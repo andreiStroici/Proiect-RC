@@ -30,6 +30,7 @@
     3. PUBREL -> clientul trimite acest pachet pentru a confirma primirea mesajului de confirmare parțială.
     4. PUBCOMP -> se semnalează că mesajul a fost livrat și procesat o singură dată.
 ### În cadrul procesului de comunicație se utilizează diferite pachete: CONNECT, CONACK, PUBLISH, PUBACK, PUBREC, PUBREL, PUBCOMP, SUBSCRIBE, SUBACK, UNSUBSCRIBE, UNSUBACK, PINREQ, PINGRESP, DISCONNECT. În cele ce umrează vom face o scurtă prezentarer a fiecărui pachet.
+---
 ### 1. Pachetul CONNECT
 #### După ce s-a realizat conețiunea de rețea dintre client și broler, acesta este primul pachet trimis de client către server. Pachetul CONNECT poate fi trimis o singură dată, iar dacă în cadrul acestui proces va apărea o eroare, brokerul va închide conețiunea de rețea. Structura acestui pachet este:
 1. **Antetul fix**
@@ -91,36 +92,118 @@
         - **Will Payload**: Binary Data.
         - **Numele utilizatorului**: șir de caractere.
         - **Parolă**: Binary Data.
-
+---
 ### 2. Pachetul CONNACK
 #### Pachetul CONNACK este trimis de broker ca răspuns la un pachet CONNECT. Acesta confirmă dacă conexiunea a fost acceptată și include informații despre starea conexiunii. Structura pachetului este:
 
 1. **Antetul fix**
     - **Tip**: 1 octet (0010 0000).
-    - **Lungimea**: 1 octet (2).
+    - **Lungimea**: Variable Byte Integer.
 
 2. **Antetul variabil**
     - **Acknowledge Flags**: 1 octet.
-        - Bit 7: Rezervat (0).
-        - Bit 6: Session Present (indică dacă o sesiune anterioară există).
+        - Biții 7-1: Rezervați și au toți valoarea 0.
+        - Bit 0: Session Present (indică dacă o sesiune anterioară există).
     - **Return Code**: 1 octet (starea conexiunii).
         - 0: Conexiune acceptată.
         - 1: Refuzată - inexistentă.
         - Alte coduri pentru diferite erori.
-
+    - **Proprietățile pachetului CONNACK**: compuse din
+        - **Lungimea proprietății**: Variable Byte Integer.
+        - **Durata de expirare a sesiunii**: compus din:
+            - **Identificator al intervalului de expirare a sesiunii**: 1 octet.
+            - **Valoarea intervalului**: întreg pe 4 octeți.
+        - **Maxim de primire**: compus din: 
+            - **Identificatorul maximului de primire**: 1 octet.
+            - **Valoarea acestui maxim**: întreg pe 2 octeți.
+        - **Maxim QoS**: compus din
+            - **Identificatorul maximului QoS**: 1 octet.
+            - **Valoarea maximă a QoS**: întreg pe 1 octet.
+        - **Posibilitate de păstrare**: compus din:
+            - **Identificatorul pentru acest câmp**: 1 octet.
+            - **Valoarea care arată dacă server-ul poate păstra mesaje**: Byte.
+        - **Dimensiunea maximă a pachetului**: compus din:
+            - **Identificatorul dimensiunii maxime**: 1 octet.
+            - **Dimensiunea maximă a pachetului**: întreg pe 4 octeți.
+        - **Idetificatorul atribuit clientului**: compus din:
+            - **Identificatorul acestui atribut**: 1 octet.
+            - **Valoarea identificatorului atribuit clientului**: șir de caractere.
+        - **Topic ALias Maxim**: compus din:
+            - **Identificatorul Topic Alias Maxim**: 1 octet.
+            - **DValoarea Topic Alias Maxim**: întreg pe 2 octeți.
+        - **Reason String**: compus din:
+            - **Identificatorul Reason String**: 1 octet.
+            - **Valoarea Reason String asociat răspunsului**: șir de caractere.
+        - **Proprietățile utilizatorului**: compus din:
+            - **Identificatorul proprietăților utilizatorului**: 1 octet.
+            - **Informații suplimentare**: șir de caractere.
+        - **Aboanre cu wildcard disponibilă**: compus din:
+            - **Identificatorul disponibiltății abonării cu wildcard**: 1 octet.
+            - **Valoare care perimte această opțiune**: Byte.
+        - **Identificatori pentru subsripțile disponibile**: compuis din:
+            - **Identificatorul această proprietate**: 1 octet.
+            - **Valoare care îmi spune dacă sunt disponibili identificatorii subscripțiilor**: Byte.
+        - **Disponibilitate subscripții partajate**: compus din:
+            - **Identificatorul aceste proprietăți**: 1 octet.
+            - **Valoare care îmi spune dacă server-ul perimite subscripții partajate**: Byte.
+        - **Informații de răspuns**: compus din:
+            - **Identificatorul informațiilor de răspuns**: 1 octet.
+            - **Valoare care este utilizată pentru topicul de răspuns**:șir de caractere.
+        - **Referința server-ului**: compus din:
+            - **Identificatorul referinței server-ului**: 1 octet.
+            - **DValoare cu care clientul poate identifica alt server**: șir de caractere.
+        - **Metoda de autentificare**: compus din:
+            - **Identificatorul metodei de autentificare**: 1 octet.
+            - **Numele metodei de autentificare**: șir de caractere.
+        - **Datele de autentificare**: compus din:
+            - **Identificatorul datelor de autentificare**: 1 octet.
+            - **Datele de autentificare**: Byte.
+3. **Acest pachet nu are payload**
 ---
 
 ### 3. Pachetul PUBLISH
 #### Pachetul PUBLISH este utilizat de client pentru a trimite mesaje către broker. Mesajele pot avea diferite niveluri de QoS.Structura pachetului este:
 
 1. **Antetul fix**
-    - **Tip**: 1 octet (0011).
+    - **Tip**: alcătuit din:
+        - **Biții 7-4**:  au valoarea 0011.
+        - **Bitul 3**: DUP Flag.
+        - **Biții 2-1**: nivelul QoS.
+        - **Bitul 0**: Retain
     - **Lungimea**: Variable Byte Integer (lungimea antetului variabil + payload).
 
 2. **Antetul variabil**
     - **Topic Name**: String (subiectul mesajului).
     - **Packet Identifier**: 2 octeți (pentru QoS 1 și QoS 2).
-    - **Properties**: Câmp opțional care poate conține informații suplimentare.
+    - **Properties**: Câmp opțional care poate conține informații suplimentare. Acestea sunt:
+        - **Lungimea pachetului**: Variable Byte Integer.
+        - **Formatul Payload-ului**: compus din:
+            - **Identificatorul formatului payload-ului**: 1 octet.
+            - **Tipul formatului**: Byte.
+        - **Intervalul de timp pentru expirarea mesajului**: compus din:
+            - **Indentificator**: Byte.
+            - **Valoarea intervalului**: număr întreg pe 4 octeți.
+        - **Topic Alias**:
+            : compus din:
+            - **Identificator**: 1 octet.
+            - **Valoarea topicului alias**: întreg pe 4 octeți.
+        - **Topicul de răspuns**: compus din:
+            : compus din:
+            - **Identificatorul topicului de răspuns**: 1 octet.
+            - **Numele topicului de rapsuns**: șir de caractere.
+        - **Date de corelare**: compus din:
+            : compus din:
+            - **Identificatorul datelor de corelare**: 1 octet.
+            - **Valoare**: Binary.
+        - **Proprietățile utilizatorului**: compus din:
+            - **Identificatorul proprietățile utilizatorului**: 1 octet.
+            - **Propeietățile utilzatorului**: pereche de șiruri de caractere.
+        - **Identificatorul subscripției**: compus din:
+            - **Identificator**: 1 octet.
+            - **Identificatorul subscripției**: Variable Byte Integer.
+        - **Tipul conținutului**: compus din:
+            - **Identificatorul tipului conținutului**: 1 octet.
+            - **Descrierea conținutului**: șir de caractere.
 
 3. **Payload**: Conținutul efectiv al mesajului.
 
@@ -131,10 +214,20 @@
 
 1. **Antetul fix**
     - **Tip**: 1 octet (0100 0000).
-    - **Lungimea**: 1 octet (2).
+    - **Lungimea**: Variable Byte Integer.
 
 2. **Antetul variabil**
     - **Packet Identifier**: 2 octeți (identificatorul mesajului confirmat).
+    - **PUBACK REASON CODE**: 1 octet
+    - **Proprietăți**: aceste sunt un câmp opțional. Acestea sunt:
+        - **Lungime**: Variable Byte Integer. 
+        - **Reason String**: compus din:
+            - **Identificator**: 1 octet.
+            - **Motivul asociat cu acest răspuns**: șir de caractere.
+        - **Proprietățile utilizatorului**: compus din:
+            - **Identifcator al proprietăților utilizatorului**: 1 octet.
+            - **Proprietățile utilizatorului**: șir de caractere.
+3. **Acest pachet nu are Payload**
 
 ---
 
@@ -143,10 +236,19 @@
 
 1. **Antetul fix**
     - **Tip**: 1 octet (0101 0000).
-    - **Lungimea**: 1 octet (2).
+    - **Lungimea**: Variable Byte Integer.
 
 2. **Antetul variabil**
     - **Packet Identifier**: 2 octeți (identificatorul mesajului confirmat).
+    - **Proprietăți**: aceste sunt un câmp opțional. Acestea sunt:
+        - **Lungime**: Variable Byte Integer. 
+        - **Reason String**: compus din:
+            - **Identificator**: 1 octet.
+            - **Motivul asociat cu acest răspuns**: șir de caractere.
+        - **Proprietățile utilizatorului**: compus din:
+            - **Identifcator al proprietăților utilizatorului**: 1 octet.
+            - **Proprietățile utilizatorului**: șir de caractere.
+3. **Acest pachet nu are Payload**
 
 ---
 
@@ -159,7 +261,16 @@
 
 2. **Antetul variabil**
     - **Packet Identifier**: 2 octeți (identificatorul mesajului confirmat).
+        - **Proprietăți**: aceste sunt un câmp opțional. Acestea sunt:
+        - **Lungime**: Variable Byte Integer. 
+        - **Reason String**: compus din:
+            - **Identificator**: 1 octet.
+            - **Motivul asociat cu acest răspuns**: șir de caractere.
+        - **Proprietățile utilizatorului**: compus din:
+            - **Identifcator al proprietăților utilizatorului**: 1 octet.
+            - **Proprietățile utilizatorului**: șir de caractere.
 
+3. **Acest pachet nu are Payload.**
 ---
 
 ### 7. Pachetul PUBCOMP (QoS 2)
@@ -171,7 +282,14 @@
 
 2. **Antetul variabil**
     - **Packet Identifier**: 2 octeți (identificatorul mesajului confirmat).
-
+     - **Proprietăți**: aceste sunt un câmp opțional. Acestea sunt:
+        - **Lungime**: Variable Byte Integer. 
+        - **Reason String**: compus din:
+            - **Identificator**: 1 octet.
+            - **Motivul asociat cu acest răspuns**: șir de caractere.
+        - **Proprietățile utilizatorului**: compus din:
+            - **Identifcator al proprietăților utilizatorului**: 1 octet.
+            - **Proprietățile utilizatorului**: șir de caractere.
 ---
 
 ### 8. Pachetul SUBSCRIBE
@@ -183,12 +301,49 @@
 
 2. **Antetul variabil**
     - **Packet Identifier**: 2 octeți (identificatorul abonării).
-    - **Topic Filters**: String (subiectul la care se abonează clientul).
-    - **Requested QoS**: 1 octet (nivelul QoS solicitat).
+    - **Proprietăți**: compuse din:
+        - **Lungime**: Variable Byte Integer.
+        - **Identificatorul subscripției**: compus din:
+            - **Identificatorul proprietății**: 1 octet.
+            - **Identificartorul subsrcipțieie**: Variable Byte Integer.
+        - **Proprietățile utilizatorului**: compus din:
+            - **Identifcator al proprietăților utilizatorului**: 1 octet.
+            - **Proprietățile utilizatorului**: șir de caractere.
+
+3. **Payload**
+    - **Topic Filters**: compus din:
+        - **Lungime**: întreg pe 2 octeți
+        - **Topic Filters efectiv**: String (subiectul la care se abonează clientul).
+    - **Opțiunile subscripției**: 1 octet alcătuit astfel:
+        - **Biții 7-6**: rezevați și au valoarea 0.
+        - **Biții 5-4**: Retain Handling.
+        - **Bitul 3**: Retain as Published.
+        - **Bitul 2**: No Local.
+        - **Biții 1-0**: QoS.
+
+---
+### 9. SUBACK
+#### Pachetul acesta este trimis de la server pentru confirmarea procesării cerieri de abonare. Acesta are următoarea structură:
+1. **Antetul fix**
+    - **Tip-ul pachetului**: 1 octet (10010000).
+    - **Lungimea**: Variable Byte Integer.
+
+2. **Antetul variabil**
+    - **Identificatorul pachetului**: este identic cu identificatorul trimis de pachetul SUBSCRIBE.
+    - **Proprietăți**
+        - **Lungime**: Variable Byte Integer.
+        - **Reason String**: compus din:
+            - **Identificator**: 1 octet.
+            - **Motivul asociat cu acest răspuns**: șir de caractere.
+        - **Proprietățile utilizatorului**: compus din:
+            - **Identifcator al proprietăților utilizatorului**: 1 octet.
+            - **Proprietățile utilizatorului**: șir de caractere.
+3. **Payload**  
+Acesta conține o listă de Rason Code care corespund fiecărui Topic Filter din pachetul SUBSCRIBE.
 
 ---
 
-### 9. Pachetul UNSUBSCRIBE
+### 10. Pachetul UNSUBSCRIBE
 #### Pachetul UNSUBSCRIBE este trimis de client pentru a renunța la o abonare existentă. Structura pachetului este:
 
 1. **Antetul fix**
@@ -197,21 +352,41 @@
 
 2. **Antetul variabil**
     - **Packet Identifier**: 2 octeți (identificatorul anulării).
-    - **Topic Filters**: String (subiectul de la care se renunță).
+    - **Proprietăți**
+        - **Lungimea proprietăților**: Variable Byte Integer.
+        - **Proprietățile utilizatorului**: compus din:
+            - **Identifcator al proprietăților utilizatorului**: 1 octet.
+            - **Proprietățile utilizatorului**: șir de caractere.
+
+3. **Payload**
+    - **Topic Filters**: 
+        - **Lungime Topic Filters**: 2 octeți
+        - **Topicurile efective**: String (subiectul de la care se renunță).
+
+---
+### 11. UNSUBACK
+#### Acesta este pachetul trimis de server către client pentru a confirma primirea pachetului de UNSUBACK. Structura acestuia este:
+1. **Antentul fix**
+    - **Tipul pachetului**: 1 octet (10110000).
+    - **Lungime a antetului variabil și a payload-ului**: Variable Byte Ineger.
+
+2. **Antetul variabil**
+    - **Identifiacatorul pachetului**: 2 octeți.
+    - **Prorpietăți**
+        - **Lungime**: Variable Byte Integer.
+        - **Reason String**: compus din:
+            - **Identificator**: 1 octet.
+            - **Motivul asociat cu acest răspuns**: șir de caractere.
+        - **Proprietățile utilizatorului**: compus din:
+            - **Identifcator al proprietăților utilizatorului**: 1 octet.
+            - **Proprietățile utilizatorului**: șir de caractere.
+
+3. **Payload**  
+Acesta conține o listă de Rason Code care corespund fiecărui Topic Filter din pachetul UNSUBSCRIBE.
 
 ---
 
-### 10. Pachetul DISCONNECT
-#### Pachetul DISCONNECT este trimis de client pentru a închide conexiunea cu brokerul. Structura pachetului este:
-
-1. **Antetul fix**
-    - **Tip**: 1 octet (1110 0000).
-    - **Lungimea**: 0 (nu are antet variabil sau payload).
-2. **Nu există antet variabil**
-3. **Nu exitsă Payload**
----
-
-### 11. Pachetul PINGREQ
+### 12. Pachetul PINGREQ
 #### Pachetul PINGREQ este trimis de client pentru a verifica dacă brokerul este încă conectat. Structura pachetului este:
 
 1. **Antetul fix**
@@ -221,7 +396,7 @@
 3. **Nu exitsă Payload**
 ---
 
-### 12. Pachetul PINGRESP
+### 13. Pachetul PINGRESP
 
 ### Descriere
 #### Pachetul PINGRESP este trimis de broker ca răspuns la PINGREQ, confirmând că brokerul este activ. Structura pachetului este:
@@ -232,7 +407,32 @@
 
 ---
 
-## 13. Pachetul AUTH
+### 14. Pachetul DISCONNECT
+#### Pachetul DISCONNECT este trimis de client pentru a închide conexiunea cu brokerul. Structura pachetului este:
+
+1. **Antetul fix**
+    - **Tip**: 1 octet (1110 0000).
+    - **Lungimea**: 0 (nu are antet variabil sau payload).
+2. **Antetul variabil**
+    - **Motivul deconectării**: Byte.
+    - **Proprietăți**
+        - **Lungime**: Variable Byte Integer
+        - **Durata de expirarea a sesiunii**: compusă din:
+            - **Identificatorul duratei de expirare**:  Byte.
+            - **Valoarea duratei de timp**: număr întreg pe 4 octeți.
+        - **Reason String**: compus din:
+            - **Identificator**: Byte
+            - **Motivul pentru deconectare**: șir de caractere.
+        - **Proprietățile utilizatorului**: compus din:
+            - **Identifcator al proprietăților utilizatorului**: 1 octet.
+            - **Proprietățile utilizatorului**: șir de caractere.
+        - **Referință server**: compus din:
+            - **Identificatorul referinței server**: Byte.
+            - **Cod pe care clientul îl folosește pentru a identifica un nou server**: șir de caractere.  
+3. **Nu exitsă Payload**
+---
+
+## 15. Pachetul AUTH
 
 ### Descriere
 
