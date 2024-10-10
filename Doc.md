@@ -58,14 +58,42 @@
         - **Dimensiunea maximă a pachetului**: 4 octeți.
         - **Topic Alias Maximum**: 2 octeți.
         - **Cerere pentru informații despre răspuns**: 1 octet (0 sau 1).
-        
+        - **Solicitare informații despre erori**: 1 octet (0 sau 1).
+        - **Proprietățile utilizatorului**: 1 octet (care este idetificatorul proprietății utilizatorului) și o pereche de șiriuri de caractere codificate cu UTF-8.
+        - **Metoda de autetificare**: 1 octet (identificatorul metodei de autetificare) și urmat de un șir de caractere codificat folosind UTF-8.
+        - **Datele de autentificare**: 1 octet (idetificatorul datelor de autentificare) urmat de un Binary Data (care conține datele de autentificare).
+3. **Payload** 
+    - **Identificatorul clientului**: șir de caractere
+    - **Proprietăți Will**: compus din
+        - **Lungimea proprietății**: Variable Integer Byte.
+        - **Interval de întârziere pentru Will**: compus din:
+            - **Idetificatorul intervalului de întârziere pentru Will**: 1 octet
+            - **Durata intervalului**: întreg memorat pe 4 octeți.
+        - **Identificatorul de format al Payload**: compus din:
+            - **Identificator pentru formatul Payload-ului**: 1 octet.
+            - **Valoarea formatului**: un octet.
+        - **Durata de expirare a mesajului**: compus din:
+            - **Identificator pentru durata de expirare a intervalului**: 1 octet.
+            - **Valoarea intervalului**: un întreg memorat pe 4 octeți.
+        - **Tipul conținutului**: compus din:
+            - **Identificator pentru tipul conținutului**: 1 octet.
+            - **Conținutul mesajului Will**: un șir de caractere.
+        - **Topicul de răspuns**: compus din:
+            - **Identificatorul topicului**: 1 octet.
+            - **VȘir de caractere utilizat pentru topicul de răspuns**: un șir de caractere.
+        - **Datele de corelare**: compus din:
+            - **Identificator pentru datele de corelare**: 1 octet.
+            - **Valoarea formatului**: Binary Data.
+        - **Proprietatea utilizatorului**: compus din:
+            - **Identificator pentru proprietatea utilizatorului**: 1 octet.
+            - **Proprietatea**: Binary Data.
+        - **Topicul Will**:  șir de caractere.
+        - **Will Payload**: Binary Data.
+        - **Numele utilizatorului**: șir de caractere.
+        - **Parolă**: Binary Data.
 
-## 2. Pachetul CONNACK
-
-### Descriere
-Pachetul CONNACK este trimis de broker ca răspuns la un pachet CONNECT. Acesta confirmă dacă conexiunea a fost acceptată și include informații despre starea conexiunii.
-
-### Structura pachetului
+### 2. Pachetul CONNACK
+#### Pachetul CONNACK este trimis de broker ca răspuns la un pachet CONNECT. Acesta confirmă dacă conexiunea a fost acceptată și include informații despre starea conexiunii. Structura pachetului este:
 
 1. **Antetul fix**
     - **Tip**: 1 octet (0010 0000).
@@ -82,12 +110,8 @@ Pachetul CONNACK este trimis de broker ca răspuns la un pachet CONNECT. Acesta 
 
 ---
 
-## 3. Pachetul PUBLISH
-
-### Descriere
-Pachetul PUBLISH este utilizat de client pentru a trimite mesaje către broker. Mesajele pot avea diferite niveluri de QoS.
-
-### Structura pachetului
+### 3. Pachetul PUBLISH
+#### Pachetul PUBLISH este utilizat de client pentru a trimite mesaje către broker. Mesajele pot avea diferite niveluri de QoS.Structura pachetului este:
 
 1. **Antetul fix**
     - **Tip**: 1 octet (0011).
@@ -102,12 +126,8 @@ Pachetul PUBLISH este utilizat de client pentru a trimite mesaje către broker. 
 
 ---
 
-## 4. Pachetul PUBACK (QoS 1)
-
-### Descriere
-Pachetul PUBACK este trimis de broker ca răspuns la un mesaj PUBLISH cu QoS 1. Acesta confirmă primirea mesajului.
-
-### Structura pachetului
+### 4. Pachetul PUBACK (QoS 1)
+#### Pachetul PUBACK este trimis de broker ca răspuns la un mesaj PUBLISH cu QoS 1. Acesta confirmă primirea mesajului. Structura pachetului este:
 
 1. **Antetul fix**
     - **Tip**: 1 octet (0100 0000).
@@ -118,12 +138,8 @@ Pachetul PUBACK este trimis de broker ca răspuns la un mesaj PUBLISH cu QoS 1. 
 
 ---
 
-## 5. Pachetul PUBREC (QoS 2)
-
-### Descriere
-Pachetul PUBREC este trimis de broker ca răspuns la un mesaj PUBLISH cu QoS 2, confirmând primirea acestuia.
-
-### Structura pachetului
+### 5. Pachetul PUBREC (QoS 2)
+#### Pachetul PUBREC este trimis de broker ca răspuns la un mesaj PUBLISH cu QoS 2, confirmând primirea acestuia.Structura pachetului este:
 
 1. **Antetul fix**
     - **Tip**: 1 octet (0101 0000).
@@ -135,11 +151,7 @@ Pachetul PUBREC este trimis de broker ca răspuns la un mesaj PUBLISH cu QoS 2, 
 ---
 
 ## 6. Pachetul PUBREL (QoS 2)
-
-### Descriere
-Pachetul PUBREL este trimis de client pentru a confirma că a primit pachetul PUBREC.
-
-### Structura pachetului
+#### Pachetul PUBREL este trimis de client pentru a confirma că a primit pachetul PUBREC. Structura pachetului este:
 
 1. **Antetul fix**
     - **Tip**: 1 octet (0110 0010).
@@ -150,12 +162,8 @@ Pachetul PUBREL este trimis de client pentru a confirma că a primit pachetul PU
 
 ---
 
-## 7. Pachetul PUBCOMP (QoS 2)
-
-### Descriere
-Pachetul PUBCOMP este trimis de broker pentru a confirma finalizarea procesului QoS 2.
-
-### Structura pachetului
+### 7. Pachetul PUBCOMP (QoS 2)
+#### Pachetul PUBCOMP este trimis de broker pentru a confirma finalizarea procesului QoS 2. Structura pachetului este:
 
 1. **Antetul fix**
     - **Tip**: 1 octet (0111 0000).
@@ -166,12 +174,8 @@ Pachetul PUBCOMP este trimis de broker pentru a confirma finalizarea procesului 
 
 ---
 
-## 8. Pachetul SUBSCRIBE
-
-### Descriere
-Pachetul SUBSCRIBE este trimis de client pentru a se abona la un subiect.
-
-### Structura pachetului
+### 8. Pachetul SUBSCRIBE
+#### Pachetul SUBSCRIBE este trimis de client pentru a se abona la un subiect. Structura pachetului este:
 
 1. **Antetul fix**
     - **Tip**: 1 octet (1000 0010).
@@ -184,12 +188,8 @@ Pachetul SUBSCRIBE este trimis de client pentru a se abona la un subiect.
 
 ---
 
-## 9. Pachetul UNSUBSCRIBE
-
-### Descriere
-Pachetul UNSUBSCRIBE este trimis de client pentru a renunța la o abonare existentă.
-
-### Structura pachetului
+### 9. Pachetul UNSUBSCRIBE
+#### Pachetul UNSUBSCRIBE este trimis de client pentru a renunța la o abonare existentă. Structura pachetului este:
 
 1. **Antetul fix**
     - **Tip**: 1 octet (1010 0010).
@@ -201,38 +201,30 @@ Pachetul UNSUBSCRIBE este trimis de client pentru a renunța la o abonare existe
 
 ---
 
-## 10. Pachetul DISCONNECT
-
-### Descriere
-Pachetul DISCONNECT este trimis de client pentru a închide conexiunea cu brokerul.
-
-### Structura pachetului
+### 10. Pachetul DISCONNECT
+#### Pachetul DISCONNECT este trimis de client pentru a închide conexiunea cu brokerul. Structura pachetului este:
 
 1. **Antetul fix**
     - **Tip**: 1 octet (1110 0000).
     - **Lungimea**: 0 (nu are antet variabil sau payload).
-
+2. **Nu există antet variabil**
+3. **Nu exitsă Payload**
 ---
 
-## 11. Pachetul PINGREQ
-
-### Descriere
-Pachetul PINGREQ este trimis de client pentru a verifica dacă brokerul este încă conectat.
-
-### Structura pachetului
+### 11. Pachetul PINGREQ
+#### Pachetul PINGREQ este trimis de client pentru a verifica dacă brokerul este încă conectat. Structura pachetului este:
 
 1. **Antetul fix**
     - **Tip**: 1 octet (1100 0000).
     - **Lungimea**: 0 (nu are antet variabil sau payload).
-
+2. **Nu există antet variabil**
+3. **Nu exitsă Payload**
 ---
 
-## 12. Pachetul PINGRESP
+### 12. Pachetul PINGRESP
 
 ### Descriere
-Pachetul PINGRESP este trimis de broker ca răspuns la PINGREQ, confirmând că brokerul este activ.
-
-### Structura pachetului
+#### Pachetul PINGRESP este trimis de broker ca răspuns la PINGREQ, confirmând că brokerul este activ. Structura pachetului este:
 
 1. **Antetul fix**
     - **Tip**: 1 octet (1101 0000).
