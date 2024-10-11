@@ -3,7 +3,7 @@
 ## Capitolul 1 Aspecte teroretice
 1. [Introducere](Capitolul%201%20Aspecte%20teoretice/01.%20Introducere.md)
 2. [Elementele unui pachet](Capitolul%201%20Aspecte%20teoretice/02.%20Elementele%20unui%20pachet.md)
-3. [QoS](Capitolul%201%20Aspecte%20teoretice/01.%QoS.md)
+3. [QoS](Capitolul%201%20Aspecte%20teoretice/01.QoS.md)
 4. [CONNECT](Capitolul%201%20Aspecte%20teoretice/01.%20CONNECT.md)
 5. [CONNACK](Capitolul%201%20Aspecte%20teoretice/01.%20CONNACK.md)
 6. [PUBLISH](Capitolul%201%20Aspecte%20teoretice/01.%20PUBLISH.md)
