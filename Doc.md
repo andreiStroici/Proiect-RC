@@ -32,7 +32,7 @@
 ### În cadrul procesului de comunicație se utilizează diferite pachete: CONNECT, CONACK, PUBLISH, PUBACK, PUBREC, PUBREL, PUBCOMP, SUBSCRIBE, SUBACK, UNSUBSCRIBE, UNSUBACK, PINREQ, PINGRESP, DISCONNECT. În cele ce umrează vom face o scurtă prezentarer a fiecărui pachet.
 ---
 ### 1. Pachetul CONNECT
-#### După ce s-a realizat conețiunea de rețea dintre client și broler, acesta este primul pachet trimis de client către server. Pachetul CONNECT poate fi trimis o singură dată, iar dacă în cadrul acestui proces va apărea o eroare, brokerul va închide conețiunea de rețea. Structura acestui pachet este:
+#### După ce s-a realizat conețiunea de rețea dintre client și broker, acesta este primul pachet trimis de client către server. Pachetul CONNECT poate fi trimis o singură dată, iar dacă în cadrul acestui proces va apărea o eroare, brokerul va închide conețiunea de rețea. Structura acestui pachet este:
 1. **Antetul fix**
     - **Tip**: 1 octet (0001 0000).
     - **Lungimea**: Variable Byte Integer (lungimea antetului variabil + payload).
