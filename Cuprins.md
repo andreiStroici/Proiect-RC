@@ -1,5 +1,5 @@
 # Cuprins
 ---
 ## Capitolul 1 Aspecte teroretice
-- [Introducere](01.Introducere.md)
+- [Introducere](Capitolul%201%20Aspecte%20teoretice/Introducere.md)
 
