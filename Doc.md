@@ -252,7 +252,7 @@
 
 ---
 
-## 6. Pachetul PUBREL (QoS 2)
+### 6. Pachetul PUBREL (QoS 2)
 #### Pachetul PUBREL este trimis de client pentru a confirma că a primit pachetul PUBREC. Structura pachetului este:
 
 1. **Antetul fix**
