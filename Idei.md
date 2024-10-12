@@ -14,4 +14,5 @@ Etape următoare:
 4. Autentificare
 5. Improvments
 6. Compus din: pentru fiecare pachet modificare
+ok
 
