@@ -20,3 +20,4 @@
 17. [DISCONNECT](Capitolul%201%20Aspecte%20teoretice/17.%20DISCONNECT.md)
 ---
 ## Capitolul 2 Analiza cerințelor proiectului
+01. [Introducere](Capitolul%202%20Analiza%20cerințelor%20proiectului/01.%20Introducere.md)
