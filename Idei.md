@@ -1,7 +1,7 @@
 OS: Windows
 Platformă: VSCode
 Etape următoare:
-1. Descirerea cerințelor
+1. Descrierea cerințelor
     - Configurare adresa broker
     - Configurare ID client
         - Reținere timestamp pt ultima acțiune făcută
