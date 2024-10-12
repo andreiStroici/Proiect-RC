@@ -1,6 +1,6 @@
 # Cuprins
 ---
-## Capitolul 1 Aspecte teroretice
+## Capitolul 1 Aspecte teoretice
 1. [Introducere](Capitolul%201%20Aspecte%20teoretice/01.%20Introducere.md)
 2. [Elementele unui pachet](Capitolul%201%20Aspecte%20teoretice/02.%20Elementele%20unui%20pachet.md)
 3. [QoS](Capitolul%201%20Aspecte%20teoretice/03.%20QoS.md)
