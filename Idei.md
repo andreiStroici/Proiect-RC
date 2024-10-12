@@ -13,4 +13,5 @@ Etape următoare:
 3. Keep Alive client + server
 4. Autentificare
 5. Improvments
+6. Compus din: pentru fiecare pachet modificare
 
