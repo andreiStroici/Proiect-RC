@@ -21,3 +21,10 @@
 ---
 ## Capitolul 2 Analiza cerințelor proiectului
 01. [Introducere](Capitolul%202%20Analiza%20cerințelor%20proiectului/01.%20Introducere.md)
+02. [Elemente tehnice](Capitolul%202%20Analiza%20cerințelor%20proiectului/02.%20Elemente%20tehnice.md)
+03. [Congfigurare adresă broker](Capitolul%202%20Analiza%20cerințelor%20proiectului/03.%20Configurare%20adresă%20broker.md)
+04. [Configurare ID Client](Capitolul%202%20Analiza%20cerințelor%20proiectului/04.%20Configurare%20ID%20Client.md)
+05. [Configurare mesaj LastWill](Capitolul%202%20Analiza%20cerințelor%20proiectului/05.%20Configurare%20mesaj%20LastWill.md)
+06. [Autentificare cu utilizator și parolă](Capitolul%202%20Analiza%20cerințelor%20proiectului/06.%20Autentificare%20cu%20utilizator%20și%20parolă.md)
+07. [Implementare mecanism Keep Alive](Capitolul%202%20Analiza%20cerințelor%20proiectului/07.%20Implementare%20mecanism%20Keep%20Alive.md)
+08. [Implementare mecanism QoS0, 1 și 2](Capitolul%202%20Analiza%20cerințelor%20proiectului/08.%20Implementare%20mecanism%20QoS0,%201%20și%202.md)
