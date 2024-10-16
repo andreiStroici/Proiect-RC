@@ -28,3 +28,4 @@
 06. [Autentificare cu utilizator și parolă](Capitolul%202%20Analiza%20cerințelor%20proiectului/06.%20Autentificare%20cu%20utilizator%20și%20parolă.md)
 07. [Implementare mecanism Keep Alive](Capitolul%202%20Analiza%20cerințelor%20proiectului/07.%20Implementare%20mecanism%20Keep%20Alive.md)
 08. [Implementare mecanism QoS0, 1 și 2](Capitolul%202%20Analiza%20cerințelor%20proiectului/08.%20Implementare%20mecanism%20QoS0,%201%20și%202.md)
+09. [Monitorizarea parametrilor sistemului de calcul](Capitolul%202%20Analiza%20cerințelor%20proiectului/09.%20Monitorizarea%20parametrilor%20sistemului%20de%20calcul.md)
