@@ -18,6 +18,7 @@
 15. [PINGREQ](Capitolul%201%20Aspecte%20teoretice/15.%20PINGREQ.md)
 16. [PINGRESP](Capitolul%201%20Aspecte%20teoretice/16.%20PINGRESP.md)
 17. [DISCONNECT](Capitolul%201%20Aspecte%20teoretice/17.%20DISCONNECT.md)
+18. [Publisher/Subscriber](Capitolul%201%20Aspecte%20teoretice/18.%20Publisher%20și%20Subscriber.md)
 ---
 ## Capitolul 2 Analiza cerințelor proiectului
 01. [Introducere](Capitolul%202%20Analiza%20cerințelor%20proiectului/01.%20Introducere.md)
@@ -29,3 +30,6 @@
 07. [Implementare mecanism Keep Alive](Capitolul%202%20Analiza%20cerințelor%20proiectului/07.%20Implementare%20mecanism%20Keep%20Alive.md)
 08. [Implementare mecanism QoS0, 1 și 2](Capitolul%202%20Analiza%20cerințelor%20proiectului/08.%20Implementare%20mecanism%20QoS0,%201%20și%202.md)
 09. [Monitorizarea parametrilor sistemului de calcul](Capitolul%202%20Analiza%20cerințelor%20proiectului/09.%20Monitorizarea%20parametrilor%20sistemului%20de%20calcul.md)
+---
+Capitolul 3 Anexe
+01. [Bibiliografie](Capitolul%203%20Anexe/01.%20Bibliografie.md)
