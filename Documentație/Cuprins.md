@@ -31,5 +31,5 @@
 08. [Implementare mecanism QoS0, 1 și 2](Capitolul%202%20Analiza%20cerințelor%20proiectului/08.%20Implementare%20mecanism%20QoS0,%201%20și%202.md)
 09. [Monitorizarea parametrilor sistemului de calcul](Capitolul%202%20Analiza%20cerințelor%20proiectului/09.%20Monitorizarea%20parametrilor%20sistemului%20de%20calcul.md)
 ---
-Capitolul 3 Anexe
+## Capitolul 3 Anexe
 01. [Bibiliografie](Capitolul%203%20Anexe/01.%20Bibliografie.md)
