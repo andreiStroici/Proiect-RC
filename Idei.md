@@ -15,4 +15,9 @@ Etape următoare:
 5. Improvments
 6. Compus din: pentru fiecare pachet modificare
 7. Fisiere de logging
+8. Diagrame de secvente
+   - CONNECT + CONNACK + DISCONNECT -> 2.06
+   - SUBSCRIBE + SUBACK/ UNSUBSCRUBE + UNSUBACK -> 2.10 Mecanismul de abonare
+   - PINGREQ + PINGRESP ->2.07
+   - PUBLISH + PUBACK + PUBREC + PUBREL + PUBCOMP -> 1.03
 
