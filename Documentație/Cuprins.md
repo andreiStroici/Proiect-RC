@@ -33,6 +33,9 @@
 ---
 ## Capitolul 3 Proiectarea aplicației
 01. [Introducere](Capitolul%203%20Proiectarea%20aplicației/01.%20Introducere.md)
+02. [Thread-urile aplicației](Capitolul%203%20Proiectarea%20aplicației/02.%20Thread-urile%20aplicației.md)
+03. [Diagrama de clase](Capitolul%203%20Proiectarea%20aplicației/03.%20Diagrama%20de%20clase.md)
+04. [Interfața cu utilizatorul](Capitolul%203%20Proiectarea%20aplicației/04.%20Interfața%20cu%20utilizatorul.md)
 ---
 ## Capitolul 4 Anexe
 01. [Bibiliografie](Capitolul%203%20Anexe/01.%20Bibliografie.md)
