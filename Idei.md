@@ -31,3 +31,4 @@ s.send(mqtt_packet.encode())  # codificare string in octeti
 s.close()
 
 ```
+3. [Client interface](https://www.wut.de/e-577ww-07-apus-000.php)
