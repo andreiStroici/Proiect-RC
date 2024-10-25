@@ -6,6 +6,7 @@
 2. Sequence diagram pt threads -> $$\color{green}Denisa$$
 3. Diagrama clase -> $$\color{grey}Andrei$$
 4. Funcționalitate clase (fisier nou pentru fiecare clasa)
+    - Client -> $$\color{grey}Andrei$$
     - Connect -> $$\color{green}Denisa$$
     - Connack -> $$\color{grey}Andrei$$
     - Publish -> $$\color{grey}Andrei$$
