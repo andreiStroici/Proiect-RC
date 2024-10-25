@@ -32,3 +32,18 @@ s.close()
 
 ```
 3. [Client interface](https://www.wut.de/e-577ww-07-apus-000.php)
+4. Modalitate de conversie int to binary data
+```Python
+def int_to_mqtt_binary_data(value: int) -> bytes:
+    # Conversie int to reprezentarea binara 
+    data_bytes = value.to_bytes((value.bit_length() + 7) // 8, byteorder='big')
+    length = len(data_bytes)
+    
+    # Ma asigur ca nu depaseste lungimea impusa
+    if length > 65535:
+        raise ValueError("Data length exceeds maximum allowed size for MQTT binary data.")
+
+    length_bytes = length.to_bytes(2, byteorder='big')
+    
+    return length_bytes + data_bytes
+```
