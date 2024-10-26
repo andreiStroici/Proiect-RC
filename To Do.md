@@ -4,9 +4,9 @@
     - (Un)Subscribe: https://sequencediagram.org/index.html#initialData=C4S2BsFMAIAoFUB2BKAzgVwEaoMYCcRMREBzaAKHIAcBDPUHEWxYaAYXBEheroaZotoAITwB7ANaQ8veiEbNWAZSy4CmaZXKjJ0gDwBaFdnyFpALiXxhStgCUAksICi28VLwGAfMbVm8ltYAgmwA0uQcXCzeOh7mAArWADIOSgAScAB02chuuniGvqYaAfAAclY29k6usdLeReoW5ZUhoUA
     - Pingreq + Pingresp: https://sequencediagram.org/index.html#initialData=C4S2BsFMAIAUEkByBxAUKgDgQwE6gMYjYB2w0AwuCJKZrgUVqdAEI4D2A1pDuqjgCN2AD2jsAbjwpUawADRsuPAFzl2AV1IhiAc2gBpSJAwBBKpOhYAZsCmQs+ABbQAEvbwt7wVJWqkAtAB8itw4yggoAEoAogCK6L6yADz+ISoRyDEAyrCoQA  
 2. Sequence diagram pt threads -> $$\color{green}Denisa$$
-3. Diagrama clase -> $$\color{grey}Andrei$$
+3. Diagrama clase -> $$\color{grey}Andrei$$ ✅
 4. Funcționalitate clase (fisier nou pentru fiecare clasa)
-    - Client -> $$\color{grey}Andrei$$
+    - Client -> $$\color{grey}Andrei$$ ✅
     - Connect -> $$\color{green}Denisa$$
     - Connack -> $$\color{grey}Andrei$$
     - Publish -> $$\color{grey}Andrei$$
