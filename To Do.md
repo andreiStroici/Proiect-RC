@@ -10,7 +10,7 @@
     - FixedHeader -> $$\color{grey}Andrei$$ ✅
     - Pachet -> $$\color{grey}Andrei$$ ✅
     - Connect -> $$\color{green}Denisa$$
-    - Connack -> $$\color{grey}Andrei$$
+    - Connack -> $$\color{grey}Andrei$$ ✅
     - Publish -> $$\color{grey}Andrei$$
     - Puback -> $$\color{green}Denisa$$
     - Pubrel -> $$\color{green}Denisa$$
