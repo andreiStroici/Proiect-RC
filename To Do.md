@@ -7,8 +7,8 @@
 3. Diagrama clase -> $$\color{grey}Andrei$$ ✅
 4. Funcționalitate clase (fisier nou pentru fiecare clasa)
     - Client -> $$\color{grey}Andrei$$ ✅
-    - FixedHeader -> $$\color{grey}Andrei$$
-    - Pachet -> $$\color{grey}Andrei$$
+    - FixedHeader -> $$\color{grey}Andrei$$ ✅
+    - Pachet -> $$\color{grey}Andrei$$ ✅
     - Connect -> $$\color{green}Denisa$$
     - Connack -> $$\color{grey}Andrei$$
     - Publish -> $$\color{grey}Andrei$$
@@ -29,4 +29,5 @@
 <!--- 
 $$\color{grey}Andrei$$
 $$\color{green}Denisa$$
+✅ marchează că acea parte a fost scrisă și urmează să fie verificată
 --->
