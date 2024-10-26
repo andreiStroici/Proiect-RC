@@ -38,6 +38,7 @@
 04. [Clasa Client](Capitolul%203%20Proiectarea%20aplicației/04.%20Client.md)
 05. [Clasa FixedHeader](Capitolul%203%20Proiectarea%20aplicației/05.%20FixedHeader.md)
 06. [Clasa Packet](Capitolul%203%20Proiectarea%20aplicației/06.%20Packet.md)
+08. [Clasa CONNACK](Capitolul%203%20Proiectarea%20aplicației/08.%20CONNACK.md)
 20. [Interfața cu utilizatorul](Capitolul%203%20Proiectarea%20aplicației/20.%20Interfața%20cu%20utilizatorul.md)
 ---
 ## Capitolul 4 Anexe
