@@ -22,7 +22,7 @@
     - Unsuback -> $$\color{green}Denisa$$ ✅
     - Pingreq -> $$\color{grey}Andrei$$
     - Pingresp -> $$\color{green}Denisa$$ ✅
-    - Disconnect -> $$\color{green}Denisa$$
+    - Disconnect -> $$\color{green}Denisa$$ ✅
 5. Interfața cu utilizatorul -> $$\color{green}Denisa$$
 6. Legătura cu soket-ul -> $$\color{grey}Andrei$$
 7. Surse diagrame de secv. -> $$\color{green}Denisa$$ ✅
