@@ -12,7 +12,7 @@
     - Connect -> $$\color{green}Denisa$$ ✅
     - Connack -> $$\color{grey}Andrei$$ ✅
     - Publish -> $$\color{grey}Andrei$$ ✅
-    - Puback -> $$\color{green}Denisa$$
+    - Puback -> $$\color{green}Denisa$$ ✅
     - Pubrel -> $$\color{green}Denisa$$
     - Pubcomp -> $$\color{grey}Andrei$$
     - Subscribe -> $$\color{green}Denisa$$
