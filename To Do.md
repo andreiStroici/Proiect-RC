@@ -16,7 +16,7 @@
     - Pubrec -> $$\color{green}Denisa$$ ✅
     - Pubrel -> $$\color{green}Denisa$$ ✅
     - Pubcomp -> $$\color{grey}Andrei$$ ✅
-    - Subscribe -> $$\color{green}Denisa$$
+    - Subscribe -> $$\color{green}Denisa$$ ✅
     - Suback -> $$\color{grey}Andrei$$
     - Unsubscribe -> $$\color{grey}Andrei$$
     - Unsuback -> $$\color{green}Denisa$$
