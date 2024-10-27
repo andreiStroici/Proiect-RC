@@ -13,7 +13,7 @@
     - Connack -> $$\color{grey}Andrei$$ ✅
     - Publish -> $$\color{grey}Andrei$$ ✅
     - Puback -> $$\color{green}Denisa$$ ✅
-    - Pubrec 
+    - Pubrec -> $$\color{green}Denisa$$ ✅
     - Pubrel -> $$\color{green}Denisa$$ ✅
     - Pubcomp -> $$\color{grey}Andrei$$ ✅
     - Subscribe -> $$\color{green}Denisa$$
