@@ -14,7 +14,7 @@
     - Publish -> $$\color{grey}Andrei$$ ✅
     - Puback -> $$\color{green}Denisa$$ ✅
     - Pubrel -> $$\color{green}Denisa$$
-    - Pubcomp -> $$\color{grey}Andrei$$
+    - Pubcomp -> $$\color{grey}Andrei$$ ✅
     - Subscribe -> $$\color{green}Denisa$$
     - Suback -> $$\color{grey}Andrei$$
     - Unsubscribe -> $$\color{grey}Andrei$$
