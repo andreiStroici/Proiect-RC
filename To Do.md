@@ -18,7 +18,7 @@
     - Pubcomp -> $$\color{grey}Andrei$$ ✅
     - Subscribe -> $$\color{green}Denisa$$ ✅
     - Suback -> $$\color{grey}Andrei$$ ✅
-    - Unsubscribe -> $$\color{grey}Andrei$$
+    - Unsubscribe -> $$\color{grey}Andrei$$ ✅
     - Unsuback -> $$\color{green}Denisa$$ ✅
     - Pingreq -> $$\color{grey}Andrei$$
     - Pingresp -> $$\color{green}Denisa$$ ✅
