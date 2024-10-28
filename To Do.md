@@ -20,7 +20,7 @@
     - Suback -> $$\color{grey}Andrei$$ ✅
     - Unsubscribe -> $$\color{grey}Andrei$$ ✅
     - Unsuback -> $$\color{green}Denisa$$ ✅
-    - Pingreq -> $$\color{grey}Andrei$$
+    - Pingreq -> $$\color{grey}Andrei$$ ✅
     - Pingresp -> $$\color{green}Denisa$$ ✅
     - Disconnect -> $$\color{green}Denisa$$ ✅
 5. Interfața cu utilizatorul -> $$\color{green}Denisa$$
