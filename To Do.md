@@ -24,7 +24,7 @@
     - Pingresp -> $$\color{green}Denisa$$ ✅
     - Disconnect -> $$\color{green}Denisa$$ ✅
 5. Interfața cu utilizatorul -> $$\color{green}Denisa$$
-6. Legătura cu soket-ul -> $$\color{grey}Andrei$$
+6. Legătura cu soket-ul -> $$\color{grey}Andrei$$ ✅
 7. Surse diagrame de secv. -> $$\color{green}Denisa$$ ✅
 8. Adăugare subcapitol "Mecanismul de abonare și dezabonare"
 
