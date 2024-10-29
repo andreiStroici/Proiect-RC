@@ -45,14 +45,15 @@
 11. [Clasa PUBREC](Capitolul%203%20Proiectarea%20aplicației/11.%20PUBREC.md)
 12. [Clasa PUBREL](Capitolul%203%20Proiectarea%20aplicației/12.%20PUBREL.md)
 13. [Clasa PUBCOMP](Capitolul%203%20Proiectarea%20aplicației/13.%20PUBCOMP.md)
-14. [Clasa SUBSCRIBE](Capitolul%203%20Proiectarea%20aplicației/10.%20SUBSCRIBE.md)
+14. [Clasa SUBSCRIBE](Capitolul%203%20Proiectarea%20aplicației/14.%20SUBSCRIBE.md)
 15. [Clasa SUBACK](Capitolul%203%20Proiectarea%20aplicației/15.%20SUBACK.md)
 16. [Clasa UNSUBSCRIBE](Capitolul%203%20Proiectarea%20aplicației/16.%20UNSUBSCRIBE.md)
 17. [Clasa UNSUBACK](Capitolul%203%20Proiectarea%20aplicației/17.%20UNSUBACK.md)
 18. [Clasa PINREQ](Capitolul%203%20Proiectarea%20aplicației/18.%20PINGEREQ.md)
 19. [Clasa PINGRESP](Capitolul%203%20Proiectarea%20aplicației/19.%20PINGRESP.md)
-20. [Clasa DISCONNECT](Capitolul%203%20Proiectarea%20aplicației/10.%20DISCONNECT.md)
-21. [Interfața cu utilizatorul](Capitolul%203%20Proiectarea%20aplicației/20.%20Interfața%20cu%20utilizatorul.md)
+20. [Clasa DISCONNECT](Capitolul%203%20Proiectarea%20aplicației/20.%20DISCONNECT.md)
+21. [Imnplementare Socket](Capitolul%203%20Proiectarea%20aplicației/21.%20Implementare%20Socket.md)
+22. [Interfața cu utilizatorul](Capitolul%203%20Proiectarea%20aplicației/22.%20Interfața%20cu%20utilizatorul.md)
 ---
 ## Capitolul 4 Anexe
 01. [Bibiliografie](Capitolul%203%20Anexe/01.%20Bibliografie.md)
