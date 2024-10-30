@@ -9,19 +9,19 @@
     - Client -> $$\color{grey}Andrei$$ ✅
     - FixedHeader -> $$\color{grey}Andrei$$ ✅
     - Pachet -> $$\color{grey}Andrei$$ ✅
-    - Connect -> $$\color{green}Denisa$$ ✅
+    - Connect -> $$\color{green}Denisa$$ ✅ ?
     - Connack -> $$\color{grey}Andrei$$ ✅
     - Publish -> $$\color{grey}Andrei$$ ✅
     - Puback -> $$\color{green}Denisa$$ ✅
     - Pubrec -> $$\color{green}Denisa$$ ✅
     - Pubrel -> $$\color{green}Denisa$$ ✅
     - Pubcomp -> $$\color{grey}Andrei$$ ✅
-    - Subscribe -> $$\color{green}Denisa$$ ✅
+    - Subscribe -> $$\color{green}Denisa$$ ✅ ?
     - Suback -> $$\color{grey}Andrei$$ ✅
     - Unsubscribe -> $$\color{grey}Andrei$$ ✅
-    - Unsuback -> $$\color{green}Denisa$$ ✅
+    - Unsuback -> $$\color{green}Denisa$$ ✅ ?
     - Pingreq -> $$\color{grey}Andrei$$ ✅
-    - Pingresp -> $$\color{green}Denisa$$ ✅
+    - Pingresp -> $$\color{green}Denisa$$ ✅ ?
     - Disconnect -> $$\color{green}Denisa$$ ✅
 5. Interfața cu utilizatorul -> $$\color{green}Denisa$$
 6. Legătura cu soket-ul -> $$\color{grey}Andrei$$ ✅
