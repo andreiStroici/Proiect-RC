@@ -47,3 +47,5 @@ def int_to_mqtt_binary_data(value: int) -> bytes:
     
     return length_bytes + data_bytes
 ```
+5. Client User Interface:
+   - în cazul trimiterii pachetelor SUBSCRIBE/PUBLISH, să încercăm să disponibilizăm câmpul care selectează QoS-ul: dacă s-a ales pachetul SUBSCRIBE, să fie indisponibil, dacă s-a ales PUBLISH să fie disponibil)
