@@ -3,6 +3,7 @@
 2. QoS la nivel de pachet SUBSCRIBE în momentul trimiterii unui pachet PUBLISH cu un anumit Qos => adăugare atribut suplimentar la Client.
 3. Atribut timer la Client => pentru mecanismul Keep Alive.
 4. Scoatem thread-ul Send
+5. Socket pe windows ?? 
 
 <!--- 
 $$\color{grey}Andrei$$
