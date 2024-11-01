@@ -3,7 +3,34 @@
 2. QoS la nivel de pachet SUBSCRIBE în momentul trimiterii unui pachet PUBLISH cu un anumit Qos => adăugare atribut suplimentar la Client.
 3. Atribut timer la Client => pentru mecanismul Keep Alive.
 4. Scoatem thread-ul Send
-5. Socket pe windows ?? 
+5. Socket pe windows ??   
+Nu merge pooling-ul in W....  
+ Vin cu o propunere noua de cod:
+
+```Python
+import socket
+
+# Creare socket de conexiune
+s_conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+s_conn.connect(('server_ip_address', port_number))
+
+try:
+    while True:
+        # Așteptare blocantă pentru primirea mesajului
+        data = s_conn.recv(dim_pachet)  # Aici nu există un timeout
+        if data:
+            print("Pachet primit:", data)
+            # Aici poți adăuga procesarea specifică pachetului MQTT
+        else:
+            print("Conexiune închisă de server.")
+            break  # Ieșire din buclă la deconectare
+finally:
+    # Închidere socket la final
+    s_conn.close()
+
+```
+
+
 
 <!--- 
 $$\color{grey}Andrei$$
