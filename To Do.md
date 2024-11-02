@@ -2,7 +2,8 @@
 1. Cozi de mesaje vs pipe.
 2. QoS la nivel de pachet SUBSCRIBE în momentul trimiterii unui pachet PUBLISH cu un anumit Qos => adăugare atribut suplimentar la Client.
 3. Atribut timer la Client => pentru mecanismul Keep Alive.
-4. Scoatem thread-ul Send
+4. Scoatem thread-ul Send  ✅ 
+[noua diagramă](https://sequencediagram.org/index.html#initialData=C4S2BsFMAIBUAsBOkCGATaBnSBHArpAHYDGMaIKA5oigLYBQ9ADioqMSC4cNLSiIWjAkqNM1btOKbtGLgQRHsOTpxbEBy49kpEADcYLYgGtIwTEJGqW6zdJ7ZCGI6fOWVY+nwHvRAWgA+OQUZZVEALmIVYEhMRmDFX3RAnUh9QxQTMwsw9Ejo2PoE0Ks0QMdnTNcc0vCK3kxKaGbmgF4Als7mqNQYuOKlUoAeP1T06BdspLRwsYN6NFjgRAB7AE8sIkqst1yxb0E9kYHpuq3oNBRgFCL5RL2UyF0DCaqpvfDF4hXCQieedpdTrGEDgcALJarDZzDI7GoeLz8Q7DPwnD5fH5-YjARE+B5BO4lDzhEFgiGYZbrWSEwYeIA)
 5. Socket pe windows ?? 
 Nu merge pooling-ul in W....  
  Vin cu o propunere noua de cod:
