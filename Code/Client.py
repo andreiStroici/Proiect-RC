@@ -105,6 +105,11 @@ class Client:
                     # DISCONNECT
                     pass
 
+    def operation(self):
+        # in interiorul acestei functii va fi ca un main pt client
+        # el va monitoriza timerele si va comunica cu Receive si Main
+        pass
+
     # Getter și setter pentru client_id
     def get_client_id(self):
         # Returnează ID-ul clientului.
