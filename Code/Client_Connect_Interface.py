@@ -1,7 +1,7 @@
 from Functions import *
 
-def connect_interface():
 
+def connect_interface():
     def get_entry_text():
         # extragem username-ul și parola la apăsarea butonului "Login"
         name_extract = name_entry.get()
@@ -36,5 +36,6 @@ def connect_interface():
     login_btn.place(relx=0.5, rely=0.65, anchor=CENTER)
 
     root.mainloop()
+
 
 connect_interface()

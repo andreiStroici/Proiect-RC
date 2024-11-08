@@ -2,8 +2,8 @@ from tkinter import *
 from tkinter import ttk as t_tk
 import Functions as f
 
-def client_interface():
 
+def client_interface():
     def get_selected_action(combobox):
         selected_value = combobox.get()
         print("Selected text: ", selected_value)
@@ -60,8 +60,7 @@ def client_interface():
                                  state="readonly"
                                  )
     action_combo.current(0)
-    action_combo.place(relx = 0.5, rely = 0.15, anchor=CENTER)
-
+    action_combo.place(relx=0.5, rely=0.15, anchor=CENTER)
 
     content_label = f.define_label(root, "Content:", 15, FALSE, 0.05, 0.45, W)
     # content_label=t_tk.Label(root, text="Content: ", font=("Helvetica", 15))
@@ -91,15 +90,16 @@ def client_interface():
     # send_label.place(relx = 0.5, rely=0.70, anchor=CENTER)
 
     send_combo = t_tk.Combobox(root,
-                                 values=["At most once",
-                                         "At least once",
-                                         "Exactly once"],
-                                 font=("Helvetica", 15),
-                                 state="readonly")
+                               values=["At most once",
+                                       "At least once",
+                                       "Exactly once"],
+                               font=("Helvetica", 15),
+                               state="readonly")
     send_combo.current(0)
-    send_combo.place(relx = 0.5, rely = 0.75, anchor=CENTER)
+    send_combo.place(relx=0.5, rely=0.75, anchor=CENTER)
     send_combo.bind("<<ComboboxSelected>>", get_selected_action(send_combo))
 
     root.mainloop()
+
 
 client_interface()
