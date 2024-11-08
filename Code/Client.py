@@ -21,6 +21,8 @@ class Client:
         self.__timer = None  # Va fi setat când se trimite pachetul CONNECT
         self.__broker_ip = broker_ip  # IP-ul brokerului MQTT
         self.__broker_port = broker_port  # Portul brokerului MQTT
+        self.s_conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # creez un obiect de tip socket
+        self.s_conn.connect((self.__broker_ip, self.__broker_port))  # realizez conexiunea cu serverul
         self.__packet = None  # Ultimul pachet trimis
         self.__QoS = 0  # Calitatea serviciului, implicit 0
         self.queue = queue  # Coada de mesaje folosita pt comunicarea intre thread-uri
@@ -54,9 +56,11 @@ class Client:
             Acestă metodă setează atributul __packet cu un pachet corespunzător.
             Momentan, tipurile de pachete nu sunt implementate.
         """
-        packet = Packet()
         match type:
             case "CONNECT":
+                self.__packet = CONNECT()
+                encoded_packet = self.__packet.encode()
+                self.s_conn.send(encoded_packet.encode())
                 pass
             case "PUBLISH":
                 pass
@@ -79,7 +83,6 @@ class Client:
             case _:
                 # Trebuie găsită o soluție pentru erorile la tipurile de pachete
                 pass
-        self.__packet = packet
 
     def receive_message(self):
         """Primește un mesaj de la broker și determină tipul pachetului.
@@ -88,17 +91,14 @@ class Client:
             Metoda folosește socket-uri pentru a stabili conexiunea cu brokerul.
             Extrage primii 4 biți din datele primite pentru a determina tipul pachetului.
         """
+        # while True:
+        #     destination = "Main"
+        #     var = "M-am plictisit"
+        #     message = (destination, var)
+        #     self.queue.put(message)
+        #     #print(f"Receive a trimis:{var}, la {destination}")
         while True:
-            destination = "Main"
-            var = "M-am plictisit"
-            message = (destination, var)
-            self.queue.put(message)
-            #print(f"Receive a trimis:{var}, la {destination}")
-
-        s_conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s_conn.connect((self.__broker_ip, self.__broker_port))
-        while True:
-            data = s_conn.recv(268435455)
+            data = self.s_conn.recv(268435455)
             first_4_bits = (data[0] >> 4) & 0x0F
             match first_4_bits:
                 case 2:

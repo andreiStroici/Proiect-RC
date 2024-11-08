@@ -4,7 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="681bba33-25ca-4196-9724-768f11579d68" name="Changes" comment="Strucutrare aproximativa pt multiprocessinf functionala" />
+    <list default="true" id="681bba33-25ca-4196-9724-768f11579d68" name="Changes" comment="Strucutrare aproximativa pt multiprocessinf functionala">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Code/CONNECT.py" beforeDir="false" afterPath="$PROJECT_DIR$/Code/CONNECT.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Code/Client.py" beforeDir="false" afterPath="$PROJECT_DIR$/Code/Client.py" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -19,12 +23,12 @@
     &quot;assignee&quot;: &quot;andreiStroici&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings">{
-  &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;https://github.com/andreiStroici/Proiect-RC.git&quot;,
-    &quot;accountId&quot;: &quot;a9022f08-304d-4198-8574-34d00a825b36&quot;
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/andreiStroici/Proiect-RC.git",
+    "accountId": "321f9094-404f-4e8a-8730-ec9e8c5e056b"
   }
-}</component>
+}]]></component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 0
@@ -48,7 +52,7 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-python-sdk-d7ad00fb9fc3-c546a90a8094-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-242.23726.102" />
+        <option value="bundled-python-sdk-5b207ade9991-746f403e7f0c-com.jetbrains.pycharm.community.sharedIndexes.bundled-PC-241.17890.14" />
       </set>
     </attachedChunks>
   </component>
