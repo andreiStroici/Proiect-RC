@@ -1,6 +1,13 @@
 from tkinter import *
 from tkinter import ttk as t_tk
 
+def get_selected_action(combobox):
+    selected_value = combobox.get()
+
+    # print("Selected option:", selected_value)
+
+    root.after(10, get_selected_action, combobox)
+
 def get_entry_text():
     # extragem numele topicului si textul la apasarea butonului "Done"
     topicN_extract = topicN_entry.get()
@@ -12,6 +19,13 @@ def get_entry_text():
     topicN_entry.delete(0, END)
     topicT_entry.delete(0, END)
 
+def task_client(text_box, option):
+    if option == "Subscribe":
+        text_box.config(state="disabled")
+    if option == "Publish":
+        text_box.config(state="enable")
+
+    root.after(10, task_client, text_box, option)
 
 def update_line():
     width = root.winfo_width()
@@ -37,9 +51,12 @@ action_label.place(relx = 0.05, rely=0.15, anchor=W)
 action_combo = t_tk.Combobox(root,
                              values=["Publish", "Subscribe"],
                              font=("Helvetica", 15),
-                             state="readonly")
+                             state="readonly"
+                             )
 action_combo.current(0)
 action_combo.place(relx = 0.5, rely = 0.15, anchor=CENTER)
+action_combo.bind("<<ComboboxSelected>>", get_selected_action(action_combo))
+
 
 update_line()
 
@@ -48,8 +65,11 @@ content_label.place(relx=0.05, rely=0.45, anchor=W)
 
 topic_name = t_tk.Label(root, text="Topic name:", font=("Helvetica", 15))
 topic_name.place(relx = 0.5, rely=0.4, anchor=CENTER)
+
 topicN_entry = t_tk.Entry(root, font=("Arial", 16))
 topicN_entry.place(relx=0.5, rely=0.45, anchor=CENTER)
+
+
 
 topic_text = t_tk.Label(root, text="Topic text:", font=("Helvetica", 15))
 topic_text.place(relx = 0.5, rely=0.55, anchor=CENTER)
@@ -70,5 +90,6 @@ send_combo = t_tk.Combobox(root,
                              state="readonly")
 send_combo.current(0)
 send_combo.place(relx = 0.5, rely = 0.75, anchor=CENTER)
+send_combo.bind("<<ComboboxSelected>>", get_selected_action(send_combo))
 
 root.mainloop()

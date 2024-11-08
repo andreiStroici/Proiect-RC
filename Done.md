@@ -49,3 +49,4 @@ Etape următoare:
 14. Legătura cu soket-ul
 15. Surse diagrame de secv.
 16. Adăugare subcapitol "Mecanismul de abonare și dezabonare"
+17. Am scos thread-ul pentru Send 

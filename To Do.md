@@ -2,9 +2,8 @@
 1. Cozi de mesaje vs pipe.
 2. QoS la nivel de pachet SUBSCRIBE în momentul trimiterii unui pachet PUBLISH cu un anumit Qos => adăugare atribut suplimentar la Client.
 3. Atribut timer la Client => pentru mecanismul Keep Alive.
-4. Scoatem thread-ul Send
-5. Socket pe windows ??
-Nu merge pooling-ul in W....  
+4. Socket pe windows ??
+Nu merge pooling-ul in W....  :(
  Vin cu o propunere noua de cod:
 
 ```Python
@@ -29,8 +28,11 @@ finally:
     s_conn.close()
 
 ```
-6. Funcționalitatea de sign in? 
-
+5. Functii pentru interfete (plus completare disable campuri optionale = topic text) -> $$\color{green}Denisa$$
+6. Functionalitate pachete CONNECT si CONNACK si eventual pt celelate pachete scheletul 
+7. EXCEPTII: a. Tratare exceptie cand programul este inchis din compilator si nu din interfata (BaseException)
+8. Schimbare (schema) interfata pentru Subscribe (putem alege QoS) -> $$\color{green}Denisa$$
+9. Importarea codului din alte fisiere
 <!--- 
 $$\color{grey}Andrei$$
 $$\color{green}Denisa$$
