@@ -1,45 +1,59 @@
+import multiprocessing
 import os
 import random
 import socket
-
+from multiprocessing import Process
+from Code.ImportFile import *
 from getmac import get_mac_address
 
 
 class Client:
-    def __init__(self, broker_ip, broker_port):
-        # acestea sunt informatiile clientului
+    def __init__(self, broker_ip, broker_port, queue: multiprocessing.Queue):
+        """Inițializează un obiect MQTTClient cu IP-ul și portul brokerului.
+
+        Atributele includ ID-ul clientului generat automat, numele de utilizator și parola,
+        timpul de keep alive (inițial None), IP-ul și portul brokerului, ultimul pachet trimis,
+        și calitatea serviciului (QoS), care este setată implicit la 0.
+        """
         self.__client_id = self.generate_client_id()
         self.__username = None
         self.__password = None
-        # este pus decoamdata pe None, deoarece valoarea lui va fi setata cand se va trimite CONNECT
-        # atuncti vom trimite si timpul pt keep alive
-        self.__timer = None
-        # pastrez ip-ul si portul brokerului pentru a sti unde voi trimite pachetele
-        self.__broker_ip = broker_ip
-        self.__broker_port = broker_port
-        # acest atribut va pastra ultimul pachet trimis
-        self.__packet = None
-        # acest atribut va pastra calitatea srviciului, by default va fi 0
-        self.__QoS = 0
+        self.__timer = None  # Va fi setat când se trimite pachetul CONNECT
+        self.__broker_ip = broker_ip  # IP-ul brokerului MQTT
+        self.__broker_port = broker_port  # Portul brokerului MQTT
+        self.__packet = None  # Ultimul pachet trimis
+        self.__QoS = 0  # Calitatea serviciului, implicit 0
+        self.queue = queue  # Coada de mesaje folosita pt comunicarea intre thread-uri
 
     @staticmethod
-    def generate_client_id(self):
+    def generate_client_id():
+        """Generează un ID unic pentru client, bazat pe numele dispozitivului și adresa MAC.
+
+        Returns:
+            str: ID-ul unic al clientului sau None dacă apare o eroare.
+        """
         try:
             device_name = os.environ.get('COMPUTERNAME')
-
-            # Remove hyphens and strip whitespace
-            device_name = device_name.replace('-', '').strip()  # șterg caracterul '-' din numele dispozitvului
-            if not device_name:
-                device_name = "Unkonwn" + random.randint(0, 100)
-            unique_id = str(get_mac_address().replace(":", "")[-8:])  # Use 8 characters for better uniqueness
-
+            if device_name:
+                device_name = device_name.replace('-', '').strip()
+            else:
+                device_name = f"Unknown{random.randint(0, 100)}"
+            unique_id = str(get_mac_address().replace(":", "")[-8:])  # Ultimele 8 caractere pentru unicitate
             return f"{device_name}{unique_id}"
-
         except Exception as e:
             print(f"Error generating client ID: {str(e)}")
             return None
 
     def send_message(self, type):
+        """Trimite un mesaj de tip specific către broker.
+
+        Args:
+            type (str): Tipul pachetului (ex. CONNECT, PUBLISH, SUBSCRIBE, etc.).
+
+        Note:
+            Acestă metodă setează atributul __packet cu un pachet corespunzător.
+            Momentan, tipurile de pachete nu sunt implementate.
+        """
         packet = Packet()
         match type:
             case "CONNECT":
@@ -63,14 +77,26 @@ class Client:
             case "DISCONNECT":
                 pass
             case _:
-                # trebuie gasit o solutie daca cumva apar erori la trimiterea tipului de pachet
+                # Trebuie găsită o soluție pentru erorile la tipurile de pachete
                 pass
         self.__packet = packet
 
     def receive_message(self):
+        """Primește un mesaj de la broker și determină tipul pachetului.
+
+        Note:
+            Metoda folosește socket-uri pentru a stabili conexiunea cu brokerul.
+            Extrage primii 4 biți din datele primite pentru a determina tipul pachetului.
+        """
+        while True:
+            destination = "Main"
+            var = "M-am plictisit"
+            message = (destination, var)
+            self.queue.put(message)
+            #print(f"Receive a trimis:{var}, la {destination}")
+
         s_conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        s_conn.connect((self.__broker_ip, self.__broker_ip))
-        # extragem primii 4 biti din pachet pentru a vedea tipul pachetului
+        s_conn.connect((self.__broker_ip, self.__broker_port))
         while True:
             data = s_conn.recv(268435455)
             first_4_bits = (data[0] >> 4) & 0x0F
@@ -107,75 +133,93 @@ class Client:
                     pass
 
     def operation(self):
-        # in interiorul acestei functii va fi ca un main pt client
-        # el va monitoriza timerele si va comunica cu Receive si Main
-        pass
+        """ in interiorul acestei functii va fi ca un main pt client
+         el va monitoriza timerele si va comunica cu Receive si Main dar
+         va si creea thread-ul Receive"""
+        receive = Process(target=self.receive_message)
+        receive.start()
+        # while True:
+        #     if not self.queue.empty():
+        #         destination, message = self.queue.get()
+        #         if destination != "Client":
+        #             self.queue.put((destination, message))
+        #         else:
+        #             if message == "send to main":
+        #                 self.queue.put(("Main", "ai un mesaj"))
+        #             elif message == "Terminate":
+        #                 receive.terminate()
+        #                 receive.join()
+        #                 self.queue.put(("Main", 'SIGKILL Receive'))
+        #             elif message == "Hello":
+        #                 print("Hello din client")
+        #             else:
+        #                 print(f"Cleintul a primit {message}")
+        # pass
 
     # Getter și setter pentru client_id
     def get_client_id(self):
-        # Returnează ID-ul clientului.
+        """Returnează ID-ul clientului."""
         return self.__client_id
 
     # Getter și setter pentru username
     def get_username(self):
-        #Returnează numele de utilizator.#
+        """Returnează numele de utilizator."""
         return self.__username
 
     def set_username(self, username):
-        #Setează numele de utilizator."""
+        """Setează numele de utilizator."""
         self.__username = username
 
     # Getter și setter pentru password
     def get_password(self):
-        #Returnează parola.
+        """Returnează parola."""
         return self.__password
 
     def set_password(self, password):
-        #Setează parola.
+        """Setează parola."""
         self.__password = password
 
     # Getter și setter pentru timer
     def get_timer(self):
-        #Returnează timpul pentru keep alive.
+        """Returnează timpul pentru keep alive."""
         return self.__timer
 
     def set_timer(self, timer):
-        #Setează timpul pentru keep alive.
+        """Setează timpul pentru keep alive."""
         self.__timer = timer
 
     # Getter și setter pentru broker_ip
     def get_broker_ip(self):
-        #Returnează adresa IP a brokerului.
+        """Returnează adresa IP a brokerului."""
         return self.__broker_ip
 
     def set_broker_ip(self, broker_ip):
-        #Setează adresa IP a brokerului.
+        """Setează adresa IP a brokerului."""
         self.__broker_ip = broker_ip
 
     # Getter și setter pentru broker_port
     def get_broker_port(self):
-        #Returnează portul brokerului.
+        """Returnează portul brokerului."""
         return self.__broker_port
 
     def set_broker_port(self, broker_port):
-        #Setează portul brokerului.
+        """Setează portul brokerului."""
         self.__broker_port = broker_port
 
     # Getter și setter pentru packet
     def get_packet(self):
-        #Returnează ultimul pachet trimis.
+        """Returnează ultimul pachet trimis."""
         return self.__packet
 
     def set_packet(self, packet):
-        #Setează ultimul pachet trimis.
+        """Setează ultimul pachet trimis."""
         self.__packet = packet
 
     # Getter și setter pentru QoS
     def get_QoS(self):
-        #Returnează calitatea serviciului (QoS).
+        """Returnează calitatea serviciului (QoS)."""
         return self.__QoS
 
     def set_QoS(self, QoS):
-        #Setează calitatea serviciului (QoS).
+        """Setează calitatea serviciului (QoS)."""
         self.__QoS = QoS
-
