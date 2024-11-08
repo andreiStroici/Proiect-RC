@@ -31,7 +31,6 @@ root.geometry("700x600")
 canvas = Canvas(root, width=700, height=600)
 canvas.pack(fill=BOTH, expand=True)
 
-
 action_label = t_tk.Label(root, text="Action name:", font=("Helvetica", 15))
 action_label.place(relx = 0.05, rely=0.15, anchor=W)
 
@@ -57,7 +56,19 @@ topic_text.place(relx = 0.5, rely=0.55, anchor=CENTER)
 topicT_entry = t_tk.Entry(root, font=("Arial", 16))
 topicT_entry.place(relx=0.5, rely=0.60, anchor=CENTER)
 
-login_btn = Button(root, text="Done", font=('Helvetica', 16, 'bold'), command=get_entry_text)
-login_btn.place(relx=0.9, rely=0.9, anchor=CENTER)
+done_btn = Button(root, text="Done", font=('Helvetica', 16, 'bold'), command=get_entry_text)
+done_btn.place(relx=0.9, rely=0.9, anchor=CENTER)
+
+send_label = t_tk.Label(root, text="Send:", font=("Helvetica", 15))
+send_label.place(relx = 0.5, rely=0.70, anchor=CENTER)
+
+send_combo = t_tk.Combobox(root,
+                             values=["At most once",
+                                     "At least once",
+                                     "Exactly once"],
+                             font=("Helvetica", 15),
+                             state="readonly")
+send_combo.current(0)
+send_combo.place(relx = 0.5, rely = 0.75, anchor=CENTER)
 
 root.mainloop()
