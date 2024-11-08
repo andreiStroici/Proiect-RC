@@ -58,4 +58,4 @@ class CONNECT(Packet, ABC):
         pass
 
     def decode(self) -> str:
-        return "It is not used"
+        return "It is not send by the server to clinet"
