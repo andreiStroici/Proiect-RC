@@ -28,10 +28,10 @@ finally:
     s_conn.close()
 
 ```
-5. Functii pentru interfete (plus completare disable campuri optionale = topic text) -> $$\color{green}Denisa$$
+5. Functii pentru interfete (plus completare disable campuri optionale = topic text) -> $$\color{green}Denisa$$ ✅
 6. Functionalitate pachete CONNECT si CONNACK si eventual pt celelate pachete scheletul 
 7. EXCEPTII: a. Tratare exceptie cand programul este inchis din compilator si nu din interfata (BaseException)
-8. Schimbare (schema) interfata pentru Subscribe (putem alege QoS) -> $$\color{green}Denisa$$
+8. Schimbare (schema) interfata pentru Subscribe (putem alege QoS) -> $$\color{green}Denisa$$ ✅
 9. Importarea codului din alte fisiere
 <!--- 
 $$\color{grey}Andrei$$

@@ -4,16 +4,23 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="681bba33-25ca-4196-9724-768f11579d68" name="Changes" comment="Clasa Client_Interface v1">
+    <list default="true" id="681bba33-25ca-4196-9724-768f11579d68" name="Changes" comment="noi observatii">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Code/Client_Connect_Interface.py" beforeDir="false" afterPath="$PROJECT_DIR$/Code/Client_Connect_Interface.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Code/Client_Interface.py" beforeDir="false" afterPath="$PROJECT_DIR$/Code/Client_Interface.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Done.md" beforeDir="false" afterPath="$PROJECT_DIR$/Done.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/To Do.md" beforeDir="false" afterPath="$PROJECT_DIR$/To Do.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Python Script" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -39,17 +46,18 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.Client_Connect_Interface.executor&quot;: &quot;Run&quot;,
-    &quot;Python.Client_Interface.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable&quot;,
-    &quot;settings.editor.splitter.proportion&quot;: &quot;0.25280327&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.Client_Connect_Interface.executor": "Run",
+    "Python.Client_Interface.executor": "Run",
+    "Python.Functions.executor": "Run",
+    "Python.main.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "main",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable",
+    "settings.editor.splitter.proportion": "0.25280327"
   }
-}</component>
+}]]></component>
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
@@ -106,7 +114,15 @@
       <option name="project" value="LOCAL" />
       <updated>1731061463810</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="noi observatii">
+      <option name="closed" value="true" />
+      <created>1731067594660</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1731067594660</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -125,6 +141,7 @@
     <MESSAGE value="Clasa Client_Connect_Interface v1 prin care se implementeaza interfata de conectare" />
     <MESSAGE value="Clasa Client_Connect_Interface v1" />
     <MESSAGE value="Clasa Client_Interface v1" />
-    <option name="LAST_COMMIT_MESSAGE" value="Clasa Client_Interface v1" />
+    <MESSAGE value="noi observatii" />
+    <option name="LAST_COMMIT_MESSAGE" value="noi observatii" />
   </component>
 </project>
