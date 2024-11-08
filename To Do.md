@@ -3,7 +3,7 @@
 2. QoS la nivel de pachet SUBSCRIBE în momentul trimiterii unui pachet PUBLISH cu un anumit Qos => adăugare atribut suplimentar la Client.
 3. Atribut timer la Client => pentru mecanismul Keep Alive.
 4. Scoatem thread-ul Send
-5. Socket pe windows ?? 
+5. Socket pe windows ??
 Nu merge pooling-ul in W....  
  Vin cu o propunere noua de cod:
 
@@ -29,6 +29,7 @@ finally:
     s_conn.close()
 
 ```
+6. Funcționalitatea de sign in? 
 
 <!--- 
 $$\color{grey}Andrei$$
