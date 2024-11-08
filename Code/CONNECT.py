@@ -1,6 +1,5 @@
 from abc import ABC
 import numpy as np
-
 from Code.FixedHeader import FixedHeader
 from Code.Packet import Packet
 
@@ -12,7 +11,7 @@ class CONNECT(Packet, ABC):
         Antetul fix e mostenit"""
         super().__init__()
         super().type = np.uint8(16)
-        super().length = FixedHeader.encode_variable_byte_integer(100)
+        super().length = None
         self.__byte = np.uint16(4)  # cei 2 octeti inaintea numelui protocolului
         self.__name = "MQTT"  # numele protocolului
         self.__protocol_version = np.uint8(5)  # verisunea protocolului
@@ -22,7 +21,7 @@ class CONNECT(Packet, ABC):
         self.__session_expiry_interval_id = np.uint8(17)  # identifiactorul duratei de expirare a intervalului
         self.__session_expiry_interval = None  # durata de expirare a intervalului in secude
         self.__maximum_receive_id = np.uint8(33)  # identificator pentru maxim de primire
-        self.__maximum_receive = None # valoare identificatorlului maxim de primire
+        self.__maximum_receive = None  # valoare identificatorlului maxim de primire
         self.__packet_maximum_size_id = np.uint8(39)  # identificatorul dimensiunii maxime a pachetului
         self.__packet_maximum_size = None  # dimensiunea maxima a dimensiunii maxime a pachetului
         self.__topic_alias_maximum_id = np.uint8(34)  # identificatorul pentru topic alias maximum
@@ -58,13 +57,89 @@ class CONNECT(Packet, ABC):
         self.__username = None  # numele utilizatorului
         self.__password = None  # parola de conectare
 
+    def calculate_variable_header_length(self):
+        """Calculăm lungimea totală a câmpurilor din variable_header (excluzând câmpurile din super)"""
+        length = 0
+
+        # Adăugăm lungimea fiecărui câmp dacă nu este None
+        if self.__byte is not None:
+            length += 2  # np.uint16 ocupă 2 octeți
+        if self.__name is not None:
+            length += len(self.__name)  # lungimea numelui protocolului
+        if self.__protocol_version is not None:
+            length += 1  # np.uint8 ocupă 1 octet
+        if self.__flags is not None:
+            length += 1  # np.uint ocupă 1 octet (presupunând np.uint e echivalent cu np.uint8)
+        if self.__keep_alive is not None:
+            length += 2  # np.uint16 ocupă 2 octeți
+
+        # Elemente de proprietate
+        if self.__property_length is not None:
+            length += 2  # np.uint16 ocupă 2 octeți
+        if self.__session_expiry_interval is not None:
+            length += 4  # np.uint32 ocupă 4 octeți
+        if self.__maximum_receive is not None:
+            length += 2  # np.uint16 ocupă 2 octeți
+        if self.__packet_maximum_size is not None:
+            length += 4  # np.uint32 ocupă 4 octeți
+        if self.__topic_alias_maximum is not None:
+            length += 2  # np.uint16 ocupă 2 octeți
+        if self.__request_response_information is not None:
+            length += 1  # np.uint8 ocupă 1 octet
+        if self.__request_problem_information is not None:
+            length += 1  # np.uint8 ocupă 1 octet
+        if self.__user_property is not None:
+            length += len(self.__user_property)  # lungimea proprietății utilizatorului
+        if self.__authentication_method is not None:
+            length += len(self.__authentication_method)  # lungimea metodei de autentificare
+        if self.__authentication_data is not None:
+            length += len(self.__authentication_data)  # lungimea datelor de autentificare
+
+        return length
+
+    def calculate_payload_length(self):
+        length = 0
+        if self.__client_id is not None:
+            length += len(self.__client_id)  # lungimea ID-ului clientului
+        if self.__will_property_length is not None:
+            length += 2  # np.uint16 ocupă 2 octeți
+        if self.__will_delay_interval is not None:
+            length += 4  # np.uint32 ocupă 4 octeți
+        if self.__payload_format_indicator is not None:
+            length += 1  # np.uint8 ocupă 1 octet
+        if self.__message_expiring_interval is not None:
+            length += 4  # np.uint32 ocupă 4 octeți
+        if self.__content_type is not None:
+            length += len(self.__content_type)  # lungimea tipului de conținut
+        if self.__response_topic is not None:
+            length += len(self.__response_topic)  # lungimea topicului de răspuns
+        if self.__correlation is not None:
+            length += len(self.__correlation)  # lungimea datelor de corelare
+        if self.__user_property_payload is not None:
+            length += len(self.__user_property_payload)  # lungimea proprietății utilizatorului în payload
+        if self.__will_topic_payload is not None:
+            length += len(self.__will_topic_payload)  # lungimea topicului will
+        if self.__will_payload is not None:
+            length += len(self.__will_payload)  # lungimea payload-ului will
+        if self.__username is not None:
+            length += len(self.__username)  # lungimea numelui de utilizator
+        if self.__password is not None:
+            length += len(self.__password)  # lungimea parolei
+        return length
+
     def encode(self) -> str:
         # Construim un string pentru toate câmpurile care nu sunt None
         result = ""
+        # determin lungimea ramasa din pachet
+        self.length = FixedHeader.encode_variable_byte_integer(self.calculate_variable_header_length()
+                                                               + self.calculate_payload_length())
+        # determin lungimea antetului variabil
+        self.__property_length = FixedHeader.encode_variable_byte_integer(self.calculate_variable_header_length())
+
+        # adaug primele campuri din pachet
+        result += str(self.type) + str(self.length) + str(self.__property_length)
 
         # Verificăm și adăugăm câmpurile cu valori
-        if self.__property_length is not None:
-            result += f"{self.__property_length}"
         if self.__session_expiry_interval is not None:
             result += f"{self.__session_expiry_interval_id}{self.__session_expiry_interval}"
         if self.__maximum_receive is not None:
@@ -112,7 +187,7 @@ class CONNECT(Packet, ABC):
 
         return result  # Returnăm stringul final fără spații
 
-    def decode(self) -> str:
+    def decode(self, packet) -> str:
         return "It is not send by the server to clinet"
 
     # Getter și setter pentru __property_length

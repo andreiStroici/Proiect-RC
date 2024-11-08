@@ -12,7 +12,7 @@ class Packet(ABC, FixedHeader):
         pass
 
     @abstractmethod
-    def decode(self) -> str:
+    def decode(self, packet) -> str:
         """Decodifica contiunutul unui pachet
             Raspuns:
                 str: care va indica daca pachetul este sau nu malformat"""
