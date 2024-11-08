@@ -11,9 +11,6 @@ def get_entry_text():
 
 
 root = Tk()
-
-content = t_tk.Frame(root)
-button = t_tk.Button(content)
 root.title("MQTT Client")
 root.geometry("600x500")
 
