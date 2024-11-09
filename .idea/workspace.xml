@@ -4,7 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="681bba33-25ca-4196-9724-768f11579d68" name="Changes" comment="Strucutrare aproximativa pt multiprocessinf functionala" />
+    <list default="true" id="681bba33-25ca-4196-9724-768f11579d68" name="Changes" comment="Strucutrare aproximativa pt multiprocessinf functionala">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Code/CONNACK.py" beforeDir="false" afterPath="$PROJECT_DIR$/Code/CONNACK.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Code/CONNECT.py" beforeDir="false" afterPath="$PROJECT_DIR$/Code/CONNECT.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Code/FixedHeader.py" beforeDir="false" afterPath="$PROJECT_DIR$/Code/FixedHeader.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Documentație/Capitolul 3 Proiectarea aplicației/05. FixedHeader.md" beforeDir="false" afterPath="$PROJECT_DIR$/Documentație/Capitolul 3 Proiectarea aplicației/05. FixedHeader.md" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -26,12 +32,12 @@
     &quot;assignee&quot;: &quot;andreiStroici&quot;
   }
 }</component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/andreiStroici/Proiect-RC.git",
-    "accountId": "321f9094-404f-4e8a-8730-ec9e8c5e056b"
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/andreiStroici/Proiect-RC.git&quot;,
+    &quot;accountId&quot;: &quot;321f9094-404f-4e8a-8730-ec9e8c5e056b&quot;
   }
-}]]></component>
+}</component>
   <component name="ProjectColorInfo">{
   &quot;customColor&quot;: &quot;&quot;,
   &quot;associatedIndex&quot;: 0

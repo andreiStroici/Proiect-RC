@@ -7,31 +7,35 @@ from Code.FixedHeader import FixedHeader
 class CONNACK(Packet, ABC):
     def __init__(self):
         super().__init__()
-        super().type = np.uint8(32) # tipul pachetului
+        super().type = np.uint8(32)  # tipul pachetului
         super().length = None
-        self.connack_flags = np.uint8(0)
-        self.reason_code = None  # codul care il intoarce server-ul
-        self.property_length = None  # lungimea antetului variabil
-        self.session_expiry_interval_id = np.uint8(17)  # identificatorlui duratei intervalului de expirare a sesiunii
-        self.session_expiry_interval = None  # durata intervalului de expirare a sesiunii in secude
+        self.__connack_flags = np.uint8(0)
+        self.__reason_code = None  # codul care il intoarce server-ul
+        self.__property_length = None  # lungimea antetului variabil
+        self.__session_expiry_interval_id = np.uint8(17)  # identificatorlui duratei intervalului de expirare a sesiunii
+        self.__session_expiry_interval = None  # durata intervalului de expirare a sesiunii in secude
         self.__maximum_receive_id = np.uint8(33)  # identificator pentru maxim de primire
         self.__maximum_receive = None  # valoare identificatorlului maxim de primire
-        self.max_qos_id = np.uint8(36)  # identificatorul pentru QoS maxim
-        self.max_qos = None  # valoarea maxima a QoS
-        self.retain_available_id = np.uint8(37)  # idetificator maxim de primire
-        self.retain_available = None  # valoare maxim de primire
+        self.__max_qos_id = np.uint8(36)  # identificatorul pentru QoS maxim
+        self.__max_qos = None  # valoarea maxima a QoS
+        self.__retain_available_id = np.uint8(37)  # idetificator maxim de primire
+        self.__retain_available = None  # valoare maxim de primire
         self.__packet_maximum_size_id = np.uint8(39)  # identificatorul dimensiunii maxime a pachetului
         self.__packet_maximum_size = None  # dimensiunea maxima a dimensiunii maxime a pachetului
         self.__assigned_client_id_id = np.uint8(18)  # identificator pentru id client dat de server
         self.__assigned_client_id = None  # id-ul de client dat de broker
         self.__topic_alias_maximum_id = np.uint8(34)  # identificatorul pentru topic alias maximum
         self.__topic_alias_maximum = None  # valoarea topic alias maximum
+        self.__reason_string_id = np.uint8(31)  # identificatorul pentru reason string
+        self.__reason_string = None  # valoarea reason string
         self.__user_property_id = np.uint8(38)  # identificatorul prorprietatiilor utilizatorului
         self.__user_property = None  # proprietatiile utilizatorlui
         self.__wildcard_subscription_available_id = np.uint8(40)
         self.__wildcard_subscription_available = None
         self.__subscription_identifiers_id = np.uint8(42)
         self.__subscription_identifiers = None
+        self.__shared_subscription_available_id = np.uint8(42)
+        self.__shared_subscription_available = None
         self.__server_keep_alive_id = np.uint8(19)
         self.__server_keep_alive = None
         self.__response_information_id = np.uint8(26)
@@ -47,10 +51,152 @@ class CONNACK(Packet, ABC):
         return "This packet is not send by the client"
 
     def decode(self, packet) -> str:
-        self.type = packet[0]
+        """Prin inetrmediul acestei functii vom decodifica pachetul connect
+            si vom verifica si dimensiunea pachetului"""
+        if self.type != packet[0]:
+            return "Malformed packet"
+        i = 1  # cu ajutorl lui I voi parcurge pachetul
+        while packet[i] & 0b10000000:  # determin lungimea pachetului
+            i = i + 1
+        self.length = packet[1:i + 1]
+        # verific daca lungimea pachetului corespunde cu cea oferita in mesaj
+        if FixedHeader.decode_variable_byte_integer(self.length) != len(packet) - 1:
+            return "Malformed packet"
+        i = i + 1
+        self.__connack_flags = packet[i]
+        if int(self.__connack_flags) not in [0, 1]:
+            return "Malformed packet"
+        i = i + 1
+        self.__reason_code = int(packet[i])
+        if self.reason_code not in [0] + list(range(128, 160)):
+            return "Malformed packet"
+        i = i + 1
+        j = i
+        while packet[i] & 0b10000000:  # determin lungimea pachetului
+            i = i + 1
+        self.__property_length = packet[j:i + 1]
+        if FixedHeader.decode_variable_byte_integer(self.property_length) != len(packet) - i:
+            return "Malformed packet"
+        i = i + 1
+        maximum = FixedHeader.decode_variable_byte_integer(self.property_length) + i
+        while i < maximum:
+            code = packet[i]
+            match code:
+                case 17:
+                    i = i + 1
+                    if self.__session_expiry_interval is None:
+                        self.__session_expiry_interval = np.uint32(packet[i:i + 4])
+                        i = i + 4
+                    else:
+                        return "Malformed packet"
+                case 33:
+                    i = i + 1
+                    if self.__maximum_receive is None:
+                        self.__maximum_receive = np.uint16(packet[i:i+2])
+                        i = i + 2
+                    else:
+                        return "Malformed packet"
+                case 36:
+                    i = i + 1
+                    if self.__max_qos is None:
+                        self.__max_qos = np.uint8(packet[i])
+                        i = i + 1
+                    else:
+                        return "Malformed packet"
+                case 37:
+                    i = i + 1
+                    if self.__retain_available is None:
+                        self.__retain_available = np.uint8(packet[i])
+                    else:
+                        return "Malformed packet"
+                case 39:
+                    i = i + 1
+                    if self.__packet_maximum_size is None:
+                        self.__packet_maximum_size = np.uint32(packet[i:i+4])
+                        i = i + 4
+                    else:
+                        return "Malformed packet"
+                case 18:
+                    i = i + 1
+                    if self.__assigned_client_id is None:
+                        pass
+                    else:
+                        return "Malformed packet"
+                case 34:
+                    i = i + 1
+                    if self.__topic_alias_maximum is None:
+                        self.__topic_alias_maximum = np.uint32(packet[i:i+2])
+                        i = i + 2
+                    else:
+                        return "Malformed packet"
+                case 31:
+                    i = i + 1
+                    if self.__reason_string is None:
+                        pass
+                    else:
+                        return "Malformed packet"
+                case 38:
+                    i = i + 1
+                    if self.__user_property is None:
+                        pass
+                    else:
+                        return "Malformed packet"
+                case 40:
+                    i = i + 1
+                    if self.__wildcard_subscription_available is None:
+                        self.__wildcard_subscription_available = np.uint8(packet[i])
+                        i = i + 1
+                    else:
+                        return "Malformed packet"
+                case 41:
+                    i = i + 1
+                    if self.__subscription_identifiers is None:
+                        self.__subscription_identifiers = np.uint8(packet[i])
+                        i = i + 1
+                    else:
+                        return "Malformed packet"
+                case 42:
+                    i = i + 1
+                    if self.__shared_subscription_available is None:
+                        self.__shared_subscription_available = np.uint8(packet[i])
+                        i = i + 1
+                    else:
+                        return "Malformed packet"
+                case 19:
+                    i = i + 1
+                    if self.__server_keep_alive is None:
+                        self.__server_keep_alive = np.uint16(packet[i:i+2])
+                        i = i + 2
+                    else:
+                        return "Malformed packet"
+                case 26:
+                    i = i + 1
+                    if self.__response_information is None:
+                        pass
+                    else:
+                        return "Malformed packet"
+                case 28:
+                    i = i + 1
+                    if self.__server_reference is None:
+                        pass
+                    else:
+                        return "Malformed packet"
+                case 21:
+                    i = i + 1
+                    if self.__authentication_method is None:
+                        pass
+                    else:
+                        return "Malformed packet"
+                case 22:
+                    i = i + 1
+                    if self.__authentication_data is None:
+                        pass
+                    else:
+                        return "Malformed packet"
+                case _:
+                    return "Malformed packet"
         return "SUCCESS"
 
-    # Getter și Setter pentru reason_code
     def get_reason_code(self):
         return self.reason_code
 

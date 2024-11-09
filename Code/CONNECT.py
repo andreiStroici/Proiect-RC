@@ -127,65 +127,78 @@ class CONNECT(Packet, ABC):
             length += len(self.__password)  # lungimea parolei
         return length
 
-    def encode(self) -> str:
-        # Construim un string pentru toate câmpurile care nu sunt None
-        result = ""
-        # determin lungimea ramasa din pachet
-        self.length = FixedHeader.encode_variable_byte_integer(self.calculate_variable_header_length()
-                                                               + self.calculate_payload_length())
-        # determin lungimea antetului variabil
-        self.__property_length = FixedHeader.encode_variable_byte_integer(self.calculate_variable_header_length())
+    def encode(self) -> bytearray:
+        # Construim un bytearray pentru toate câmpurile care nu sunt None
+        result = bytearray()
 
-        # adaug primele campuri din pachet
-        result += str(self.type) + str(self.length) + str(self.__property_length)
+        # Adăugăm primele câmpuri din pachet (presupunem că `self.type` este deja un byte)
+        result.append(self.type)  # Adăugăm `self.type` ca un singur byte
+        result.extend(self.length)  # `self.length` este deja un bytearray
+        result.extend(self.__property_length)  # `self.__property_length` este deja un bytearray
 
         # Verificăm și adăugăm câmpurile cu valori
         if self.__session_expiry_interval is not None:
-            result += f"{self.__session_expiry_interval_id}{self.__session_expiry_interval}"
+            result.extend(self.__session_expiry_interval_id.to_bytes(1, byteorder='big'))
+            result.extend(self.__session_expiry_interval.to_bytes(4, byteorder='big'))
         if self.__maximum_receive is not None:
-            result += f"{self.__maximum_receive_id}{self.__maximum_receive}"
+            result.extend(self.__maximum_receive_id.to_bytes(1, byteorder='big'))
+            result.extend(self.__maximum_receive.to_bytes(2, byteorder='big'))
         if self.__packet_maximum_size is not None:
-            result += f"{self.__packet_maximum_size_id}{self.__packet_maximum_size}"
+            result.extend(self.__packet_maximum_size_id.to_bytes(1, byteorder='big'))
+            result.extend(self.__packet_maximum_size.to_bytes(4, byteorder='big'))
         if self.__topic_alias_maximum is not None:
-            result += f"{self.__topic_alias_maximum_id}{self.__topic_alias_maximum}"
+            result.extend(self.__topic_alias_maximum_id.to_bytes(1, byteorder='big'))
+            result.extend(self.__topic_alias_maximum.to_bytes(2, byteorder='big'))
         if self.__request_response_information is not None:
-            result += f"{self.__request_response_information_id}{self.__request_response_information}"
+            result.extend(self.__request_response_information_id.to_bytes(1, byteorder='big'))
+            result.extend(self.__request_response_information.to_bytes(1, byteorder='big'))
         if self.__request_problem_information is not None:
-            result += f"{self.__request_problem_information_id}{self.__request_problem_information}"
+            result.extend(self.__request_problem_information_id.to_bytes(1, byteorder='big'))
+            result.extend(self.__request_problem_information.to_bytes(1, byteorder='big'))
         if self.__user_property is not None:
-            result += f"{self.__user_property_id}{self.__user_property}"
+            result.extend(self.__user_property_id.to_bytes(1, byteorder='big'))
+            result.extend(self.__user_property.encode('utf-8'))
         if self.__authentication_method is not None:
-            result += f"{self.__authentication_method_id}{self.__authentication_method}"
+            result.extend(self.__authentication_method_id.to_bytes(1, byteorder='big'))
+            result.extend(self.__authentication_method.encode('utf-8'))
         if self.__authentication_data is not None:
-            result += f"{self.__authentication_data_id}{self.__authentication_data}"
+            result.extend(self.__authentication_data_id.to_bytes(1, byteorder='big'))
+            result.extend(self.__authentication_data)
         if self.__client_id is not None:
-            result += f"{self.__client_id}"
+            result.extend(self.__client_id.encode('utf-8'))
         if self.__will_property_length is not None:
-            result += f"{self.__will_property_length}"
+            result.extend(self.__will_property_length.to_bytes(1, byteorder='big'))
         if self.__will_delay_interval is not None:
-            result += f"{self.__will_delay_interval_id}{self.__will_delay_interval}"
+            result.extend(self.__will_delay_interval_id.to_bytes(1, byteorder='big'))
+            result.extend(self.__will_delay_interval.to_bytes(4, byteorder='big'))
         if self.__payload_format_indicator is not None:
-            result += f"{self.__payload_format_indicator_id}{self.__payload_format_indicator}"
+            result.extend(self.__payload_format_indicator_id.to_bytes(1, byteorder='big'))
+            result.extend(self.__payload_format_indicator.to_bytes(1, byteorder='big'))
         if self.__message_expiring_interval is not None:
-            result += f"{self.__message_expiring_interval_id}{self.__message_expiring_interval}"
+            result.extend(self.__message_expiring_interval_id.to_bytes(1, byteorder='big'))
+            result.extend(self.__message_expiring_interval.to_bytes(4, byteorder='big'))
         if self.__content_type is not None:
-            result += f"{self.__content_type_id}{self.__content_type}"
+            result.extend(self.__content_type_id.to_bytes(1, byteorder='big'))
+            result.extend(self.__content_type.encode('utf-8'))
         if self.__response_topic is not None:
-            result += f"{self.__response_topic_id}{self.__response_topic}"
+            result.extend(self.__response_topic_id.to_bytes(1, byteorder='big'))
+            result.extend(self.__response_topic.encode('utf-8'))
         if self.__correlation is not None:
-            result += f"{self.__correlation_data_id}{self.__correlation}"
+            result.extend(self.__correlation_data_id.to_bytes(1, byteorder='big'))
+            result.extend(self.__correlation)
         if self.__user_property_payload is not None:
-            result += f"{self.__user_property_payload_id}{self.__user_property_payload}"
+            result.extend(self.__user_property_payload_id.to_bytes(1, byteorder='big'))
+            result.extend(self.__user_property_payload.encode('utf-8'))
         if self.__will_topic_payload is not None:
-            result += f"{self.__will_topic_payload}"
+            result.extend(self.__will_topic_payload.encode('utf-8'))
         if self.__will_payload is not None:
-            result += f"{self.__will_payload}"
+            result.extend(self.__will_payload)
         if self.__username is not None:
-            result += f"{self.__username}"
+            result.extend(self.__username.encode('utf-8'))
         if self.__password is not None:
-            result += f"{self.__password}"
+            result.extend(self.__password.encode('utf-8'))
 
-        return result  # Returnăm stringul final fără spații
+        return result  # Returnăm bytearray-ul final
 
     def decode(self, packet) -> str:
         return "It is not send by the server to clinet"
