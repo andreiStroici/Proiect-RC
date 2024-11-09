@@ -75,121 +75,123 @@ class CONNACK(Packet, ABC):
         while packet[i] & 0b10000000:  # determin lungimea pachetului
             i = i + 1
         self.__property_length = packet[j:i + 1]
+        # verific lungimea proprietatiilor pachetului
         if FixedHeader.decode_variable_byte_integer(self.property_length) != len(packet) - i:
             return "Malformed packet"
         i = i + 1
         maximum = FixedHeader.decode_variable_byte_integer(self.property_length) + i
+        # de acum voi parcurge si voi completa capurile din proprietati
         while i < maximum:
             code = packet[i]
             match code:
-                case 17:
+                case 17:  # durata expriarii sesiunii
                     i = i + 1
-                    if self.__session_expiry_interval is None:
+                    if self.__session_expiry_interval is None:  # ma asigur ca nu e introdus de 2 ori
                         self.__session_expiry_interval = np.uint32(packet[i:i + 4])
                         i = i + 4
                     else:
                         return "Malformed packet"
-                case 33:
+                case 33:  # maximum receive
                     i = i + 1
-                    if self.__maximum_receive is None:
-                        self.__maximum_receive = np.uint16(packet[i:i+2])
+                    if self.__maximum_receive is None:  # ma asigur ca nu e introdus de 2 ori
+                        self.__maximum_receive = np.uint16(packet[i:i + 2])
                         i = i + 2
                     else:
                         return "Malformed packet"
-                case 36:
+                case 36:  # maximum QoS
                     i = i + 1
-                    if self.__max_qos is None:
+                    if self.__max_qos is None:  # ma asigur ca nu e introdus de 2 ori
                         self.__max_qos = np.uint8(packet[i])
                         i = i + 1
                     else:
                         return "Malformed packet"
-                case 37:
+                case 37:  # ratain available
                     i = i + 1
-                    if self.__retain_available is None:
+                    if self.__retain_available is None:  # ma asigur ca nu e introdus de 2 ori
                         self.__retain_available = np.uint8(packet[i])
                     else:
                         return "Malformed packet"
-                case 39:
+                case 39:  # dimensiunea maxima a pachetului
                     i = i + 1
-                    if self.__packet_maximum_size is None:
-                        self.__packet_maximum_size = np.uint32(packet[i:i+4])
+                    if self.__packet_maximum_size is None:  # ma asigur ca nu e introdus de 2 ori
+                        self.__packet_maximum_size = np.uint32(packet[i:i + 4])
                         i = i + 4
                     else:
                         return "Malformed packet"
-                case 18:
+                case 18:  # identificator de client dat de broker
                     i = i + 1
-                    if self.__assigned_client_id is None:
+                    if self.__assigned_client_id is None:  # ma asigur ca nu e introdus de 2 ori
                         pass
                     else:
                         return "Malformed packet"
-                case 34:
+                case 34:  # topic  alias maximum
                     i = i + 1
-                    if self.__topic_alias_maximum is None:
-                        self.__topic_alias_maximum = np.uint32(packet[i:i+2])
+                    if self.__topic_alias_maximum is None:  # ma asigur ca nu e introdus de 2 ori
+                        self.__topic_alias_maximum = np.uint32(packet[i:i + 2])
                         i = i + 2
                     else:
                         return "Malformed packet"
-                case 31:
+                case 31:  # reason string
                     i = i + 1
-                    if self.__reason_string is None:
+                    if self.__reason_string is None:  # ma asigur ca nu e introdus de 2 ori
                         pass
                     else:
                         return "Malformed packet"
-                case 38:
+                case 38:  # proprietatiile utilizatorilor
                     i = i + 1
-                    if self.__user_property is None:
+                    if self.__user_property is None:  # ma asigur ca nu e introdus de 2 ori
                         pass
                     else:
                         return "Malformed packet"
-                case 40:
+                case 40:  # wilcard subscribe available
                     i = i + 1
-                    if self.__wildcard_subscription_available is None:
+                    if self.__wildcard_subscription_available is None:  # ma asigur ca nu e introdus de 2 ori
                         self.__wildcard_subscription_available = np.uint8(packet[i])
                         i = i + 1
                     else:
                         return "Malformed packet"
-                case 41:
+                case 41:  # identificatori de abonare
                     i = i + 1
-                    if self.__subscription_identifiers is None:
+                    if self.__subscription_identifiers is None:  # ma asigur ca nu e introdus de 2 ori
                         self.__subscription_identifiers = np.uint8(packet[i])
                         i = i + 1
                     else:
                         return "Malformed packet"
-                case 42:
+                case 42:  # shared subscription available
                     i = i + 1
-                    if self.__shared_subscription_available is None:
+                    if self.__shared_subscription_available is None:  # ma asigur ca nu e introdus de 2 ori
                         self.__shared_subscription_available = np.uint8(packet[i])
                         i = i + 1
                     else:
                         return "Malformed packet"
-                case 19:
+                case 19:  # server keep alive
                     i = i + 1
-                    if self.__server_keep_alive is None:
-                        self.__server_keep_alive = np.uint16(packet[i:i+2])
+                    if self.__server_keep_alive is None:  # ma asigur ca nu e introdus de 2 ori
+                        self.__server_keep_alive = np.uint16(packet[i:i + 2])
                         i = i + 2
                     else:
                         return "Malformed packet"
-                case 26:
+                case 26:  # response infromation
                     i = i + 1
-                    if self.__response_information is None:
+                    if self.__response_information is None:  # ma asigur ca nu e introdus de 2 ori
                         pass
                     else:
                         return "Malformed packet"
-                case 28:
+                case 28:  # referinta broker
                     i = i + 1
-                    if self.__server_reference is None:
+                    if self.__server_reference is None:  # ma asigur ca nu e introdus de 2 ori
                         pass
                     else:
                         return "Malformed packet"
-                case 21:
+                case 21:  # metoda de autentificare
                     i = i + 1
-                    if self.__authentication_method is None:
+                    if self.__authentication_method is None:  # ma asigur ca nu e introdus de 2 ori
                         pass
                     else:
                         return "Malformed packet"
-                case 22:
+                case 22:  # date de autentificare
                     i = i + 1
-                    if self.__authentication_data is None:
+                    if self.__authentication_data is None:  # ma asigur ca nu e introdus de 2 ori
                         pass
                     else:
                         return "Malformed packet"

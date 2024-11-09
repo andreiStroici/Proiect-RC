@@ -7,9 +7,6 @@
     <list default="true" id="681bba33-25ca-4196-9724-768f11579d68" name="Changes" comment="Strucutrare aproximativa pt multiprocessinf functionala">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Code/CONNACK.py" beforeDir="false" afterPath="$PROJECT_DIR$/Code/CONNACK.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Code/CONNECT.py" beforeDir="false" afterPath="$PROJECT_DIR$/Code/CONNECT.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Code/FixedHeader.py" beforeDir="false" afterPath="$PROJECT_DIR$/Code/FixedHeader.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Documentație/Capitolul 3 Proiectarea aplicației/05. FixedHeader.md" beforeDir="false" afterPath="$PROJECT_DIR$/Documentație/Capitolul 3 Proiectarea aplicației/05. FixedHeader.md" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
