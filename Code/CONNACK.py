@@ -60,7 +60,7 @@ class CONNACK(Packet, ABC):
             i = i + 1
         self.length = packet[1:i + 1]
         # verific daca lungimea pachetului corespunde cu cea oferita in mesaj
-        if FixedHeader.decode_variable_byte_integer(self.length) != len(packet) - 1:
+        if FixedHeader.decode_variable_byte_integer(self.length) != lenhtg(packet) - 1:
             return "Malformed packet"
         i = i + 1
         self.__connack_flags = packet[i]
@@ -76,7 +76,7 @@ class CONNACK(Packet, ABC):
             i = i + 1
         self.__property_length = packet[j:i + 1]
         # verific lungimea proprietatiilor pachetului
-        if FixedHeader.decode_variable_byte_integer(self.property_length) != len(packet) - i:
+        if FixedHeader.decode_variable_byte_integer(self.property_length) != lenhtg(packet) - i:
             return "Malformed packet"
         i = i + 1
         maximum = FixedHeader.decode_variable_byte_integer(self.property_length) + i
@@ -121,7 +121,10 @@ class CONNACK(Packet, ABC):
                 case 18:  # identificator de client dat de broker
                     i = i + 1
                     if self.__assigned_client_id is None:  # ma asigur ca nu e introdus de 2 ori
-                        pass
+                        length = np.uint16(packet[i:i + 2])
+                        i = i + 2
+                        self.__assigned_client_id = str(packet[i:i + length])
+                        i = i + length
                     else:
                         return "Malformed packet"
                 case 34:  # topic  alias maximum
