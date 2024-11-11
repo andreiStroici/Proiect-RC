@@ -137,13 +137,19 @@ class CONNACK(Packet, ABC):
                 case 31:  # reason string
                     i = i + 1
                     if self.__reason_string is None:  # ma asigur ca nu e introdus de 2 ori
-                        pass
+                        length = np.uint16(packet[i:i+2])
+                        i = i + 2
+                        self.__reason_string = str(packet[i:i+length])
+                        i = i + length
                     else:
                         return "Malformed packet"
                 case 38:  # proprietatiile utilizatorilor
                     i = i + 1
                     if self.__user_property is None:  # ma asigur ca nu e introdus de 2 ori
-                        pass
+                        length = np.uint16(packet[i:i + 2])
+                        i = i + 2
+                        self.__user_property = str(packet[i:i + length])
+                        i = i + length
                     else:
                         return "Malformed packet"
                 case 40:  # wilcard subscribe available
@@ -177,25 +183,37 @@ class CONNACK(Packet, ABC):
                 case 26:  # response infromation
                     i = i + 1
                     if self.__response_information is None:  # ma asigur ca nu e introdus de 2 ori
-                        pass
+                        length = np.uint16(packet[i:i + 2])
+                        i = i + 2
+                        self.__response_information = str(packet[i:i + length])
+                        i = i + length
                     else:
                         return "Malformed packet"
                 case 28:  # referinta broker
                     i = i + 1
                     if self.__server_reference is None:  # ma asigur ca nu e introdus de 2 ori
-                        pass
+                        length = np.uint16(packet[i:i + 2])
+                        i = i + 2
+                        self.__server_reference = str(packet[i:i + length])
+                        i = i + length
                     else:
                         return "Malformed packet"
                 case 21:  # metoda de autentificare
                     i = i + 1
                     if self.__authentication_method is None:  # ma asigur ca nu e introdus de 2 ori
-                        pass
+                        length = np.uint16(packet[i:i + 2])
+                        i = i + 2
+                        self.__authentication_method = str(packet[i:i + length])
+                        i = i + length
                     else:
                         return "Malformed packet"
                 case 22:  # date de autentificare
                     i = i + 1
                     if self.__authentication_data is None:  # ma asigur ca nu e introdus de 2 ori
-                        pass
+                        length = np.uint16(packet[i:i + 2])
+                        i = i + 2
+                        self.__authentication_data = str(packet[i:i + length])
+                        i = i + length
                     else:
                         return "Malformed packet"
                 case _:
