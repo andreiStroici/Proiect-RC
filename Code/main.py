@@ -8,7 +8,7 @@ def main():
     Aici vom crea si thread-ul pentru client
     Ea nu are niciun raspuns"""
     queue = multiprocessing.Queue()
-    client = Client(1, 1, queue)
+    client = Client("1", 1, queue)
     client_proc = Process(target=client.operation)
     client_proc.start()
     print("Mai line 15")
