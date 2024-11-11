@@ -89,11 +89,11 @@ class CONNECT(Packet, ABC):
         if self.__request_problem_information is not None:
             length += 1  # np.uint8 ocupă 1 octet
         if self.__user_property is not None:
-            length += len(self.__user_property)  # lungimea proprietății utilizatorului
+            length += len(self.__user_property) + 2 # lungimea proprietății utilizatorului
         if self.__authentication_method is not None:
-            length += len(self.__authentication_method)  # lungimea metodei de autentificare
+            length += len(self.__authentication_method) + 2  # lungimea metodei de autentificare
         if self.__authentication_data is not None:
-            length += len(self.__authentication_data)  # lungimea datelor de autentificare
+            length += len(self.__authentication_data) + 2 # lungimea datelor de autentificare
 
         return length
 
@@ -110,21 +110,21 @@ class CONNECT(Packet, ABC):
         if self.__message_expiring_interval is not None:
             length += 4  # np.uint32 ocupă 4 octeți
         if self.__content_type is not None:
-            length += len(self.__content_type)  # lungimea tipului de conținut
+            length += len(self.__content_type) + 2  # lungimea tipului de conținut
         if self.__response_topic is not None:
-            length += len(self.__response_topic)  # lungimea topicului de răspuns
+            length += len(self.__response_topic) + 2  # lungimea topicului de răspuns
         if self.__correlation is not None:
-            length += len(self.__correlation)  # lungimea datelor de corelare
+            length += len(self.__correlation) + 2  # lungimea datelor de corelare
         if self.__user_property_payload is not None:
-            length += len(self.__user_property_payload)  # lungimea proprietății utilizatorului în payload
+            length += len(self.__user_property_payload) + 2  # lungimea proprietății utilizatorului în payload
         if self.__will_topic_payload is not None:
-            length += len(self.__will_topic_payload)  # lungimea topicului will
+            length += len(self.__will_topic_payload) + 2  # lungimea topicului will
         if self.__will_payload is not None:
-            length += len(self.__will_payload)  # lungimea payload-ului will
+            length += len(self.__will_payload) + 2  # lungimea payload-ului will
         if self.__username is not None:
-            length += len(self.__username)  # lungimea numelui de utilizator
+            length += len(self.__username) + 2  # lungimea numelui de utilizator
         if self.__password is not None:
-            length += len(self.__password)  # lungimea parolei
+            length += len(self.__password) + 2  # lungimea parolei
         return length
 
     def encode(self) -> bytearray:
@@ -157,14 +157,17 @@ class CONNECT(Packet, ABC):
             result.extend(self.__request_problem_information.to_bytes(1, byteorder='big'))
         if self.__user_property is not None:
             result.extend(self.__user_property_id.to_bytes(1, byteorder='big'))
+            result.extend(len(self.__user_property).to_bytes(2, byteorder="big"))
             result.extend(self.__user_property.encode('utf-8'))
         if self.__authentication_method is not None:
             result.extend(self.__authentication_method_id.to_bytes(1, byteorder='big'))
+            result.extend(len(self.__authentication_method).to_bytes(2, byteorder="big"))
             result.extend(self.__authentication_method.encode('utf-8'))
         if self.__authentication_data is not None:
             result.extend(self.__authentication_data_id.to_bytes(1, byteorder='big'))
             result.extend(self.__authentication_data)
         if self.__client_id is not None:
+            result.extend(len(self.__client_id).to_bytes(2, byteorder="big"))
             result.extend(self.__client_id.encode('utf-8'))
         if self.__will_property_length is not None:
             result.extend(self.__will_property_length.to_bytes(1, byteorder='big'))
@@ -179,26 +182,32 @@ class CONNECT(Packet, ABC):
             result.extend(self.__message_expiring_interval.to_bytes(4, byteorder='big'))
         if self.__content_type is not None:
             result.extend(self.__content_type_id.to_bytes(1, byteorder='big'))
+            result.extend(len(self.__content_type).to_bytes(2, byteorder="big"))
             result.extend(self.__content_type.encode('utf-8'))
         if self.__response_topic is not None:
             result.extend(self.__response_topic_id.to_bytes(1, byteorder='big'))
+            result.extend(len(self.__response_topic).to_bytes(2, byteorder="big"))
             result.extend(self.__response_topic.encode('utf-8'))
         if self.__correlation is not None:
             result.extend(self.__correlation_data_id.to_bytes(1, byteorder='big'))
             result.extend(self.__correlation)
         if self.__user_property_payload is not None:
             result.extend(self.__user_property_payload_id.to_bytes(1, byteorder='big'))
+            result.extend(len(self.__user_property_payload).to_bytes(2, byteorder="big"))
             result.extend(self.__user_property_payload.encode('utf-8'))
         if self.__will_topic_payload is not None:
+            result.extend(len(self.__will_topic_payload).to_bytes(2, byteorder="big"))
             result.extend(self.__will_topic_payload.encode('utf-8'))
         if self.__will_payload is not None:
             result.extend(self.__will_payload)
         if self.__username is not None:
+            result.extend(len(self.__username).to_bytes(2, byteorder="big"))
             result.extend(self.__username.encode('utf-8'))
         if self.__password is not None:
+            result.extend(len(self.__password).to_bytes(2, byteorder="big"))
             result.extend(self.__password.encode('utf-8'))
 
-        return result  # Returnăm bytearray-ul final
+        return result  # Returnam bytearray-ul final
 
     def decode(self, packet) -> str:
         return "It is not send by the server to clinet"
