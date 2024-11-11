@@ -60,7 +60,7 @@ class CONNACK(Packet, ABC):
             i = i + 1
         self.length = packet[1:i + 1]
         # verific daca lungimea pachetului corespunde cu cea oferita in mesaj
-        if FixedHeader.decode_variable_byte_integer(self.length) != lenhtg(packet) - 1:
+        if FixedHeader.decode_variable_byte_integer(self.length) != len(packet) - 1:
             return "Malformed packet"
         i = i + 1
         self.__connack_flags = packet[i]
@@ -76,7 +76,7 @@ class CONNACK(Packet, ABC):
             i = i + 1
         self.__property_length = packet[j:i + 1]
         # verific lungimea proprietatiilor pachetului
-        if FixedHeader.decode_variable_byte_integer(self.property_length) != lenhtg(packet) - i:
+        if FixedHeader.decode_variable_byte_integer(self.property_length) != len(packet) - i:
             return "Malformed packet"
         i = i + 1
         maximum = FixedHeader.decode_variable_byte_integer(self.property_length) + i
