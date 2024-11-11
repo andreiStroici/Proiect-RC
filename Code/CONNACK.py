@@ -221,24 +221,24 @@ class CONNACK(Packet, ABC):
         return "SUCCESS"
 
     def get_reason_code(self):
-        return self.reason_code
+        return self.__reason_code
 
     def set_reason_code(self, value):
-        self.reason_code = value
+        self.__reason_code = value
 
     # Getter și Setter pentru property_length
     def get_property_length(self):
-        return self.property_length
+        return self.__property_length
 
     def set_property_length(self, value):
-        self.property_length = value
+        self.__property_length = value
 
     # Getter și Setter pentru session_expiry_interval
     def get_session_expiry_interval(self):
-        return self.session_expiry_interval
+        return self.__session_expiry_interval
 
     def set_session_expiry_interval(self, value):
-        self.session_expiry_interval = value
+        self.__session_expiry_interval = value
 
     # Getter și Setter pentru __maximum_receive
     def get_maximum_receive(self):
@@ -249,17 +249,17 @@ class CONNACK(Packet, ABC):
 
     # Getter și Setter pentru max_qos
     def get_max_qos(self):
-        return self.max_qos
+        return self.__max_qos
 
     def set_max_qos(self, value):
-        self.max_qos = value
+        self.__max_qos = value
 
     # Getter și Setter pentru retain_available
     def get_retain_available(self):
-        return self.retain_available
+        return self.__retain_available
 
     def set_retain_available(self, value):
-        self.retain_available = value
+        self.__retain_available = value
 
     # Getter și Setter pentru __packet_maximum_size
     def get_packet_maximum_size(self):

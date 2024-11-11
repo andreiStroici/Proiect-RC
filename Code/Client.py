@@ -26,6 +26,7 @@ class Client:
         self.__packet = None  # Ultimul pachet trimis
         self.__QoS = 0  # Calitatea serviciului, implicit 0
         self.queue = queue  # Coada de mesaje folosita pt comunicarea intre thread-uri
+        print("Clasa client creata")
 
     @staticmethod
     def generate_client_id():
@@ -56,11 +57,12 @@ class Client:
             Acestă metodă setează atributul __packet cu un pachet corespunzător.
             Momentan, tipurile de pachete nu sunt implementate.
         """
+        print("Start send")
         match type:
             case "CONNECT":
                 self.__packet = CONNECT()
                 encoded_packet = self.__packet.encode()
-                self.s_conn.send(encoded_packet.encode())
+                self.s_conn.send(encoded_packet)
                 pass
             case "PUBLISH":
                 pass
@@ -83,6 +85,7 @@ class Client:
             case _:
                 # Trebuie găsită o soluție pentru erorile la tipurile de pachete
                 pass
+        print("End send")
 
     def receive_message(self):
         """Primește un mesaj de la broker și determină tipul pachetului.
@@ -97,12 +100,59 @@ class Client:
         #     message = (destination, var)
         #     self.queue.put(message)
         #     #print(f"Receive a trimis:{var}, la {destination}")
+        print("Start receive")
         while True:
             data = self.s_conn.recv(268435455)
+            print("Pachet primit")
             first_4_bits = (data[0] >> 4) & 0x0F
             match first_4_bits:
                 case 2:
                     # CONNACK
+                    match self.__packet.get_reason_code():
+                        case 0:
+                            print("Success")
+                        case 128:
+                            print("Unspecified error")
+                        case 129:
+                            print("Malformed Packet")
+                        case 130:
+                            print("Protocol Error")
+                        case 131:
+                            print("Implementation specific error")
+                        case 132:
+                            print("Unsupported Protocol Version")
+                        case 133:
+                            print("Client Identifier not valid")
+                        case 134:
+                            print("Bad User Name or Password")
+                        case 135:
+                            print("Not authorized")
+                        case 136:
+                            print("Server unavailable")
+                        case 137:
+                            print("Server busy")
+                        case 138:
+                            print("Banned")
+                        case 140:
+                            print("Bad authentication method")
+                        case 144:
+                            print("Topic Name invalid")
+                        case 149:
+                            print("Packet too large")
+                        case 151:
+                            print("Quota exceeded")
+                        case 153:
+                            print("Payload format invalid")
+                        case 154:
+                            print("Retain not supported")
+                        case 155:
+                            print("QoS not supported")
+                        case 156:
+                            print("Use another server")
+                        case 157:
+                            print("Server moved")
+                        case 159:
+                            print("Connection rate exceeded")
                     pass
                 case 3:
                     # PUBLISH
@@ -138,6 +188,7 @@ class Client:
          va si creea thread-ul Receive"""
         receive = Process(target=self.receive_message)
         receive.start()
+        #self.send_message("CONNECT")
         # while True:
         #     if not self.queue.empty():
         #         destination, message = self.queue.get()

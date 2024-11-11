@@ -8,10 +8,13 @@ def main():
     Aici vom crea si thread-ul pentru client
     Ea nu are niciun raspuns"""
     queue = multiprocessing.Queue()
-    client = Client("1", 1, queue)
+    username = input("usenrame:\n")
+    password = input("password:\n")
+    client = Client("localhost", 1883, queue)
+    client.set_username(username)
+    client.set_password(password)
     client_proc = Process(target=client.operation)
     client_proc.start()
-    print("Mai line 15")
     while True:
         if not queue.empty():
             destination, message = queue.get()
