@@ -8,30 +8,28 @@ def main():
     Aici vom crea si thread-ul pentru client
     Ea nu are niciun raspuns"""
     queue = multiprocessing.Queue()
-    username = input("usenrame:\n")
-    password = input("password:\n")
-    client = Client("localhost", 1883, queue)
+    username = "proba1"
+    password = "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3"
+    client = Client("127.0.0.1", 5000, queue)
     client.set_username(username)
     client.set_password(password)
     client_proc = Process(target=client.operation)
     client_proc.start()
-    while True:
-        if not queue.empty():
-            destination, message = queue.get()
-            if destination != "Main":
-                queue.put((destination, message))
-            else:
-                # if message == "Hello":
-                #     print("Buna din main")
-                # elif message == "M-am plictisit":
-                #     queue.put(("Client", "Terminate"))
-                # elif message == "SIGKILL Receive":
-                #     client_proc.terminate()
-                #     break
-                # vom lucra cu mesajul trimis
-                pass
-    client_proc.join()
-    print("Termianre")
+    try:
+        while True:
+            if not queue.empty():
+                destination, message = queue.get()
+                if destination != "Main":
+                    queue.put((destination, message))
+                else:
+                    if message == "Terminate":
+                        client_proc.terminate()
+                        break
+                    pass
+        client_proc.join()
+        print("Termianre")
+    except BaseException:
+        print("Inchidere brusca a aplicatiei")
 
 
 if __name__ == "__main__":

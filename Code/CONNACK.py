@@ -7,8 +7,8 @@ from Code.FixedHeader import FixedHeader
 class CONNACK(Packet, ABC):
     def __init__(self):
         super().__init__()
-        super().type = np.uint8(32)  # tipul pachetului
-        super().length = None
+        self.type = np.uint8(32)  # tipul pachetului
+        self.length = None
         self.__connack_flags = np.uint8(0)
         self.__reason_code = None  # codul care il intoarce server-ul
         self.__property_length = None  # lungimea antetului variabil

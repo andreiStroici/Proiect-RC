@@ -15,7 +15,9 @@ class Client:
         timpul de keep alive (inițial None), IP-ul și portul brokerului, ultimul pachet trimis,
         și calitatea serviciului (QoS), care este setată implicit la 0.
         """
-        self.__client_id = self.generate_client_id()
+
+        self.__client_id = "mqttx_c2718eb2"
+        # self.__client_id = self.generate_client_id()
         self.__username = None
         self.__password = None
         self.__timer = None  # Va fi setat când se trimite pachetul CONNECT
@@ -26,7 +28,6 @@ class Client:
         self.__packet = None  # Ultimul pachet trimis
         self.__QoS = 0  # Calitatea serviciului, implicit 0
         self.queue = queue  # Coada de mesaje folosita pt comunicarea intre thread-uri
-        print("Clasa client creata")
 
     @staticmethod
     def generate_client_id():
@@ -47,7 +48,7 @@ class Client:
             print(f"Error generating client ID: {str(e)}")
             return None
 
-    def send_message(self, type):
+    def send_message(self, packet_type):
         """Trimite un mesaj de tip specific către broker.
 
         Args:
@@ -56,11 +57,15 @@ class Client:
         Note:
             Acestă metodă setează atributul __packet cu un pachet corespunzător.
             Momentan, tipurile de pachete nu sunt implementate.
+            :param packet_type:
         """
-        print("Start send")
-        match type:
+        match packet_type:
             case "CONNECT":
                 self.__packet = CONNECT()
+                self.__packet.set_will_property_length(0)
+                self.__packet.set_client_id(self.__client_id)
+                self.__packet.set_username(self.__username)
+                self.__packet.set_password(self.__password)
                 encoded_packet = self.__packet.encode()
                 self.s_conn.send(encoded_packet)
                 pass
@@ -100,87 +105,92 @@ class Client:
         #     message = (destination, var)
         #     self.queue.put(message)
         #     #print(f"Receive a trimis:{var}, la {destination}")
-        print("Start receive")
-        while True:
-            data = self.s_conn.recv(268435455)
-            print("Pachet primit")
-            first_4_bits = (data[0] >> 4) & 0x0F
-            match first_4_bits:
-                case 2:
-                    # CONNACK
-                    match self.__packet.get_reason_code():
-                        case 0:
-                            print("Success")
-                        case 128:
-                            print("Unspecified error")
-                        case 129:
-                            print("Malformed Packet")
-                        case 130:
-                            print("Protocol Error")
-                        case 131:
-                            print("Implementation specific error")
-                        case 132:
-                            print("Unsupported Protocol Version")
-                        case 133:
-                            print("Client Identifier not valid")
-                        case 134:
-                            print("Bad User Name or Password")
-                        case 135:
-                            print("Not authorized")
-                        case 136:
-                            print("Server unavailable")
-                        case 137:
-                            print("Server busy")
-                        case 138:
-                            print("Banned")
-                        case 140:
-                            print("Bad authentication method")
-                        case 144:
-                            print("Topic Name invalid")
-                        case 149:
-                            print("Packet too large")
-                        case 151:
-                            print("Quota exceeded")
-                        case 153:
-                            print("Payload format invalid")
-                        case 154:
-                            print("Retain not supported")
-                        case 155:
-                            print("QoS not supported")
-                        case 156:
-                            print("Use another server")
-                        case 157:
-                            print("Server moved")
-                        case 159:
-                            print("Connection rate exceeded")
-                    pass
-                case 3:
-                    # PUBLISH
-                    pass
-                case 4:
-                    # PUBACK
-                    pass
-                case 5:
-                    # PUBREC
-                    pass
-                case 6:
-                    # PUBREL
-                    pass
-                case 7:
-                    # PUBCOMP
-                    pass
-                case 9:
-                    # SUBACK
-                    pass
-                case 11:
-                    # UNSUBACK
-                    pass
-                case 13:
-                    # PINGRESP
-                    pass
-                case 14:
-                    # DISCONNECT
-                    pass
+        #self.s_conn.settimeout(10.0)
+        try:
+            while True:
+                data = self.s_conn.recv(1024)
+                if not data:
+                    self.queue.put(("Client", "Terminate"))
+                    break
+                first_4_bits = (data[1] >> 4) & 0x0F
+                match first_4_bits:
+                    case 2:
+                        # CONNACK
+                        match self.__packet.get_reason_code():
+                            case 0:
+                                print("Success")
+                            case 128:
+                                print("Unspecified error")
+                            case 129:
+                                print("Malformed Packet")
+                            case 130:
+                                print("Protocol Error")
+                            case 131:
+                                print("Implementation specific error")
+                            case 132:
+                                print("Unsupported Protocol Version")
+                            case 133:
+                                print("Client Identifier not valid")
+                            case 134:
+                                print("Bad User Name or Password")
+                            case 135:
+                                print("Not authorized")
+                            case 136:
+                                print("Server unavailable")
+                            case 137:
+                                print("Server busy")
+                            case 138:
+                                print("Banned")
+                            case 140:
+                                print("Bad authentication method")
+                            case 144:
+                                print("Topic Name invalid")
+                            case 149:
+                                print("Packet too large")
+                            case 151:
+                                print("Quota exceeded")
+                            case 153:
+                                print("Payload format invalid")
+                            case 154:
+                                print("Retain not supported")
+                            case 155:
+                                print("QoS not supported")
+                            case 156:
+                                print("Use another server")
+                            case 157:
+                                print("Server moved")
+                            case 159:
+                                print("Connection rate exceeded")
+                        pass
+                    case 3:
+                        # PUBLISH
+                        pass
+                    case 4:
+                        # PUBACK
+                        pass
+                    case 5:
+                        # PUBREC
+                        pass
+                    case 6:
+                        # PUBREL
+                        pass
+                    case 7:
+                        # PUBCOMP
+                        pass
+                    case 9:
+                        # SUBACK
+                        pass
+                    case 11:
+                        # UNSUBACK
+                        pass
+                    case 13:
+                        # PINGRESP
+                        pass
+                    case 14:
+                        # DISCONNECT
+                        pass
+        except BaseException:
+            print("Eroare de la primirea pachetelor")
 
     def operation(self):
         """ in interiorul acestei functii va fi ca un main pt client
@@ -188,23 +198,17 @@ class Client:
          va si creea thread-ul Receive"""
         receive = Process(target=self.receive_message)
         receive.start()
-        #self.send_message("CONNECT")
-        # while True:
-        #     if not self.queue.empty():
-        #         destination, message = self.queue.get()
-        #         if destination != "Client":
-        #             self.queue.put((destination, message))
-        #         else:
-        #             if message == "send to main":
-        #                 self.queue.put(("Main", "ai un mesaj"))
-        #             elif message == "Terminate":
-        #                 receive.terminate()
-        #                 receive.join()
-        #                 self.queue.put(("Main", 'SIGKILL Receive'))
-        #             elif message == "Hello":
-        #                 print("Hello din client")
-        #             else:
-        #                 print(f"Cleintul a primit {message}")
+        self.send_message("CONNECT")
+        while True:
+            if not self.queue.empty():
+                destination, message = self.queue.get()
+                if destination != "Client":
+                    self.queue.put((destination, message))
+                else:
+                    if message == "Terminate":
+                        receive.terminate()
+                        receive.join()
+                        self.queue.put(("Main", "Terminate"))
         # pass
 
     # Getter și setter pentru client_id

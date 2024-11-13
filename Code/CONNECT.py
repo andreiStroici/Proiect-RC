@@ -10,13 +10,13 @@ class CONNECT(Packet, ABC):
         inculzand toate informatiile pachetului
         Antetul fix e mostenit"""
         super().__init__()
-        super().type = np.uint8(16)
-        super().length = None
+        self.type = np.uint8(16)
+        self.length = None
         self.__byte = np.uint16(4)  # cei 2 octeti inaintea numelui protocolului
         self.__name = "MQTT"  # numele protocolului
         self.__protocol_version = np.uint8(5)  # verisunea protocolului
-        self.__flags = np.uint(0)  # flag-urile folosite
-        self.__keep_alive = np.uint16(0)  # durata intervalului de keep alive
+        self.__flags = np.uint8(192)  # flag-urile folosite
+        self.__keep_alive = np.uint16(60)  # durata intervalului de keep alive
         self.__property_length = None  # lunginea proprietatiilor pachetlui
         self.__session_expiry_interval_id = np.uint8(17)  # identifiactorul duratei de expirare a intervalului
         self.__session_expiry_interval = None  # durata de expirare a intervalului in secude
@@ -59,7 +59,7 @@ class CONNECT(Packet, ABC):
 
     def calculate_variable_header_length(self):
         """Calculăm lungimea totală a câmpurilor din variable_header (excluzând câmpurile din super)"""
-        length = 0
+        length = 7
 
         # Adăugăm lungimea fiecărui câmp dacă nu este None
         if self.__byte is not None:
@@ -74,8 +74,9 @@ class CONNECT(Packet, ABC):
             length += 2  # np.uint16 ocupă 2 octeți
 
         # Elemente de proprietate
-        if self.__property_length is not None:
-            length += 2  # np.uint16 ocupă 2 octeți
+        if self.__property_length is None:
+            self.__property_length = FixedHeader.encode_variable_byte_integer(self.property_length())
+            length += len(self.__property_length)  # lungimea nr care descrie proprietatile
         if self.__session_expiry_interval is not None:
             length += 4  # np.uint32 ocupă 4 octeți
         if self.__maximum_receive is not None:
@@ -98,6 +99,7 @@ class CONNECT(Packet, ABC):
         return length
 
     def calculate_payload_length(self):
+        """Calculez lungimea payload-ului"""
         length = 0
         if self.__client_id is not None:
             length += len(self.__client_id)  # lungimea ID-ului clientului
@@ -127,87 +129,152 @@ class CONNECT(Packet, ABC):
             length += len(self.__password) + 2  # lungimea parolei
         return length
 
-    def encode(self) -> bytearray:
-        # Construim un bytearray pentru toate câmpurile care nu sunt None
-        result = bytearray()
+    def property_length(self):
+        length = 0
 
+        if self.__session_expiry_interval is not None:
+            length += 4  # np.uint32 ocupă 4 octeți
+        if self.__maximum_receive is not None:
+            length += 2  # np.uint16 ocupă 2 octeți
+        if self.__packet_maximum_size is not None:
+            length += 4  # np.uint32 ocupă 4 octeți
+        if self.__topic_alias_maximum is not None:
+            length += 2  # np.uint16 ocupă 2 octeți
+        if self.__request_response_information is not None:
+            length += 1  # np.uint8 ocupă 1 octet
+        if self.__request_problem_information is not None:
+            length += 1  # np.uint8 ocupă 1 octet
+        if self.__user_property is not None:
+            length += len(self.__user_property) + 2  # lungimea proprietății utilizatorului
+        if self.__authentication_method is not None:
+            length += len(self.__authentication_method) + 2  # lungimea metodei de autentificare
+        if self.__authentication_data is not None:
+            length += len(self.__authentication_data) + 2  # lungimea datelor de autentificare
+
+        return length
+
+    def encode(self) -> str:
+        """ Construim un șir de caractere pentru toate câmpurile care nu sunt None """
+        result = ""
+        self.length = FixedHeader.encode_variable_byte_integer(self.calculate_variable_header_length()
+                                                               + self.calculate_payload_length())
         # Adăugăm primele câmpuri din pachet (presupunem că `self.type` este deja un byte)
-        result.append(self.type)  # Adăugăm `self.type` ca un singur byte
-        result.extend(self.length)  # `self.length` este deja un bytearray
-        result.extend(self.__property_length)  # `self.__property_length` este deja un bytearray
+        result += chr(self.type)  # Adăugăm `self.type` ca un singur caracter
+        result += self.length.decode()  # `self.length` este deja un bytearray, îl decodificăm
+        result += self.__name
+        result += ''.join(chr(byte) for byte in self.__protocol_version.tobytes())
+        result += ''.join(chr(byte) for byte in self.__flags.tobytes())
+        result += ''.join(chr(byte) for byte in self.__keep_alive.tobytes())
+        result += self.__property_length.decode()  # `self.__property_length` este un bytearray
 
         # Verificăm și adăugăm câmpurile cu valori
         if self.__session_expiry_interval is not None:
-            result.extend(self.__session_expiry_interval_id.to_bytes(1, byteorder='big'))
-            result.extend(self.__session_expiry_interval.to_bytes(4, byteorder='big'))
-        if self.__maximum_receive is not None:
-            result.extend(self.__maximum_receive_id.to_bytes(1, byteorder='big'))
-            result.extend(self.__maximum_receive.to_bytes(2, byteorder='big'))
-        if self.__packet_maximum_size is not None:
-            result.extend(self.__packet_maximum_size_id.to_bytes(1, byteorder='big'))
-            result.extend(self.__packet_maximum_size.to_bytes(4, byteorder='big'))
-        if self.__topic_alias_maximum is not None:
-            result.extend(self.__topic_alias_maximum_id.to_bytes(1, byteorder='big'))
-            result.extend(self.__topic_alias_maximum.to_bytes(2, byteorder='big'))
-        if self.__request_response_information is not None:
-            result.extend(self.__request_response_information_id.to_bytes(1, byteorder='big'))
-            result.extend(self.__request_response_information.to_bytes(1, byteorder='big'))
-        if self.__request_problem_information is not None:
-            result.extend(self.__request_problem_information_id.to_bytes(1, byteorder='big'))
-            result.extend(self.__request_problem_information.to_bytes(1, byteorder='big'))
-        if self.__user_property is not None:
-            result.extend(self.__user_property_id.to_bytes(1, byteorder='big'))
-            result.extend(len(self.__user_property).to_bytes(2, byteorder="big"))
-            result.extend(self.__user_property.encode('utf-8'))
-        if self.__authentication_method is not None:
-            result.extend(self.__authentication_method_id.to_bytes(1, byteorder='big'))
-            result.extend(len(self.__authentication_method).to_bytes(2, byteorder="big"))
-            result.extend(self.__authentication_method.encode('utf-8'))
-        if self.__authentication_data is not None:
-            result.extend(self.__authentication_data_id.to_bytes(1, byteorder='big'))
-            result.extend(self.__authentication_data)
-        if self.__client_id is not None:
-            result.extend(len(self.__client_id).to_bytes(2, byteorder="big"))
-            result.extend(self.__client_id.encode('utf-8'))
-        if self.__will_property_length is not None:
-            result.extend(self.__will_property_length.to_bytes(1, byteorder='big'))
-        if self.__will_delay_interval is not None:
-            result.extend(self.__will_delay_interval_id.to_bytes(1, byteorder='big'))
-            result.extend(self.__will_delay_interval.to_bytes(4, byteorder='big'))
-        if self.__payload_format_indicator is not None:
-            result.extend(self.__payload_format_indicator_id.to_bytes(1, byteorder='big'))
-            result.extend(self.__payload_format_indicator.to_bytes(1, byteorder='big'))
-        if self.__message_expiring_interval is not None:
-            result.extend(self.__message_expiring_interval_id.to_bytes(1, byteorder='big'))
-            result.extend(self.__message_expiring_interval.to_bytes(4, byteorder='big'))
-        if self.__content_type is not None:
-            result.extend(self.__content_type_id.to_bytes(1, byteorder='big'))
-            result.extend(len(self.__content_type).to_bytes(2, byteorder="big"))
-            result.extend(self.__content_type.encode('utf-8'))
-        if self.__response_topic is not None:
-            result.extend(self.__response_topic_id.to_bytes(1, byteorder='big'))
-            result.extend(len(self.__response_topic).to_bytes(2, byteorder="big"))
-            result.extend(self.__response_topic.encode('utf-8'))
-        if self.__correlation is not None:
-            result.extend(self.__correlation_data_id.to_bytes(1, byteorder='big'))
-            result.extend(self.__correlation)
-        if self.__user_property_payload is not None:
-            result.extend(self.__user_property_payload_id.to_bytes(1, byteorder='big'))
-            result.extend(len(self.__user_property_payload).to_bytes(2, byteorder="big"))
-            result.extend(self.__user_property_payload.encode('utf-8'))
-        if self.__will_topic_payload is not None:
-            result.extend(len(self.__will_topic_payload).to_bytes(2, byteorder="big"))
-            result.extend(self.__will_topic_payload.encode('utf-8'))
-        if self.__will_payload is not None:
-            result.extend(self.__will_payload)
-        if self.__username is not None:
-            result.extend(len(self.__username).to_bytes(2, byteorder="big"))
-            result.extend(self.__username.encode('utf-8'))
-        if self.__password is not None:
-            result.extend(len(self.__password).to_bytes(2, byteorder="big"))
-            result.extend(self.__password.encode('utf-8'))
+            result += chr(self.__session_expiry_interval_id)
+            result += ''.join(chr(byte) for byte in self.__session_expiry_interval)  # Folosim latin1 pentru a păstra fiecare octet ca ASCII
 
-        return result  # Returnam bytearray-ul final
+        if self.__maximum_receive is not None:
+            result += chr(self.__maximum_receive_id)
+            result += self.__maximum_receive.to_bytes(2, byteorder='big').decode(
+                'latin1')  # Folosim latin1 pentru a păstra fiecare octet ca ASCII
+
+        if self.__packet_maximum_size is not None:
+            result += chr(self.__packet_maximum_size_id)
+            result += self.__packet_maximum_size.to_bytes(4, byteorder='big').decode(
+                'latin1')  # Folosim latin1 pentru a păstra fiecare octet ca ASCII
+
+        if self.__topic_alias_maximum is not None:
+            result += chr(self.__topic_alias_maximum_id)
+            result += self.__topic_alias_maximum.to_bytes(2, byteorder='big').decode(
+                'latin1')  # Folosim latin1 pentru a păstra fiecare octet ca ASCII
+
+        if self.__request_response_information is not None:
+            result += chr(self.__request_response_information_id)
+            result += chr(self.__request_response_information)
+
+        if self.__request_problem_information is not None:
+            result += chr(self.__request_problem_information_id)
+            result += chr(self.__request_problem_information)
+
+        if self.__user_property is not None:
+            result += chr(self.__user_property_id)
+            result += len(self.__user_property).to_bytes(2, byteorder="big").decode(
+                'latin1')  # Folosim latin1 pentru a păstra fiecare octet ca ASCII
+            result += self.__user_property
+
+        if self.__authentication_method is not None:
+            result += chr(self.__authentication_method_id)
+            result += len(self.__authentication_method).to_bytes(2, byteorder="big").decode(
+                'latin1')  # Folosim latin1 pentru a păstra fiecare octet ca ASCII
+            result += self.__authentication_method
+
+        if self.__authentication_data is not None:
+            result += chr(self.__authentication_data_id)
+            result += self.__authentication_data.decode(
+                'latin1')  # Folosim latin1 pentru a păstra fiecare octet ca ASCII
+
+        if self.__client_id is not None:
+            result += len(self.__client_id).to_bytes(2, byteorder="big").decode(
+                'latin1')  # Folosim latin1 pentru a păstra fiecare octet ca ASCII
+            result += self.__client_id
+
+        if self.__will_property_length is not None:
+            result += chr(self.__will_property_length)
+
+        if self.__will_delay_interval is not None:
+            result += chr(self.__will_delay_interval_id)
+            result += self.__will_delay_interval.to_bytes(4, byteorder='big').decode(
+                'latin1')  # Folosim latin1 pentru a păstra fiecare octet ca ASCII
+
+        if self.__payload_format_indicator is not None:
+            result += chr(self.__payload_format_indicator_id)
+            result += chr(self.__payload_format_indicator)
+
+        if self.__message_expiring_interval is not None:
+            result += chr(self.__message_expiring_interval_id)
+            result += self.__message_expiring_interval.to_bytes(4, byteorder='big').decode(
+                'latin1')  # Folosim latin1 pentru a păstra fiecare octet ca ASCII
+
+        if self.__content_type is not None:
+            result += chr(self.__content_type_id)
+            result += len(self.__content_type).to_bytes(2, byteorder="big").decode(
+                'latin1')  # Folosim latin1 pentru a păstra fiecare octet ca ASCII
+            result += self.__content_type
+
+        if self.__response_topic is not None:
+            result += chr(self.__response_topic_id)
+            result += len(self.__response_topic).to_bytes(2, byteorder="big").decode(
+                'latin1')  # Folosim latin1 pentru a păstra fiecare octet ca ASCII
+            result += self.__response_topic
+
+        if self.__correlation is not None:
+            result += chr(self.__correlation_data_id)
+            result += self.__correlation.decode('latin1')  # Folosim latin1 pentru a păstra fiecare octet ca ASCII
+
+        if self.__user_property_payload is not None:
+            result += chr(self.__user_property_payload_id)
+            result += len(self.__user_property_payload).to_bytes(2, byteorder="big").decode(
+                'latin1')  # Folosim latin1 pentru a păstra fiecare octet ca ASCII
+            result += self.__user_property_payload
+
+        if self.__will_topic_payload is not None:
+            result += len(self.__will_topic_payload).to_bytes(2, byteorder="big").decode(
+                'latin1')  # Folosim latin1 pentru a păstra fiecare octet ca ASCII
+            result += self.__will_topic_payload
+
+        if self.__will_payload is not None:
+            result += self.__will_payload.decode('latin1')  # Folosim latin1 pentru a păstra fiecare octet ca ASCII
+
+        if self.__username is not None:
+            result += len(self.__username).to_bytes(2, byteorder="big").decode(
+                'latin1')  # Folosim latin1 pentru a păstra fiecare octet ca ASCII
+            result += self.__username
+
+        if self.__password is not None:
+            result += len(self.__password).to_bytes(2, byteorder="big").decode(
+                'latin1')  # Folosim latin1 pentru a păstra fiecare octet ca ASCII
+            result += self.__password
+
+        return result  # Returnăm șirul final
 
     def decode(self, packet) -> str:
         return "It is not send by the server to clinet"
