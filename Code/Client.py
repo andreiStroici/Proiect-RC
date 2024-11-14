@@ -112,10 +112,11 @@ class Client:
                 if not data:
                     self.queue.put(("Client", "Terminate"))
                     break
-                first_4_bits = (data[1] >> 4) & 0x0F
+                first_4_bits = (data[0] >> 4) & 0x0F
                 match first_4_bits:
                     case 2:
                         # CONNACK
+                        print(self.__packet.get_reason_code())
                         match self.__packet.get_reason_code():
                             case 0:
                                 print("Success")
