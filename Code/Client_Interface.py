@@ -30,29 +30,19 @@ def client_interface():
             topicT_entry.config(state="normal")
         root.after(500, task_client, combobox, topicT_entry)
 
-    # def update_line():
-    #     width = root.winfo_width()
-    #     height = root.winfo_height()
-    #
-    #     canvas.delete(ALL)
-    #
-    #     canvas.create_line(0, 0.23*height, width, 0.23*height, fill="black", width=1.5)
-    #
-    #     root.after(1, update_line)
-
     root = Tk()
 
     root.title("MQTT Client")
-    root.geometry("700x600")
+    width = root.winfo_screenwidth()
+    height = root.winfo_screenheight()
+    root.geometry(f"{int(width)}x{int(height)}")
 
     # pentru linia orizontala
-    canvas = Canvas(root, width=700, height=600)
+    canvas = Canvas(root, width=width, height=height)
     canvas.pack(fill=BOTH, expand=True)
     f.update_line(root, canvas)
 
-    action_label = f.define_label(root, "Action name:", 15, FALSE, 0.05, 0.15, W);
-    # action_label = t_tk.Label(root, text="Action name:", font=("Helvetica", 15))
-    # action_label.place(relx = 0.05, rely=0.15, anchor=W)
+    f.define_label(root, "Action name:", 15, FALSE, 0.02, 0.15, W)
 
     action_combo = t_tk.Combobox(root,
                                  values=["Publish", "Subscribe"],
@@ -60,34 +50,22 @@ def client_interface():
                                  state="readonly"
                                  )
     action_combo.current(0)
-    action_combo.place(relx=0.5, rely=0.15, anchor=CENTER)
+    action_combo.place(relx=0.23, rely=0.20, anchor=CENTER)
 
-    content_label = f.define_label(root, "Content:", 15, FALSE, 0.05, 0.45, W)
-    # content_label=t_tk.Label(root, text="Content: ", font=("Helvetica", 15))
-    # content_label.place(relx=0.05, rely=0.45, anchor=W)
+    f.define_label(root, "Content:", 15, FALSE, 0.02, 0.45, W)
 
-    topic_name = f.define_label(root, "Topic name:", 15, FALSE, 0.5, 0.4, CENTER);
-    # topic_name = t_tk.Label(root, text="Topic name:", font=("Helvetica", 15))
-    # topic_name.place(relx = 0.5, rely=0.4, anchor=CENTER)
+    f.define_label(root, "Topic name:", 15, FALSE, 0.2, 0.5, CENTER)
+    topicN_entry = f.define_entry(root, FALSE, 0.2, 0.55)
 
-    topicN_entry = f.define_entry(root, FALSE, 0.5, 0.45)
-    # topicN_entry = t_tk.Entry(root, font=("Arial", 16))
-    # topicN_entry.place(relx=0.5, rely=0.45, anchor=CENTER)
+    f.define_label(root, "Topic text:", 15, FALSE, 0.2, 0.60, CENTER)
+    topicT_entry = f.define_entry(root, FALSE, 0.2, 0.65)
 
-    topic_text = f.define_label(root, "Topic text:", 15, FALSE, 0.5, 0.55, CENTER);
-    # topic_text = t_tk.Label(root, text="Topic text:", font=("Helvetica", 15))
-    # topic_text.place(relx = 0.5, rely=0.55, anchor=CENTER)
-    topicT_entry = f.define_entry(root, FALSE, 0.5, 0.60)
-    # topicT_entry = t_tk.Entry(root, font=("Arial", 16))
-    # topicT_entry.place(relx=0.5, rely=0.60, anchor=CENTER)
     action_combo.bind("<<ComboboxSelected>>", task_client(action_combo, topicT_entry))
 
     done_btn = Button(root, text="Done", font=('Helvetica', 16, 'bold'), command=get_entry_text)
-    done_btn.place(relx=0.9, rely=0.9, anchor=CENTER)
+    done_btn.place(relx=0.2, rely=0.85, anchor=CENTER)
 
-    send_label = f.define_label(root, "Send:", 15, FALSE, 0.5, 0.7, CENTER);
-    # send_label = t_tk.Label(root, text="Send:", font=("Helvetica", 15))
-    # send_label.place(relx = 0.5, rely=0.70, anchor=CENTER)
+    f.define_label(root, "Send:", 15, FALSE, 0.2, 0.7, CENTER)
 
     send_combo = t_tk.Combobox(root,
                                values=["At most once",
@@ -96,8 +74,14 @@ def client_interface():
                                font=("Helvetica", 15),
                                state="readonly")
     send_combo.current(0)
-    send_combo.place(relx=0.5, rely=0.75, anchor=CENTER)
+    send_combo.place(relx=0.2, rely=0.75, anchor=CENTER)
     send_combo.bind("<<ComboboxSelected>>", get_selected_action(send_combo))
+
+    text_var = StringVar()
+    f.define_label(root, "Subscriptions", 25, FALSE, 0.72, 0.05, CENTER)
+    f.define_displayTxt(root, width, height)
+
+    # f.update_text(root, text_var)
 
     root.mainloop()
 
