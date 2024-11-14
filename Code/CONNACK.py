@@ -68,7 +68,7 @@ class CONNACK(Packet, ABC):
             return "Malformed packet"
         i = i + 1
         self.__reason_code = int(packet[i])
-        if self.reason_code not in [0] + list(range(128, 160)):
+        if self.__reason_code not in [0] + list(range(128, 160)):
             return "Malformed packet"
         i = i + 1
         j = i
@@ -76,10 +76,10 @@ class CONNACK(Packet, ABC):
             i = i + 1
         self.__property_length = packet[j:i + 1]
         # verific lungimea proprietatiilor pachetului
-        if FixedHeader.decode_variable_byte_integer(self.property_length) != len(packet) - i:
+        if FixedHeader.decode_variable_byte_integer(self.__property_length) != len(packet) - i:
             return "Malformed packet"
         i = i + 1
-        maximum = FixedHeader.decode_variable_byte_integer(self.property_length) + i
+        maximum = FixedHeader.decode_variable_byte_integer(self.__property_length) + i
         # de acum voi parcurge si voi completa capurile din proprietati
         while i < maximum:
             code = packet[i]
