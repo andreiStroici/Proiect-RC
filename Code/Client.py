@@ -67,7 +67,7 @@ class Client:
                 self.__packet.set_username(self.__username)
                 self.__packet.set_password(self.__password)
                 encoded_packet = self.__packet.encode()
-                self.s_conn.send(encoded_packet)
+                self.s_conn.send(encoded_packet.encode())
                 pass
             case "PUBLISH":
                 pass
