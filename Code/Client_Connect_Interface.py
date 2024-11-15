@@ -1,13 +1,15 @@
 from Functions import *
+import main
 
-def connect_interface():
+def connect_interface(queue):
+
     def get_entry_text():
         # extragem username-ul și parola la apăsarea butonului "Login"
-        name_extract = name_entry.get()
-        pass_extract = pass_entry.get()
+        username = name_entry.get()
+        password = pass_entry.get()
 
-        print("Extracted name:", name_extract)
-        print("Extracted password:", pass_extract)
+        queue.put((username, password))
+        root.destroy()
 
     root = Tk()
     root.title("MQTT Client")
@@ -26,5 +28,3 @@ def connect_interface():
 
     root.mainloop()
 
-
-connect_interface()

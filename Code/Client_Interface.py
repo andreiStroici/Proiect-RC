@@ -37,7 +37,7 @@ def client_interface():
     height = root.winfo_screenheight()
     root.geometry(f"{int(width)}x{int(height)}")
 
-    # pentru linia orizontala
+    # desenarea liniilor
     canvas = Canvas(root, width=width, height=height)
     canvas.pack(fill=BOTH, expand=True)
     f.update_line(root, canvas)
@@ -77,13 +77,12 @@ def client_interface():
     send_combo.place(relx=0.2, rely=0.75, anchor=CENTER)
     send_combo.bind("<<ComboboxSelected>>", get_selected_action(send_combo))
 
-    text_var = StringVar()
+    # text_var = StringVar()
     f.define_label(root, "Subscriptions", 25, FALSE, 0.72, 0.05, CENTER)
     f.define_displayTxt(root, width, height)
 
     # f.update_text(root, text_var)
 
     root.mainloop()
-
 
 client_interface()
