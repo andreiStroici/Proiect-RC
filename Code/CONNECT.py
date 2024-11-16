@@ -158,8 +158,17 @@ class CONNECT(Packet, ABC):
     def encode(self) -> str:
         """ Construim un șir de caractere pentru toate câmpurile care nu sunt None """
         result = ""
-        self.length = FixedHeader.encode_variable_byte_integer(self.calculate_variable_header_length()
-                                                               + self.calculate_payload_length())
+        lg = self.calculate_variable_header_length() + self.calculate_payload_length()
+        if lg < 256:
+            self.length = FixedHeader.encode_variable_byte_integer(lg + 2)
+        elif lg < 65536:
+            self.length = FixedHeader.encode_variable_byte_integer(lg + 3)
+        elif lg < 16777216:
+            self.length = FixedHeader.encode_variable_byte_integer(lg + 4)
+        else:
+            self.length = FixedHeader.encode_variable_byte_integer(lg + 5)
+        # pt broker facut de Emi si Alin
+        # self.length = FixedHeader.encode_variable_byte_integer(lg)
         # Adăugăm primele câmpuri din pachet (presupunem că `self.type` este deja un byte)
         result += chr(self.type)  # Adăugăm `self.type` ca un singur caracter
         result += self.length.decode()  # `self.length` este deja un bytearray, îl decodificăm
@@ -167,7 +176,7 @@ class CONNECT(Packet, ABC):
         result += self.__name
         result += ''.join(chr(byte) for byte in self.__protocol_version.byteswap().tobytes())
         result += ''.join(chr(byte) for byte in self.__flags.byteswap().tobytes())
-        result += ''.join(chr(byte) for byte in np.uint16(self.__keep_alive).tobytes())
+        result += ''.join(chr(byte) for byte in np.uint16(self.__keep_alive).byteswap().tobytes())
         # result += struct.pack('!H', self.__keep_alive)
         result += self.__property_length.decode()  # `self.__property_length` este un bytearray
 
@@ -198,23 +207,23 @@ class CONNECT(Packet, ABC):
 
         if self.__user_property is not None:
             result += chr(self.__user_property_id)
-            result += ''.join(chr(byte) for byte in len(self.__user_property).to_bytes(byteorder='big')) # Folosim
+            result += ''.join(chr(byte) for byte in len(self.__user_property).to_bytes(2, byteorder='big')) # Folosim
             # latin1 pentru a păstra fiecare octet ca ASCII
             result += self.__user_property
 
         if self.__authentication_method is not None:
             result += chr(self.__authentication_method_id)
-            result += ''.join(chr(byte) for byte in len(self.__authentication_method).to_bytes(byteorder='big'))   #
+            result += ''.join(chr(byte) for byte in len(self.__authentication_method).to_bytes(2, byteorder='big'))   #
             # Folosim latin1 pentru a păstra fiecare octet ca ASCII
             result += self.__authentication_method
 
         if self.__authentication_data is not None:
             result += chr(self.__authentication_data_id)
-            result += ''.join(chr(byte) for byte in self.__authentication_data.byteswap().tobytes()) # Folosim latin1
+            result += ''.join(chr(byte) for byte in self.__authentication_data.byteswap().tobytes())  # Folosim latin1
             # pentru a păstra fiecare octet ca ASCII
 
         if self.__client_id is not None:
-            result += ''.join(chr(byte) for byte in len(self.__client_id).to_bytes(byteorder='big'))# Folosim latin1
+            result += ''.join(chr(byte) for byte in len(self.__client_id).to_bytes(2, byteorder='big'))# Folosim latin1
             # pentru a păstra fiecare octet ca ASCII
             result += self.__client_id
 
@@ -237,13 +246,13 @@ class CONNECT(Packet, ABC):
 
         if self.__content_type is not None:
             result += chr(self.__content_type_id)
-            result += ''.join(chr(byte) for byte in len(self.__content_type).to_bytes(byteorder='big'))  # Folosim
+            result += ''.join(chr(byte) for byte in len(self.__content_type).to_bytes(2, byteorder='big'))  # Folosim
             # latin1 pentru a păstra fiecare octet ca ASCII
             result += self.__content_type
 
         if self.__response_topic is not None:
             result += chr(self.__response_topic_id)
-            result += ''.join(chr(byte) for byte in len(self.__response_topic).to_bytes(byteorder='big')) # Folosim
+            result += ''.join(chr(byte) for byte in len(self.__response_topic).to_bytes(2, byteorder='big')) # Folosim
             # latin1 pentru a păstra fiecare octet ca ASCII
             result += self.__response_topic
 
@@ -254,12 +263,12 @@ class CONNECT(Packet, ABC):
 
         if self.__user_property_payload is not None:
             result += chr(self.__user_property_payload_id)
-            result += ''.join(chr(byte) for byte in len(self.__user_property_payload).to_bytes(byteorder='big'))
+            result += ''.join(chr(byte) for byte in len(self.__user_property_payload).to_bytes(2, byteorder='big'))
             # Folosim latin1 pentru a păstra fiecare octet ca ASCII
             result += self.__user_property_payload
 
         if self.__will_topic_payload is not None:
-            result += ''.join(chr(byte) for byte in len(self.__will_topic_payload).to_bytes(byteorder='big'))
+            result += ''.join(chr(byte) for byte in len(self.__will_topic_payload).to_bytes(2, byteorder='big'))
             # Folosim latin1 pentru a păstra fiecare octet ca ASCII
             result += self.__will_topic_payload
 
@@ -268,7 +277,7 @@ class CONNECT(Packet, ABC):
             # pentru a păstra fiecare octet ca ASCII
 
         if self.__username is not None:
-            result += ''.join(chr(byte) for byte in len(self.__username).to_bytes(byteorder='big'))  # Folosim latin1
+            result += ''.join(chr(byte) for byte in len(self.__username).to_bytes(2, byteorder='big'))  # Folosim latin1
             # pentru a păstra fiecare octet ca ASCII
             result += self.__username
 

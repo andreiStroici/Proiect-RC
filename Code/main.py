@@ -17,7 +17,7 @@ def main():
     print("Username: ", username)
     print("Password: ", password)
 
-    client = Client("127.0.0.1", 5000, queue)
+    client = Client("127.0.0.1", 1883, queue)
     client.set_username(username)
     client.set_password(password)
     client_proc = Process(target=client.operation)

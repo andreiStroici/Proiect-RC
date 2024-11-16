@@ -16,7 +16,7 @@ class Client:
         și calitatea serviciului (QoS), care este setată implicit la 0.
         """
 
-        self.__client_id = "mqttx_c2718eb2"
+        self.__client_id = "mqttx_28f24124"
         # self.__client_id = self.generate_client_id()
         self.__username = None
         self.__password = None
@@ -62,12 +62,16 @@ class Client:
         match packet_type:
             case "CONNECT":
                 self.__packet = CONNECT()
-                self.__packet.set_will_property_length(0)
                 self.__packet.set_client_id(self.__client_id)
                 self.__packet.set_username(self.__username)
                 self.__packet.set_password(self.__password)
                 encoded_packet = self.__packet.encode()
-                self.s_conn.send(encoded_packet.encode())
+                print(len(encoded_packet))
+                print(len(encoded_packet.encode()))
+                var = bytearray()
+                for byte in encoded_packet:
+                    var.extend(ord(byte).to_bytes(1, "big"))
+                self.s_conn.send(var)
                 pass
             case "PUBLISH":
                 pass
@@ -192,6 +196,7 @@ class Client:
                         pass
         except BaseException:
             print("Eroare de la primirea pachetelor")
+            self.queue.put(("Client", "Terminate"))
 
     def operation(self):
         """ in interiorul acestei functii va fi ca un main pt client
