@@ -124,7 +124,9 @@ class Client:
                     case 2:
                         # CONNACK
                         self.__packet = CONNACK()
-                        self.__packet.decode(data)
+                        is_correct = self.__packet.decode(data)
+                        if is_correct != "SUCCESS":
+                                print("Malformed CONNACK")
                         match self.__packet.get_reason_code():
                             case 0:
                                 print("Success")
@@ -194,6 +196,10 @@ class Client:
                         pass
                     case 13:
                         # PINGRESP
+                        self.__packet = PINGRESP()
+                        is_correct = self.__packet.decode(data)
+                        # if is_correct != "SUCCESS":
+                        #     print("Malformed PINGRESP")
                         pass
                     case 14:
                         # DISCONNECT

@@ -78,11 +78,12 @@ class CONNACK(Packet, ABC):
         while packet[i] & 0b10000000:  # determin lungimea pachetului
             i = i + 1
         self.__property_length = packet[j:i + 1]
+        lg, nr_bytes = FixedHeader.decode_variable_byte_integer(self.__property_length)
         # verific lungimea proprietatiilor pachetului
-        if FixedHeader.decode_variable_byte_integer(self.__property_length) != len(packet) - i:
+        if lg != len(packet) - i - 1:
             return "Malformed packet"
         i = i + 1
-        maximum = FixedHeader.decode_variable_byte_integer(self.__property_length) + i
+        maximum = lg + i
         # de acum voi parcurge si voi completa capurile din proprietati
         while i < maximum:
             code = packet[i]
@@ -90,41 +91,41 @@ class CONNACK(Packet, ABC):
                 case 17:  # durata expriarii sesiunii
                     i = i + 1
                     if self.__session_expiry_interval is None:  # ma asigur ca nu e introdus de 2 ori
-                        self.__session_expiry_interval = np.uint32(packet[i:i + 4])
+                        self.__session_expiry_interval = packet[i:i + 4]
                         i = i + 4
                     else:
                         return "Malformed packet"
                 case 33:  # maximum receive
                     i = i + 1
                     if self.__maximum_receive is None:  # ma asigur ca nu e introdus de 2 ori
-                        self.__maximum_receive = np.uint16(packet[i:i + 2])
+                        self.__maximum_receive = packet[i:i + 2]
                         i = i + 2
                     else:
                         return "Malformed packet"
                 case 36:  # maximum QoS
                     i = i + 1
                     if self.__max_qos is None:  # ma asigur ca nu e introdus de 2 ori
-                        self.__max_qos = np.uint8(packet[i])
+                        self.__max_qos = packet[i]
                         i = i + 1
                     else:
                         return "Malformed packet"
                 case 37:  # ratain available
                     i = i + 1
                     if self.__retain_available is None:  # ma asigur ca nu e introdus de 2 ori
-                        self.__retain_available = np.uint8(packet[i])
+                        self.__retain_available = [i]
                     else:
                         return "Malformed packet"
                 case 39:  # dimensiunea maxima a pachetului
                     i = i + 1
                     if self.__packet_maximum_size is None:  # ma asigur ca nu e introdus de 2 ori
-                        self.__packet_maximum_size = np.uint32(packet[i:i + 4])
+                        self.__packet_maximum_size = packet[i:i + 4]
                         i = i + 4
                     else:
                         return "Malformed packet"
                 case 18:  # identificator de client dat de broker
                     i = i + 1
                     if self.__assigned_client_id is None:  # ma asigur ca nu e introdus de 2 ori
-                        length = np.uint16(packet[i:i + 2])
+                        length = packet[i:i + 2]
                         i = i + 2
                         self.__assigned_client_id = str(packet[i:i + length])
                         i = i + length
@@ -133,14 +134,14 @@ class CONNACK(Packet, ABC):
                 case 34:  # topic  alias maximum
                     i = i + 1
                     if self.__topic_alias_maximum is None:  # ma asigur ca nu e introdus de 2 ori
-                        self.__topic_alias_maximum = np.uint32(packet[i:i + 2])
+                        self.__topic_alias_maximum = packet[i:i + 2]
                         i = i + 2
                     else:
                         return "Malformed packet"
                 case 31:  # reason string
                     i = i + 1
                     if self.__reason_string is None:  # ma asigur ca nu e introdus de 2 ori
-                        length = np.uint16(packet[i:i+2])
+                        length = packet[i:i+2]
                         i = i + 2
                         self.__reason_string = str(packet[i:i+length])
                         i = i + length
@@ -149,7 +150,7 @@ class CONNACK(Packet, ABC):
                 case 38:  # proprietatiile utilizatorilor
                     i = i + 1
                     if self.__user_property is None:  # ma asigur ca nu e introdus de 2 ori
-                        length = np.uint16(packet[i:i + 2])
+                        length = packet[i:i + 2]
                         i = i + 2
                         self.__user_property = str(packet[i:i + length])
                         i = i + length
@@ -158,35 +159,34 @@ class CONNACK(Packet, ABC):
                 case 40:  # wilcard subscribe available
                     i = i + 1
                     if self.__wildcard_subscription_available is None:  # ma asigur ca nu e introdus de 2 ori
-                        self.__wildcard_subscription_available = np.uint8(packet[i])
+                        self.__wildcard_subscription_available = packet[i]
                         i = i + 1
                     else:
                         return "Malformed packet"
                 case 41:  # identificatori de abonare
                     i = i + 1
                     if self.__subscription_identifiers is None:  # ma asigur ca nu e introdus de 2 ori
-                        self.__subscription_identifiers = np.uint8(packet[i])
+                        self.__subscription_identifiers = packet[i]
                         i = i + 1
                     else:
                         return "Malformed packet"
                 case 42:  # shared subscription available
                     i = i + 1
                     if self.__shared_subscription_available is None:  # ma asigur ca nu e introdus de 2 ori
-                        self.__shared_subscription_available = np.uint8(packet[i])
+                        self.__shared_subscription_available = packet[i]
                         i = i + 1
                     else:
                         return "Malformed packet"
                 case 19:  # server keep alive
                     i = i + 1
-                    if self.__server_keep_alive is None:  # ma asigur ca nu e introdus de 2 ori
-                        self.__server_keep_alive = np.uint16(packet[i:i + 2])
+                    if self.__server_keep_alive is packet[i:i + 2]
                         i = i + 2
                     else:
                         return "Malformed packet"
                 case 26:  # response infromation
                     i = i + 1
                     if self.__response_information is None:  # ma asigur ca nu e introdus de 2 ori
-                        length = np.uint16(packet[i:i + 2])
+                        length = packet[i:i + 2]
                         i = i + 2
                         self.__response_information = str(packet[i:i + length])
                         i = i + length
@@ -195,7 +195,7 @@ class CONNACK(Packet, ABC):
                 case 28:  # referinta broker
                     i = i + 1
                     if self.__server_reference is None:  # ma asigur ca nu e introdus de 2 ori
-                        length = np.uint16(packet[i:i + 2])
+                        length = packet[i:i + 2]
                         i = i + 2
                         self.__server_reference = str(packet[i:i + length])
                         i = i + length
@@ -204,7 +204,7 @@ class CONNACK(Packet, ABC):
                 case 21:  # metoda de autentificare
                     i = i + 1
                     if self.__authentication_method is None:  # ma asigur ca nu e introdus de 2 ori
-                        length = np.uint16(packet[i:i + 2])
+                        length = packet[i:i + 2]
                         i = i + 2
                         self.__authentication_method = str(packet[i:i + length])
                         i = i + length
@@ -213,7 +213,7 @@ class CONNACK(Packet, ABC):
                 case 22:  # date de autentificare
                     i = i + 1
                     if self.__authentication_data is None:  # ma asigur ca nu e introdus de 2 ori
-                        length = np.uint16(packet[i:i + 2])
+                        length = packet[i:i + 2]
                         i = i + 2
                         self.__authentication_data = str(packet[i:i + length])
                         i = i + length
