@@ -86,6 +86,12 @@ class Client:
             case "UNSUBSCRIBE":
                 pass
             case "PINGREQ":
+                self.__packet = PINGREQ()
+                encoded_packet = self.__packet.encode()
+                var = bytearray()
+                for byte in encoded_packet:
+                    var.extend(ord(byte).to_bytes(1, "big"))
+                self.s_conn.send(var)
                 pass
             case "DISCONNECT":
                 pass
@@ -202,8 +208,11 @@ class Client:
          va si creea thread-ul Receive"""
         receive = Process(target=self.receive_message)
         receive.start()
+        # deocamdata avem o soltie de copil mic pt trimiterea lui PINGREQ
+        ping = 0
         self.send_message("CONNECT")
         while True:
+            ping = ping + 1
             if not self.queue.empty():
                 destination, message = self.queue.get()
                 if destination != "Client":
@@ -213,6 +222,9 @@ class Client:
                         receive.terminate()
                         receive.join()
                         self.queue.put(("Main", "Terminate"))
+            if ping == 100000:
+                self.send_message("PINGREQ")
+                ping = 0
         # pass
 
     # Getter și setter pentru client_id
