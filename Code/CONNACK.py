@@ -56,11 +56,14 @@ class CONNACK(Packet, ABC):
         if self.type != packet[0]:
             return "Malformed packet"
         i = 1  # cu ajutorl lui I voi parcurge pachetul
+        lg = 1
         while packet[i] & 0b10000000:  # determin lungimea pachetului
             i = i + 1
-        self.length = packet[1:i + 1]
+            lg = lg + 1
+        # self.length = packet[1:i + 1]
+        self.length, nr_bytes = FixedHeader.decode_variable_byte_integer(packet[1:i+1])
         # verific daca lungimea pachetului corespunde cu cea oferita in mesaj
-        if FixedHeader.decode_variable_byte_integer(self.length) != len(packet) - 1:
+        if self.length != len(packet) - 1 - lg:
             return "Malformed packet"
         i = i + 1
         self.__connack_flags = packet[i]
