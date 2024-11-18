@@ -16,7 +16,7 @@ class CONNECT(Packet, ABC):
         self.__byte = np.uint16(4)  # cei 2 octeti inaintea numelui protocolului
         self.__name = "MQTT"  # numele protocolului
         self.__protocol_version = np.uint8(5)  # verisunea protocolului
-        self.__flags = np.uint8(195)  # flag-urile folosite
+        self.__flags = np.uint8(194)  # flag-urile folosite
         # self.__keep_alive = np.uint16(60)  # durata intervalului de keep alive
         self.__keep_alive = 60  # durata intervalului de keep alive
         self.__property_length = None  # lunginea proprietatiilor pachetlui
@@ -285,8 +285,6 @@ class CONNECT(Packet, ABC):
             result += ''.join(chr(byte) for byte in len(self.__password).to_bytes(2, byteorder='big'))  # Folosim latin1
             # pentru a păstra fiecare octet ca ASCII
             result += self.__password
-
-        print(result)
 
         return result  # Returnăm șirul final
 

@@ -66,8 +66,6 @@ class Client:
                 self.__packet.set_username(self.__username)
                 self.__packet.set_password(self.__password)
                 encoded_packet = self.__packet.encode()
-                print(len(encoded_packet))
-                print(len(encoded_packet.encode()))
                 var = bytearray()
                 for byte in encoded_packet:
                     var.extend(ord(byte).to_bytes(1, "big"))
@@ -94,7 +92,6 @@ class Client:
             case _:
                 # Trebuie găsită o soluție pentru erorile la tipurile de pachete
                 pass
-        print("End send")
 
     def receive_message(self):
         """Primește un mesaj de la broker și determină tipul pachetului.
@@ -120,7 +117,8 @@ class Client:
                 match first_4_bits:
                     case 2:
                         # CONNACK
-                        print(self.__packet.get_reason_code())
+                        self.__packet = CONNACK()
+                        self.__packet.decode(data)
                         match self.__packet.get_reason_code():
                             case 0:
                                 print("Success")
