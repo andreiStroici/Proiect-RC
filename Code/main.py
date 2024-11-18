@@ -32,11 +32,15 @@ def main():
                     if message == "Terminate":
                         client_proc.terminate()
                         break
+                    elif "Malformed" in message:
+                        print(f"There is an error received from broker {message}")
+                        client_proc.terminate()
+                        break
                     pass
         client_proc.join()
-        print("Termianre")
+        print("The app is closing")
     except BaseException:
-        print("Inchidere brusca a aplicatiei")
+        print("The application suddenly stopped")
 
 
 if __name__ == "__main__":

@@ -179,7 +179,7 @@ class CONNACK(Packet, ABC):
                         return "Malformed packet"
                 case 19:  # server keep alive
                     i = i + 1
-                    if self.__server_keep_alive is packet[i:i + 2]
+                    if self.__server_keep_alive is packet[i:i + 2]:
                         i = i + 2
                     else:
                         return "Malformed packet"

@@ -6,7 +6,7 @@ from Code.Packet import Packet
 class PINGRESP(Packet, ABC):
     def __init__(self):
         super().__init__()
-        self.type = np.uint8(193)
+        self.type = np.uint8(208)
 
     def encode(self) -> str:
         return "This packet is sent only from the broker to client"

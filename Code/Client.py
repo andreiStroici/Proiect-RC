@@ -126,7 +126,8 @@ class Client:
                         self.__packet = CONNACK()
                         is_correct = self.__packet.decode(data)
                         if is_correct != "SUCCESS":
-                                print("Malformed CONNACK")
+                            print("Malformed CONNACK")
+                            self.queue.put(("Client", "Malformed CONNACK"))
                         match self.__packet.get_reason_code():
                             case 0:
                                 print("Success")
@@ -198,8 +199,9 @@ class Client:
                         # PINGRESP
                         self.__packet = PINGRESP()
                         is_correct = self.__packet.decode(data)
-                        # if is_correct != "SUCCESS":
-                        #     print("Malformed PINGRESP")
+                        if is_correct != "SUCCESS":
+                            print("Malformed PINGRESP")
+                            self.queue.put(("Client", "Malformed PINGRESP"))
                         pass
                     case 14:
                         # DISCONNECT
@@ -228,6 +230,10 @@ class Client:
                         receive.terminate()
                         receive.join()
                         self.queue.put(("Main", "Terminate"))
+                    if "Malformed" in message:
+                        receive.terminate()
+                        receive.join()
+                        self.queue.put("Main", message)
             if ping == 100000:
                 self.send_message("PINGREQ")
                 ping = 0
