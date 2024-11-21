@@ -16,8 +16,8 @@ class Client:
         și calitatea serviciului (QoS), care este setată implicit la 0.
         """
 
-        self.__client_id = "mqttx_28f24124"
-        # self.__client_id = self.generate_client_id()
+        # self.__client_id = "mqttx_28f24124"
+        self.__client_id = self.generate_client_id()
         self.__username = None
         self.__password = None
         self.__timer = None  # Va fi setat când se trimite pachetul CONNECT

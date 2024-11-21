@@ -92,7 +92,8 @@ class CONNECT(Packet, ABC):
         if self.__request_problem_information is not None:
             length += 1  # np.uint8 ocupă 1 octet
         if self.__user_property is not None:
-            length += len(self.__user_property) + 2 # lungimea proprietății utilizatorului
+            length += len(self.__user_property[0] + self.__user_property[1]) + 4
+            # lungimea proprietății utilizatorului
         if self.__authentication_method is not None:
             length += len(self.__authentication_method) + 2  # lungimea metodei de autentificare
         if self.__authentication_data is not None:
@@ -120,7 +121,8 @@ class CONNECT(Packet, ABC):
         if self.__correlation is not None:
             length += len(self.__correlation) + 2  # lungimea datelor de corelare
         if self.__user_property_payload is not None:
-            length += len(self.__user_property_payload) + 2  # lungimea proprietății utilizatorului în payload
+            length += len(self.__user_property_payload[0] + self.__user_property_payload) + 4
+            # lungimea proprietății utilizatorului în payload
         if self.__will_topic_payload is not None:
             length += len(self.__will_topic_payload) + 2  # lungimea topicului will
         if self.__will_payload is not None:
@@ -147,7 +149,8 @@ class CONNECT(Packet, ABC):
         if self.__request_problem_information is not None:
             length += 1  # np.uint8 ocupă 1 octet
         if self.__user_property is not None:
-            length += len(self.__user_property) + 2  # lungimea proprietății utilizatorului
+            length += len(self.__user_property[0] + self.__user_property[0]) + 4
+            # lungimea proprietății utilizatorului
         if self.__authentication_method is not None:
             length += len(self.__authentication_method) + 2  # lungimea metodei de autentificare
         if self.__authentication_data is not None:
@@ -207,9 +210,12 @@ class CONNECT(Packet, ABC):
 
         if self.__user_property is not None:
             result += chr(self.__user_property_id)
-            result += ''.join(chr(byte) for byte in len(self.__user_property).to_bytes(2, byteorder='big')) # Folosim
+            result += ''.join(chr(byte) for byte in len(self.__user_property[0]).to_bytes(2, byteorder='big')) # Folosim
             # latin1 pentru a păstra fiecare octet ca ASCII
-            result += self.__user_property
+            result += self.__user_property[0]
+            result += ''.join(chr(byte) for byte in len(self.__user_property[1]).to_bytes(2, byteorder='big')) # Folosim
+            # latin1 pentru a păstra fiecare octet ca ASCII
+            result += self.__user_property[1]
 
         if self.__authentication_method is not None:
             result += chr(self.__authentication_method_id)
