@@ -82,11 +82,21 @@ class Client:
             case "PUBCOMP":
                 pass
             case "SUBSCRIBE":
+                self.__packet = SUBSCRIBE()
+                self.__packet.set_topic_filters("test/topic")
+                self.__packet.set_subscription_options(2)
+                print(self.__packet.encode())
+                encoded_packet = self.__packet.encode()
+                var = bytearray()
+                for byte in encoded_packet:
+                    var.extend(ord(byte).to_bytes(1, "big"))
+                self.s_conn.send(var)
                 pass
             case "UNSUBSCRIBE":
                 pass
             case "PINGREQ":
                 self.__packet = PINGREQ()
+                encoded_packet = self.__packet.encode()
                 encoded_packet = self.__packet.encode()
                 var = bytearray()
                 for byte in encoded_packet:
@@ -218,6 +228,8 @@ class Client:
         receive.start()
         # deocamdata avem o soltie de copil mic pt trimiterea lui PINGREQ
         ping = 0
+        subscribe_inc = True
+        subscribe = 0
         self.send_message("CONNECT")
         while True:
             ping = ping + 1
@@ -237,6 +249,12 @@ class Client:
             if ping == 100000:
                 self.send_message("PINGREQ")
                 ping = 0
+            if subscribe_inc:
+                subscribe = subscribe + 1
+            if subscribe == 123456:
+                self.send_message("SUBSCRIBE")
+                subscribe = 0
+                subscribe_inc = False
         # pass
 
     # Getter și setter pentru client_id
