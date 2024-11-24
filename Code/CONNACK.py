@@ -152,8 +152,13 @@ class CONNACK(Packet, ABC):
                     if self.__user_property is None:  # ma asigur ca nu e introdus de 2 ori
                         length = packet[i:i + 2]
                         i = i + 2
-                        self.__user_property = str(packet[i:i + length])
+                        user_property1 = str(packet[i:i + length])
                         i = i + length
+                        length = packet[i:i + 2]
+                        i = i + 2
+                        user_property2 = str(packet[i:i + length])
+                        i = i + length
+                        self.__user_property = (user_property1, user_property2)
                     else:
                         return "Malformed packet"
                 case 40:  # wilcard subscribe available

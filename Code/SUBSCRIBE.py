@@ -110,3 +110,9 @@ class SUBSCRIBE(Packet, ABC):
 
     def get_topic_filters(self):
         return self.__topic_filters
+
+    def set_packet_identifier(self, identifier):
+        self.__packet_identifier = identifier
+
+    def get_packet_identifier(self):
+        return self.__packet_identifier

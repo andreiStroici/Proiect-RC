@@ -28,6 +28,8 @@ class Client:
         self.__packet = None  # Ultimul pachet trimis
         self.__QoS = 0  # Calitatea serviciului, implicit 0
         self.queue = queue  # Coada de mesaje folosita pt comunicarea intre thread-uri
+        self.__last_topic_filter = []  # aici voi tine ultimele topic filters trimise prin subscribe
+        self.__last_packet_identifier = None  # aici voi tine ultimele topic filters trimise prin subscribe
 
     @staticmethod
     def generate_client_id():
@@ -85,7 +87,9 @@ class Client:
                 self.__packet = SUBSCRIBE()
                 self.__packet.set_topic_filters("test/topic")
                 self.__packet.set_subscription_options(2)
-                print(self.__packet.encode())
+                self.__last_topic_filter = self.__packet.get_topic_filters()
+                self.__last_packet_identifier = self.__packet.get_packet_identifier()
+                self.queue.put(("Receive", (self.__last_topic_filter, self.__last_packet_identifier)))
                 encoded_packet = self.__packet.encode()
                 var = bytearray()
                 for byte in encoded_packet:
@@ -126,6 +130,13 @@ class Client:
         try:
             while True:
                 data = self.s_conn.recv(1024)
+                if not self.queue.empty():
+                    destination, message = self.queue.get()
+                    if destination != "Receive":
+                        self.queue.put((destination, message))
+                    else:
+                        self.__last_topic_filter = message[0]
+                        self.__last_packet_identifier = message[1]
                 if not data:
                     self.queue.put(("Client", "Terminate"))
                     break
@@ -201,6 +212,12 @@ class Client:
                         pass
                     case 9:
                         # SUBACK
+                        self.__packet = SUBACK()
+                        self.__packet.set_topic_filters(self.__last_topic_filter)
+                        self.__packet.set_last_packet_identifier(self.__last_packet_identifier)
+                        is_correct = self.__packet.decode(data)
+                        if is_correct != "SUCCESS":
+                            print("Malformed packet")
                         pass
                     case 11:
                         # UNSUBACK
