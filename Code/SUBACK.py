@@ -26,7 +26,7 @@ class SUBACK(Packet, ABC):
         i = 0
         type = packet[0]
         if self.type != type:
-            return "Malformed packet"
+            return "Malformed packet -> type"
         i = i + 1
         lg = 1
         while packet[i] & 0b10000000:  # determin lungimea pachetului
@@ -34,12 +34,12 @@ class SUBACK(Packet, ABC):
             lg = lg + 1
         self.length, nr_bytes = FixedHeader.decode_variable_byte_integer(packet[1:i + 1])
         if self.length != len(packet) - 1 - lg:
-            return "Malformed packet"
+            return "Malformed packet -> packet length"
         i = i + 1
         self.__packet_identifier = packet[i:i+2]
-        self.__packet_identifier = np.frombuffer(self.__packet_identifier, dtype=np.uint16).byteswap()[0]
-        if self.__packet_identifier != np.uint16(self.__last_packet_identifier):
-            return "Malformed packet"
+        number = np.frombuffer(self.__packet_identifier, dtype=np.uint16).byteswap()[0]
+        if number != self.__last_packet_identifier:
+            return "Malformed packet -> packet_identifier"
         i = i + 2
         j = i
         while packet[i] & 0b10000000:  # determin lungimea pachetului
@@ -47,7 +47,7 @@ class SUBACK(Packet, ABC):
         self.__property_length, nr_bytes = FixedHeader.decode_variable_byte_integer(packet[j:i + 1])
         lg = self.__property_length
         if lg >= len(packet) - i - 1:
-            return "Malformed packet"
+            return "Malformed packet -> property length"
         maximum = lg + i
         while i < maximum:
             code = packet[i]
@@ -60,7 +60,7 @@ class SUBACK(Packet, ABC):
                         self.__reason_string = str(packet[i:i + length])
                         i = i + length
                     else:
-                        return "Malformed packet"
+                        return "Malformed packet -> 2 times reason string"
                 case 38:  # user property
                     i = i + 1
                     if self.__user_property is None:  # ma asigur ca nu e introdus de 2 ori
@@ -74,36 +74,49 @@ class SUBACK(Packet, ABC):
                         i = i + length
                         self.__user_property = (user_property1, user_property2)
                     else:
-                        return "Malformed packet"
+                        return "Malformed packet -> 2 times user property"
         if len(packet) - i - 1 != len(self.__topic_filters):
-            return "Malformed packet"
+            return "Malformed packet -> topic length"
         for j in range(0, len(self.__topic_filters)):
-            code = packet[i + j]
+            code = packet[i + j + nr_bytes]
+            val = packet[5]
             match code:
                 case 0:
-                    print(f"Granted QoS 0 for {self.__topic_filters[j]}")
+                    pass
+                    # print(f"Granted QoS 0 for {self.__topic_filters[j]}")
                 case 1:
-                    print(f"Granted QoS 1 for {self.__topic_filters[j]}")
+                    pass
+                    # print(f"Granted QoS 1 for {self.__topic_filters[j]}")
                 case 2:
-                    print(f"Granted QoS 2 for {self.__topic_filters[j]}")
+                    pass
+                    # print(f"Granted QoS 2 for {self.__topic_filters[j]}")
                 case 0x80:
-                    print(f"Unspecified error for {self.__topic_filters[j]}")
+                    pass
+                    # print(f"Unspecified error for {self.__topic_filters[j]}")
                 case 0x83:
-                    print(f"Implementation specific error for {self.__topic_filters[j]}")
+                    pass
+                    # print(f"Implementation specific error for {self.__topic_filters[j]}")
                 case 0x87:
-                    print(f"Not authorized for {self.__topic_filters[j]}")
+                    pass
+                    # print(f"Not authorized for {self.__topic_filters[j]}")
                 case 0x8F:
-                    print(f"Topic Filter invalid for {self.__topic_filters[j]}")
+                    pass
+                    # print(f"Topic Filter invalid for {self.__topic_filters[j]}")
                 case 0x91:
-                    print(f"Packet Identifier in use for {self.__topic_filters[j]}")
+                    pass
+                    # print(f"Packet Identifier in use for {self.__topic_filters[j]}")
                 case 0x97:
-                    print(f"Quota exceeded for {self.__topic_filters[j]}")
+                    pass
+                    # print(f"Quota exceeded for {self.__topic_filters[j]}")
                 case 0x9E:
-                    print(f"Shared Subscriptions not supported for {self.__topic_filters[j]}")
+                    pass
+                    # print(f"Shared Subscriptions not supported for {self.__topic_filters[j]}")
                 case 0xA1:
-                    print(f"Subscription Identifiers not supported for {self.__topic_filters[j]}")
+                    pass
+                    # print(f"Subscription Identifiers not supported for {self.__topic_filters[j]}")
                 case 0xA2:
-                    print(f"Wildcard Subscriptions not supported for {self.__topic_filters[j]}")
+                    pass
+                    # print(f"Wildcard Subscriptions not supported for {self.__topic_filters[j]}")
                 case _:
                     return "Malformed packet"
         return "SUCCESS"

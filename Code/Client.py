@@ -97,6 +97,11 @@ class Client:
                 self.s_conn.send(var)
                 pass
             case "UNSUBSCRIBE":
+                self.__packet = UNSUBSCRIBE()
+                self.__packet.set_packet_identifier(11)
+                self.__packet.set_topic_filter(["test/topic"])
+                encoded_packet = self.__packet.encode()
+                print(encoded_packet)
                 pass
             case "PINGREQ":
                 self.__packet = PINGREQ()
@@ -130,13 +135,6 @@ class Client:
         try:
             while True:
                 data = self.s_conn.recv(1024)
-                if not self.queue.empty():
-                    destination, message = self.queue.get()
-                    if destination != "Receive":
-                        self.queue.put((destination, message))
-                    else:
-                        self.__last_topic_filter = message[0]
-                        self.__last_packet_identifier = message[1]
                 if not data:
                     self.queue.put(("Client", "Terminate"))
                     break
@@ -212,12 +210,21 @@ class Client:
                         pass
                     case 9:
                         # SUBACK
+                        while True:
+                            if not self.queue.empty():
+                                destination, message = self.queue.get()
+                                if destination != "Receive":
+                                    self.queue.put((destination, message))
+                                else:
+                                    self.__last_topic_filter = message[0]
+                                    self.__last_packet_identifier = message[1]
+                                    break
                         self.__packet = SUBACK()
                         self.__packet.set_topic_filters(self.__last_topic_filter)
                         self.__packet.set_last_packet_identifier(self.__last_packet_identifier)
                         is_correct = self.__packet.decode(data)
                         if is_correct != "SUCCESS":
-                            print("Malformed packet")
+                            print(f"SUBACK {is_correct}")
                         pass
                     case 11:
                         # UNSUBACK
@@ -246,7 +253,9 @@ class Client:
         # deocamdata avem o soltie de copil mic pt trimiterea lui PINGREQ
         ping = 0
         subscribe_inc = True
+        unsubscribe_inc = False
         subscribe = 0
+        unsubscribe = 0
         self.send_message("CONNECT")
         while True:
             ping = ping + 1
@@ -266,12 +275,21 @@ class Client:
             if ping == 100000:
                 self.send_message("PINGREQ")
                 ping = 0
+                print("SEND PING")
             if subscribe_inc:
                 subscribe = subscribe + 1
+            if unsubscribe_inc:
+                unsubscribe = unsubscribe + 1
             if subscribe == 123456:
                 self.send_message("SUBSCRIBE")
                 subscribe = 0
                 subscribe_inc = False
+                unsubscribe_inc = True
+                print("Send SUBSCRIBE")
+            if unsubscribe == 10:
+                print("SEND UNSUBSCRIBE")
+                self.send_message("UNSUBSCRIBE")
+                unsubscribe_inc = False
         # pass
 
     # Getter și setter pentru client_id
