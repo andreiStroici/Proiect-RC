@@ -1,8 +1,9 @@
 import multiprocessing
 import os
+import queue
 import random
 import socket
-from multiprocessing import Process
+from multiprocessing import Process, Lock, Manager
 from Code.ImportFile import *
 from getmac import get_mac_address
 
@@ -29,7 +30,9 @@ class Client:
         self.__QoS = 0  # Calitatea serviciului, implicit 0
         self.queue = queue  # Coada de mesaje folosita pt comunicarea intre thread-uri
         self.__last_topic_filter = []  # aici voi tine ultimele topic filters trimise prin subscribe
-        self.__last_packet_identifier = None  # aici voi tine ultimele topic filters trimise prin subscribe
+        self.__last_packet_identifier = None
+        # aici voi tine ultimele topic filters trimise prin subscribe
+        self.__receive_queue = multiprocessing.Queue()
 
     @staticmethod
     def generate_client_id():
@@ -89,7 +92,8 @@ class Client:
                 self.__packet.set_subscription_options(2)
                 self.__last_topic_filter = self.__packet.get_topic_filters()
                 self.__last_packet_identifier = self.__packet.get_packet_identifier()
-                self.queue.put(("Receive", (self.__last_topic_filter, self.__last_packet_identifier)))
+                self.__receive_queue.put((self.__last_topic_filter, self.__last_packet_identifier))
+                print(self.__last_packet_identifier)
                 encoded_packet = self.__packet.encode()
                 var = bytearray()
                 for byte in encoded_packet:
@@ -210,18 +214,20 @@ class Client:
                         pass
                     case 9:
                         # SUBACK
+                        # it = 0
                         while True:
-                            if not self.queue.empty():
-                                destination, message = self.queue.get()
-                                if destination != "Receive":
-                                    self.queue.put((destination, message))
-                                else:
-                                    self.__last_topic_filter = message[0]
-                                    self.__last_packet_identifier = message[1]
-                                    break
+                            try:
+                                message = self.__receive_queue.get(
+                                    timeout=1)  # Așteaptă până la 1 secundă pentru a primi un mesaj
+                                self.__last_topic_filter = message[0]
+                                self.__last_packet_identifier = message[1]
+                                break
+                            except queue.Empty:
+                                # Tratează cazurile în care coada este goală după timeout
+                                continue
                         self.__packet = SUBACK()
-                        self.__packet.set_topic_filters(self.__last_topic_filter)
                         self.__packet.set_last_packet_identifier(self.__last_packet_identifier)
+                        self.__packet.set_topic_filters(self.__last_topic_filter)
                         is_correct = self.__packet.decode(data)
                         if is_correct != "SUCCESS":
                             print(f"SUBACK {is_correct}")
@@ -284,7 +290,7 @@ class Client:
                 self.send_message("SUBSCRIBE")
                 subscribe = 0
                 subscribe_inc = False
-                unsubscribe_inc = True
+                # unsubscribe_inc = True
                 print("Send SUBSCRIBE")
             if unsubscribe == 10:
                 print("SEND UNSUBSCRIBE")
