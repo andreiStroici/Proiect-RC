@@ -93,7 +93,6 @@ class Client:
                 self.__last_topic_filter = self.__packet.get_topic_filters()
                 self.__last_packet_identifier = self.__packet.get_packet_identifier()
                 self.__receive_queue.put((self.__last_topic_filter, self.__last_packet_identifier))
-                print(self.__last_packet_identifier)
                 encoded_packet = self.__packet.encode()
                 var = bytearray()
                 for byte in encoded_packet:
@@ -102,10 +101,13 @@ class Client:
                 pass
             case "UNSUBSCRIBE":
                 self.__packet = UNSUBSCRIBE()
-                self.__packet.set_packet_identifier(11)
+                self.__packet.set_packet_identifier(10)
                 self.__packet.set_topic_filter(["test/topic"])
                 encoded_packet = self.__packet.encode()
-                print(encoded_packet)
+                var = bytearray()
+                for byte in encoded_packet:
+                    var.extend(ord(byte).to_bytes(1, "big"))
+                self.s_conn.send(var)
                 pass
             case "PINGREQ":
                 self.__packet = PINGREQ()
@@ -290,12 +292,13 @@ class Client:
                 self.send_message("SUBSCRIBE")
                 subscribe = 0
                 subscribe_inc = False
-                # unsubscribe_inc = True
+                unsubscribe_inc = True
                 print("Send SUBSCRIBE")
-            if unsubscribe == 10:
+            if unsubscribe == 123456:
                 print("SEND UNSUBSCRIBE")
                 self.send_message("UNSUBSCRIBE")
                 unsubscribe_inc = False
+                unsubscribe = 0
         # pass
 
     # Getter și setter pentru client_id

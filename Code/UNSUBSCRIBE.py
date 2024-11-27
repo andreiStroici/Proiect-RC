@@ -33,13 +33,19 @@ class UNSUBSCRIBE(Packet, ABC):
 
     def encode(self) -> str:
         result = ""
-        self.length = FixedHeader.encode_variable_byte_integer(self.variable_header_length() + self.payload_length())
+        lg = self.variable_header_length() + self.payload_length()
+        if lg < 256:
+            lg = lg + 1
+        elif lg < 65536:
+            lg = lg + 2
+        elif lg < 16777216:
+            lg = lg + 3
+        else:
+            lg = lg + 4
+        self.length = FixedHeader.encode_variable_byte_integer(lg)
         result = result + chr(self.type)
         result = result + self.length.decode()
-        hex_str = hex(self.__packet_identifier)[2:].zfill(4)
-        byte_pairs = [''.join(hex_str[i:i + 2]) for i in range(0, len(hex_str), 2)]
-        result = result + ''.join(byte_pairs)
-        # result = result + ''.join(chr(byte) for byte in np.uint16(self.__packet_identifier).tobytes(2))
+        result = result + self.__packet_identifier.to_bytes(2, byteorder='big').decode('latin')
         result = result + FixedHeader.encode_variable_byte_integer(self.variable_header_property_length()).decode()
         if self.__user_property is not None:
             result = result + chr(self.__user_property_id)
@@ -50,10 +56,7 @@ class UNSUBSCRIBE(Packet, ABC):
                                       np.uint16(len(self.__user_property[1])).tobytes(2, bytorder='big'))
             result = result + self.__user_property[1]
         for topic in self.__topic_filter:
-            hex_str = hex(self.__packet_identifier)[2:].zfill(4)
-            byte_pairs = [''.join(hex_str[i:i + 2]) for i in range(0, len(hex_str), 2)]
-            # result = result + ''.join(byte for byte in np.uint16(len(topic)).tobytes(2, bytorder='big'))
-            result = result + ''.join(byte_pairs)
+            result = result + len(topic).to_bytes(2,byteorder='big').decode('latin')
             result = result + topic
         return result
 
