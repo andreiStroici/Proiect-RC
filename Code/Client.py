@@ -101,8 +101,10 @@ class Client:
                 pass
             case "UNSUBSCRIBE":
                 self.__packet = UNSUBSCRIBE()
-                self.__packet.set_packet_identifier(10)
+                self.__packet.set_packet_identifier(11)
+                self.__last_packet_identifier = 11
                 self.__packet.set_topic_filter(["test/topic"])
+                self.__receive_queue.put((self.__last_topic_filter, self.__last_packet_identifier))
                 encoded_packet = self.__packet.encode()
                 var = bytearray()
                 for byte in encoded_packet:
@@ -236,6 +238,16 @@ class Client:
                         pass
                     case 11:
                         # UNSUBACK
+                        while True:
+                            try:
+                                message = self.__receive_queue.get(
+                                    timeout=1)  # Așteaptă până la 1 secundă pentru a primi un mesaj
+                                self.__last_topic_filter = message[0]
+                                self.__last_packet_identifier = message[1]
+                                break
+                            except queue.Empty:
+                                # Tratează cazurile în care coada este goală după timeout
+                                continue
                         pass
                     case 13:
                         # PINGRESP
