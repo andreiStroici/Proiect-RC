@@ -72,7 +72,6 @@ class Client_Interface():
             topicT_extract = self.topicT_entry.get()
         else:
             topicT_extract = ' '
-
         send_option = combobox2.get()
 
         self.topicN_entry.delete(0, END)
