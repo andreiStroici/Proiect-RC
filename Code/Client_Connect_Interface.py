@@ -1,5 +1,4 @@
 from Functions import *
-import main
 
 def connect_interface(queue):
 

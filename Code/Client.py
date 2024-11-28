@@ -292,6 +292,7 @@ class Client:
                         receive.terminate()
                         receive.join()
                         self.queue.put("Main", message)
+
             if ping == 100000:
                 self.send_message("PINGREQ")
                 ping = 0
