@@ -2,17 +2,23 @@ from Functions import *
 
 def connect_interface(queue):
 
+    def close():
+        queue.put(("Abort", ("", "")))
+        root.destroy()
+
     def get_entry_text():
         # extragem username-ul și parola la apăsarea butonului "Login"
         username = name_entry.get()
         password = pass_entry.get()
 
-        queue.put((username, password))
+        queue.put(("Success", (username, password)))
         root.destroy()
 
     root = Tk()
     root.title("MQTT Client")
     root.geometry("600x500")
+
+    root.protocol("WM_DELETE_WINDOW", close)
 
     define_label(root, "Client Connect Interface", 18, TRUE, 0.5, 0.10, CENTER)
 
@@ -26,4 +32,3 @@ def connect_interface(queue):
     login_btn.place(relx=0.5, rely=0.65, anchor=CENTER)
 
     root.mainloop()
-

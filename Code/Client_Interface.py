@@ -98,4 +98,5 @@ class Client_Interface():
 
     def close(self):
         self.queue.put(("Client", "Terminate"))
+        self.root.withdraw()
         self.root.quit()
