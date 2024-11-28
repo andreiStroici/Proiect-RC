@@ -79,7 +79,6 @@ class SUBACK(Packet, ABC):
             return "Malformed packet -> topic length"
         for j in range(0, len(self.__topic_filters)):
             code = packet[i + j + nr_bytes]
-            val = packet[5]
             match code:
                 case 0:
                     print(f"Granted QoS 0 for {self.__topic_filters[j]}")
