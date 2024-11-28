@@ -92,6 +92,8 @@ class UNSUBACK(Packet, ABC):
                 case 0x91:
                     print(f"UNSUBSCRIBE: Packet Identifier in use for {self.__topic_filters}")
 
+        # self.__property_length = FixedHeader.decode_variable_byte_integer()
+
         return "SUCCESS"
 
     # Getter și setter pentru `__packet_identifier`
