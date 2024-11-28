@@ -277,7 +277,6 @@ class Client:
         subscribe = 0
         unsubscribe = 0
         self.send_message("CONNECT")
-        self.__timer = time.time()
         while True:
             if not self.queue.empty():
                 destination, message = self.queue.get()
@@ -296,7 +295,6 @@ class Client:
             if time.time() - self.__timer > 60:
                 self.send_message("PINGREQ")
                 print("SEND PING")
-                self.__timer = time.time()
             if subscribe_inc:
                 subscribe = subscribe + 1
             if unsubscribe_inc:
@@ -307,13 +305,11 @@ class Client:
                 subscribe_inc = False
                 unsubscribe_inc = True
                 print("Send SUBSCRIBE")
-                self.__timer = time.time()
             if unsubscribe == 123456:
                 print("SEND UNSUBSCRIBE")
                 self.send_message("UNSUBSCRIBE")
                 unsubscribe_inc = False
                 unsubscribe = 0
-                self.__timer = time.time()
 
     # Getter și setter pentru client_id
     def get_client_id(self):
