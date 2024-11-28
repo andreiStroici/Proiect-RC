@@ -235,6 +235,7 @@ class Client:
                         is_correct = self.__packet.decode(data)
                         if is_correct != "SUCCESS":
                             print(f"SUBACK {is_correct}")
+                            self.queue.put(("Client", "Malformed SUBACK"))
                         pass
                     case 11:
                         # UNSUBACK
@@ -248,6 +249,12 @@ class Client:
                             except queue.Empty:
                                 # Tratează cazurile în care coada este goală după timeout
                                 continue
+                        self.__packet = UNSUBACK()
+                        self.__packet.set_last_packet_id(self.__last_packet_identifier)
+                        self.__packet.set_topic_filters(self.__last_topic_filter)
+                        is_correct = self.__packet.decode(data)
+                        if is_correct != "SUCCESS":
+                            print(f"SUBACK: {is_correct}")
                         pass
                     case 13:
                         # PINGRESP

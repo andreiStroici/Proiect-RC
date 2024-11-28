@@ -17,12 +17,28 @@ class UNSUBACK(Packet, ABC):
         self.__user_property = None
         self.__reasons_code = None
         self.__topic_filters = None
+        self.__last_packet_id = None
 
     def encode(self) -> str:
         return "This packet is not send by client to broker"
 
     def decode(self, packet) -> str:
-        pass
+        if self.type != packet[0]:
+            return "Malformed packet"
+        i = 1
+        lg = 1
+        while packet[i] & 0b10000000:  # determin lungimea pachetului
+            i = i + 1
+            lg = lg + 1
+        self.length, nr_bytes = FixedHeader.decode_variable_byte_integer(packet[1:i+1])
+        if len(packet) - nr_bytes - 1 != self.length:
+            return "Malformed packet"
+        i = i + 2
+        j = i
+        while packet[i] & 0b10000000:  # determin lungimea pachetului
+            i = i + 1
+        self.__property_length = FixedHeader.decode_variable_byte_integer()
+        return "SUCCESS"
 
     # Getter și setter pentru `__packet_identifier`
     def get_packet_identifier(self):
@@ -61,3 +77,6 @@ class UNSUBACK(Packet, ABC):
 
     def set_topic_filters(self, topic: list):
         self.__topic_filters = topic
+
+    def set_last_packet_id(self, pack_id):
+        self.__last_packet_id = pack_id
