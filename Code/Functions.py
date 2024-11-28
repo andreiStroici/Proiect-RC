@@ -45,6 +45,3 @@ def update_line(r, canvas):
     canvas.place(relx=0, rely=0)
 
     r.after(1, update_line, r, canvas)
-
-# def update_text(text_widget, new_text):
-    # text_widget.insert(t_tk.END, new_text)
