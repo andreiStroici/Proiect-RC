@@ -82,41 +82,29 @@ class SUBACK(Packet, ABC):
             val = packet[5]
             match code:
                 case 0:
-                    pass
-                    # print(f"Granted QoS 0 for {self.__topic_filters[j]}")
+                    print(f"Granted QoS 0 for {self.__topic_filters[j]}")
                 case 1:
-                    pass
-                    # print(f"Granted QoS 1 for {self.__topic_filters[j]}")
+                    print(f"Granted QoS 1 for {self.__topic_filters[j]}")
                 case 2:
-                    pass
-                    # print(f"Granted QoS 2 for {self.__topic_filters[j]}")
+                    print(f"Granted QoS 2 for {self.__topic_filters[j]}")
                 case 0x80:
-                    pass
-                    # print(f"Unspecified error for {self.__topic_filters[j]}")
+                    print(f"Unspecified error for {self.__topic_filters[j]}")
                 case 0x83:
-                    pass
-                    # print(f"Implementation specific error for {self.__topic_filters[j]}")
+                    print(f"Implementation specific error for {self.__topic_filters[j]}")
                 case 0x87:
-                    pass
-                    # print(f"Not authorized for {self.__topic_filters[j]}")
+                    print(f"Not authorized for {self.__topic_filters[j]}")
                 case 0x8F:
-                    pass
-                    # print(f"Topic Filter invalid for {self.__topic_filters[j]}")
+                    print(f"Topic Filter invalid for {self.__topic_filters[j]}")
                 case 0x91:
-                    pass
-                    # print(f"Packet Identifier in use for {self.__topic_filters[j]}")
+                    print(f"Packet Identifier in use for {self.__topic_filters[j]}")
                 case 0x97:
-                    pass
-                    # print(f"Quota exceeded for {self.__topic_filters[j]}")
+                    print(f"Quota exceeded for {self.__topic_filters[j]}")
                 case 0x9E:
-                    pass
-                    # print(f"Shared Subscriptions not supported for {self.__topic_filters[j]}")
+                    print(f"Shared Subscriptions not supported for {self.__topic_filters[j]}")
                 case 0xA1:
-                    pass
-                    # print(f"Subscription Identifiers not supported for {self.__topic_filters[j]}")
+                    print(f"Subscription Identifiers not supported for {self.__topic_filters[j]}")
                 case 0xA2:
-                    pass
-                    # print(f"Wildcard Subscriptions not supported for {self.__topic_filters[j]}")
+                    print(f"Wildcard Subscriptions not supported for {self.__topic_filters[j]}")
                 case _:
                     return "Malformed packet"
         return "SUCCESS"
