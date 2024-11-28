@@ -37,7 +37,7 @@ class UNSUBACK(Packet, ABC):
         j = i
         while packet[i] & 0b10000000:  # determin lungimea pachetului
             i = i + 1
-        self.__property_length = FixedHeader.decode_variable_byte_integer()
+        # self.__property_length = FixedHeader.decode_variable_byte_integer()
         return "SUCCESS"
 
     # Getter și setter pentru `__packet_identifier`

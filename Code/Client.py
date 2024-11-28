@@ -3,6 +3,7 @@ import os
 import queue
 import random
 import socket
+import time
 from multiprocessing import Process, Lock, Manager
 from Code.ImportFile import *
 from getmac import get_mac_address
@@ -21,7 +22,7 @@ class Client:
         self.__client_id = self.generate_client_id()
         self.__username = None
         self.__password = None
-        self.__timer = None  # Va fi setat când se trimite pachetul CONNECT
+        self.__timer = None  # retine momentul la care am trimis pachetul
         self.__broker_ip = broker_ip  # IP-ul brokerului MQTT
         self.__broker_port = broker_port  # Portul brokerului MQTT
         self.s_conn = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # creez un obiect de tip socket
@@ -114,7 +115,6 @@ class Client:
             case "PINGREQ":
                 self.__packet = PINGREQ()
                 encoded_packet = self.__packet.encode()
-                encoded_packet = self.__packet.encode()
                 var = bytearray()
                 for byte in encoded_packet:
                     var.extend(ord(byte).to_bytes(1, "big"))
@@ -125,6 +125,7 @@ class Client:
             case _:
                 # Trebuie găsită o soluție pentru erorile la tipurile de pachete
                 pass
+        self.__timer = time.time()
 
     def receive_message(self):
         """Primește un mesaj de la broker și determină tipul pachetului.
@@ -133,13 +134,6 @@ class Client:
             Metoda folosește socket-uri pentru a stabili conexiunea cu brokerul.
             Extrage primii 4 biți din datele primite pentru a determina tipul pachetului.
         """
-        # while True:
-        #     destination = "Main"
-        #     var = "M-am plictisit"
-        #     message = (destination, var)
-        #     self.queue.put(message)
-        #     #print(f"Receive a trimis:{var}, la {destination}")
-        #self.s_conn.settimeout(10.0)
         try:
             while True:
                 data = self.s_conn.recv(1024)
@@ -278,14 +272,13 @@ class Client:
         receive = Process(target=self.receive_message)
         receive.start()
         # deocamdata avem o soltie de copil mic pt trimiterea lui PINGREQ
-        ping = 0
         subscribe_inc = True
         unsubscribe_inc = False
         subscribe = 0
         unsubscribe = 0
         self.send_message("CONNECT")
+        self.__timer = time.time()
         while True:
-            ping = ping + 1
             if not self.queue.empty():
                 destination, message = self.queue.get()
                 if destination != "Client":
@@ -300,10 +293,10 @@ class Client:
                         receive.join()
                         self.queue.put("Main", message)
 
-            if ping == 100000:
+            if time.time() - self.__timer > 60:
                 self.send_message("PINGREQ")
-                ping = 0
                 print("SEND PING")
+                self.__timer = time.time()
             if subscribe_inc:
                 subscribe = subscribe + 1
             if unsubscribe_inc:
@@ -314,12 +307,13 @@ class Client:
                 subscribe_inc = False
                 unsubscribe_inc = True
                 print("Send SUBSCRIBE")
+                self.__timer = time.time()
             if unsubscribe == 123456:
                 print("SEND UNSUBSCRIBE")
                 self.send_message("UNSUBSCRIBE")
                 unsubscribe_inc = False
                 unsubscribe = 0
-        # pass
+                self.__timer = time.time()
 
     # Getter și setter pentru client_id
     def get_client_id(self):
