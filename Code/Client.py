@@ -89,10 +89,10 @@ class Client:
                 pass
             case "SUBSCRIBE":
                 self.__packet = SUBSCRIBE()
-                self.__packet.set_topic_filters("test/topic")
-                self.__packet.set_subscription_options(2)
+                self.__packet.set_topic_filters(self.__last_topic_filter)
+                self.__packet.set_subscription_options(self.__QoS)
                 self.__last_topic_filter = self.__packet.get_topic_filters()
-                self.__last_packet_identifier = self.__packet.get_packet_identifier()
+                self.__last_packet_identifier = 10
                 self.__receive_queue.put((self.__last_topic_filter, self.__last_packet_identifier))
                 encoded_packet = self.__packet.encode()
                 var = bytearray()
@@ -104,7 +104,7 @@ class Client:
                 self.__packet = UNSUBSCRIBE()
                 self.__packet.set_packet_identifier(11)
                 self.__last_packet_identifier = 11
-                self.__packet.set_topic_filter(["test/topic"])
+                self.__packet.set_topic_filter(self.__last_topic_filter)
                 self.__receive_queue.put((self.__last_topic_filter, self.__last_packet_identifier))
                 encoded_packet = self.__packet.encode()
                 var = bytearray()
@@ -271,11 +271,7 @@ class Client:
          va si creea thread-ul Receive"""
         receive = Process(target=self.receive_message)
         receive.start()
-        # deocamdata avem o soltie de copil mic pt trimiterea lui PINGREQ
-        subscribe_inc = True
-        unsubscribe_inc = False
-        subscribe = 0
-        unsubscribe = 0
+
         self.send_message("CONNECT")
         while True:
             if not self.queue.empty():
@@ -291,25 +287,28 @@ class Client:
                         receive.terminate()
                         receive.join()
                         self.queue.put("Main", message)
+                    if isinstance(message, tuple):
+                        if message[1] is not None:
+                            self.__last_topic_filter = message[1].split(', ')
+                        match message[0]:
+                            case "Subscribe": # ramane sa modificam cu tipul de QoS
+                                match message[3]:
+                                    case "At least once":
+                                        self.__QoS = 1
+                                    case "Exactly once":
+                                        self.__QoS = 2
+                                    case "At most once":
+                                        self.__QoS = 0
+                                self.send_message("SUBSCRIBE")
+                                print("SEND SUBSCRIBE")
+                            case "Unsubscribe":
+                                self.send_message("UNSUBSCRIBE")
+                                print("SEND UNSUBSCRIBE")
+
 
             if time.time() - self.__timer > 60:
                 self.send_message("PINGREQ")
                 print("SEND PING")
-            if subscribe_inc:
-                subscribe = subscribe + 1
-            if unsubscribe_inc:
-                unsubscribe = unsubscribe + 1
-            if subscribe == 123456:
-                self.send_message("SUBSCRIBE")
-                subscribe = 0
-                subscribe_inc = False
-                unsubscribe_inc = True
-                print("Send SUBSCRIBE")
-            if unsubscribe == 123456:
-                print("SEND UNSUBSCRIBE")
-                self.send_message("UNSUBSCRIBE")
-                unsubscribe_inc = False
-                unsubscribe = 0
 
     # Getter și setter pentru client_id
     def get_client_id(self):

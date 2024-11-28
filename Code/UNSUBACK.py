@@ -44,9 +44,9 @@ class UNSUBACK(Packet, ABC):
             i = i + 1
         self.__property_length, nr_bytes = FixedHeader.decode_variable_byte_integer(packet[j:i+1])
         lg = self.__property_length
-        print(len(packet))
         if lg >= len(packet) - i - 1:
             return "Malformed packet -> property length"
+        i = i + 1
         if self.__property_length != 0:
             i = i + 1
             maximum = i + self.length

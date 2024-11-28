@@ -104,8 +104,8 @@ class SUBSCRIBE(Packet, ABC):
     def get_subscription_options(self):
         return self.__subscription_options
 
-    def set_topic_filters(self, topic_filters: str):
-        self.__topic_filters = self.__topic_filters + [topic_filters]
+    def set_topic_filters(self, topic_filters: list):
+        self.__topic_filters = self.__topic_filters + topic_filters
         self.__topic_filters_lengths = self.__topic_filters_lengths + [len(topic_filters)]
 
     def get_topic_filters(self):
