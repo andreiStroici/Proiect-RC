@@ -23,7 +23,7 @@ class Client_Interface():
         f.define_label(self.root, "Action name:", 15, FALSE, 0.02, 0.15, W)
 
         action_combo = t_tk.Combobox(self.root,
-                                     values=["Publish", "Subscribe"],
+                                     values=["Publish", "Subscribe", "Unsubscribe"],
                                      font=("Helvetica", 15),
                                      state="readonly")
         action_combo.current(0)
@@ -81,7 +81,7 @@ class Client_Interface():
 
     def task_client(self, combobox, topicT_entry):
         option = combobox.get()
-        if option == "Subscribe":
+        if option == "Subscribe" or option == "Unsubscribe":
             topicT_entry.config(state="disabled")
         if option == "Publish":
             topicT_entry.config(state="normal")
