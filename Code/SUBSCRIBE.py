@@ -76,8 +76,7 @@ class SUBSCRIBE(Packet, ABC):
                                       np.uint16(len(self.__user_property[1])).byteswap().to_bytes(2, byteorder="big"))
             result = result + self.__user_property[1]
         for i in range(0, len(self.__topic_filters)):
-            result = result + ''.join(chr(byte) for byte in
-                                      self.__topic_filters_lengths[i].to_bytes(2, byteorder="big"))
+            result = result + len(self.__topic_filters[i]).to_bytes(2,byteorder='big').decode('latin')
             result = result + self.__topic_filters[i]
         result = result + chr(self.__subscription_options)
         return result
