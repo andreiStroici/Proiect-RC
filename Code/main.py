@@ -49,7 +49,6 @@ def main():
                 queue.put((destination, message))
             else:
                 if isinstance(message, tuple):
-                    print(message)
                     queue.put(("Client", (message)))
                 elif message == "Terminate":
                     client_proc.terminate()
