@@ -9,7 +9,7 @@ class PINGREQ(Packet, ABC):
     def __init__(self):
         """Se creaza obiectul care descrie pachetul PINGREQ"""
         super().__init__()
-        self.type = np.uint8(192)
+        self.type = 192
 
     def encode(self) -> str:
         """Vom codifica pachetul sub forma unui sir de caractrere pentru a-l
@@ -17,7 +17,7 @@ class PINGREQ(Packet, ABC):
             param: nu are niciun parametru
             ret: reutrneaza un sir de caractere care constituie pachetul care trebuie trimis"""
         ret = ""
-        ret = ret + chr(self.type)
+        ret = ret + self.type.to_bytes(1, byteorder='big').decode('latin')
         ret = ret + '\0'
         return ret
 
