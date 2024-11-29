@@ -7,11 +7,11 @@ import numpy as np
 class UNSUBSCRIBE(Packet, ABC):
     def __init__(self):
         super().__init__()
-        self.type = np.uint8(162)
+        self.type = 162
         self.length = None
         self.__packet_identifier = None
         self.__property_length = None
-        self.__user_property_id = np.uint8(38)
+        self.__user_property_id = 38
         self.__user_property = None
         self.__topic_filter = None
 
@@ -43,17 +43,19 @@ class UNSUBSCRIBE(Packet, ABC):
         else:
             lg = lg + 4
         self.length = FixedHeader.encode_variable_byte_integer(lg)
-        result = result + chr(self.type)
+        result = result + self.type.to_bytes(1, byteorder='big').decode('latin')
         result = result + self.length.decode()
         result = result + self.__packet_identifier.to_bytes(2, byteorder='big').decode('latin')
         result = result + FixedHeader.encode_variable_byte_integer(self.variable_header_property_length()).decode()
         if self.__user_property is not None:
-            result = result + chr(self.__user_property_id)
-            result = result + ''.join(byte for byte in
-                                      np.uint16(len(self.__user_property[0])).tobytes(2, bytorder='big'))
+            result = result + self.__user_property_id.to_bytes(1, byteorder='big').decode('latin')
+            # result = result + ''.join(byte for byte in
+            #                           np.uint16(len(self.__user_property[0])).tobytes(2, bytorder='big'))
+            result = result + len(self.__user_property[1]).to_bytes(2, byteorder='big').decode('latin')
             result = result + self.__user_property[0]
-            result = result + ''.join(byte for byte in
-                                      np.uint16(len(self.__user_property[1])).tobytes(2, bytorder='big'))
+            # result = result + ''.join(byte for byte in
+            #                           np.uint16(len(self.__user_property[1])).tobytes(2, bytorder='big'))
+            result = result + len(self.__user_property[1]).to_bytes(2, byteorder='big').decode('latin')
             result = result + self.__user_property[1]
         for topic in self.__topic_filter:
             result = result + len(topic).to_bytes(2,byteorder='big').decode('latin')
