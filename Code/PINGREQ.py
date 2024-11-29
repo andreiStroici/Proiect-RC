@@ -1,7 +1,5 @@
 from abc import ABC
 
-import numpy as np
-
 from Code.Packet import Packet
 
 

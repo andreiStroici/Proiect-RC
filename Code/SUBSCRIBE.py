@@ -1,5 +1,4 @@
 from abc import ABC
-import numpy as np
 from Code.Packet import Packet
 from Code.FixedHeader import FixedHeader
 
@@ -7,13 +6,13 @@ from Code.FixedHeader import FixedHeader
 class SUBSCRIBE(Packet, ABC):
     def __init__(self):
         super().__init__()
-        self.type = np.uint8(130)
+        self.type = 130
         self.length = None
-        self.__packet_identifier = np.uint16(0x000A)
+        self.__packet_identifier = 0x000A
         self.__property_length = None
-        self.__subscription_id_id = np.uint8(11)
+        self.__subscription_id_id = 11
         self.__subscription_id = None
-        self.__user_property_id = np.uint8(38)
+        self.__user_property_id = 38
         self.__user_property = None
         self.__subscription_options = None
         self.__topic_filters_lengths = []
@@ -58,22 +57,23 @@ class SUBSCRIBE(Packet, ABC):
             self.variable_header_length() +
             self.payload_length() + 1
         )
-        result = result + chr(self.type)
+        result = result + self.type.to_bytes(1, byteorder='big').decode('latin')
         result = result + self.length.decode()
-        result = result + chr(np.uint8(0))
-        result = result + chr(np.uint8(10))
+        result = result + self.__packet_identifier.to_bytes(2, byteorder='big').decode('latin')
         result = (result +
                   FixedHeader.encode_variable_byte_integer(self.variable_header_property_length()).decode())
         if self.__subscription_id is not None:
-            result = result + chr(self.__subscription_id_id)
+            result = result + self.__subscription_id_id.to_bytes(1, byteorder='big').decode('latin')
             result = result + self.__subscription_id.decode()
         if self.__user_property is not None:
-            result = result + chr(self.__user_property_id)
-            result = result + "".join(chr(byte) for byte in
-                                      np.uint16(len(self.__user_property[0])).byteswap().to_bytes(2, byteorder="big"))
+            result = result + self.__user_property_id.to_bytes(1, byteorder='big').decode('latin')
+            # result = result + "".join(chr(byte) for byte in
+            #                           np.uint16(len(self.__user_property[0])).byteswap().to_bytes(2, byteorder="big"))
+            result = result + len(self.__user_property[0]).to_bytes(2, byteorder='big').decode('latin')
             result = result + self.__user_property[1]
-            result = result + "".join(chr(byte) for byte in
-                                      np.uint16(len(self.__user_property[1])).byteswap().to_bytes(2, byteorder="big"))
+            # result = result + "".join(chr(byte) for byte in
+            #                           np.uint16(len(self.__user_property[1])).byteswap().to_bytes(2, byteorder="big"))
+            result = result + len(self.__user_property[1]).to_bytes(2, byteorder='big').decode('latin')
             result = result + self.__user_property[1]
         for i in range(0, len(self.__topic_filters)):
             result = result + len(self.__topic_filters[i]).to_bytes(2,byteorder='big').decode('latin')

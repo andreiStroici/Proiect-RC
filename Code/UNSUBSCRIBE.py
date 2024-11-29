@@ -1,7 +1,6 @@
 from Code.FixedHeader import FixedHeader
 from Code.Packet import Packet
 from abc import ABC
-import numpy as np
 
 
 class UNSUBSCRIBE(Packet, ABC):
