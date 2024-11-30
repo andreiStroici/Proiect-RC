@@ -1,19 +1,18 @@
 from Code.FixedHeader import FixedHeader
 from Code.Packet import Packet
-import numpy as np
 from abc import ABC
 
 
 class SUBACK(Packet, ABC):
     def __init__(self):
         super().__init__()
-        self.type = np.uint8(144)
+        self.type = 144
         self.length = None
         self.__packet_identifier = None
         self.__property_length = None
-        self.__reason_string_id = np.uint8(31)
+        self.__reason_string_id = 31
         self.__reason_string = None
-        self.__user_property_id = np.uint8(38)
+        self.__user_property_id = 38
         self.__user_property = None
         self.__payload = None
         self.__topic_filters = []
@@ -24,7 +23,7 @@ class SUBACK(Packet, ABC):
 
     def decode(self, packet) -> str:
         i = 0
-        type = packet[0]
+        type = int(packet[0])
         if self.type != type:
             return "Malformed packet -> type"
         i = i + 1
@@ -37,7 +36,7 @@ class SUBACK(Packet, ABC):
             return "Malformed packet -> packet length"
         i = i + 1
         self.__packet_identifier = packet[i:i+2]
-        number = np.frombuffer(self.__packet_identifier, dtype=np.uint16).byteswap()[0]
+        number = int(packet[i]) * 256 + int(packet[i+1])
         if number != self.__last_packet_identifier:
             return "Malformed packet -> packet_identifier"
         i = i + 2

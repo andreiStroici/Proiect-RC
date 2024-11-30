@@ -1,50 +1,49 @@
 from Code.Packet import Packet
 from abc import ABC
-import numpy as np
 from Code.FixedHeader import FixedHeader
 
 
 class CONNACK(Packet, ABC):
     def __init__(self):
         super().__init__()
-        self.type = np.uint8(32)  # tipul pachetului
+        self.type = 32  # tipul pachetului
         self.length = None
-        self.__connack_flags = np.uint8(0)
+        self.__connack_flags = 0
         self.__reason_code = None  # codul care il intoarce server-ul
         self.__property_length = None  # lungimea antetului variabil
-        self.__session_expiry_interval_id = np.uint8(17)  # identificatorlui duratei intervalului de expirare a sesiunii
+        self.__session_expiry_interval_id = 17  # identificatorlui duratei intervalului de expirare a sesiunii
         self.__session_expiry_interval = None  # durata intervalului de expirare a sesiunii in secude
-        self.__maximum_receive_id = np.uint8(33)  # identificator pentru maxim de primire
+        self.__maximum_receive_id = 33  # identificator pentru maxim de primire
         self.__maximum_receive = None  # valoare identificatorlului maxim de primire
-        self.__max_qos_id = np.uint8(36)  # identificatorul pentru QoS maxim
+        self.__max_qos_id = 36  # identificatorul pentru QoS maxim
         self.__max_qos = None  # valoarea maxima a QoS
-        self.__retain_available_id = np.uint8(37)  # idetificator maxim de primire
+        self.__retain_available_id = 37  # idetificator maxim de primire
         self.__retain_available = None  # valoare maxim de primire
-        self.__packet_maximum_size_id = np.uint8(39)  # identificatorul dimensiunii maxime a pachetului
+        self.__packet_maximum_size_id = 39  # identificatorul dimensiunii maxime a pachetului
         self.__packet_maximum_size = None  # dimensiunea maxima a dimensiunii maxime a pachetului
-        self.__assigned_client_id_id = np.uint8(18)  # identificator pentru id client dat de server
+        self.__assigned_client_id_id = 18  # identificator pentru id client dat de server
         self.__assigned_client_id = None  # id-ul de client dat de broker
-        self.__topic_alias_maximum_id = np.uint8(34)  # identificatorul pentru topic alias maximum
+        self.__topic_alias_maximum_id = 34  # identificatorul pentru topic alias maximum
         self.__topic_alias_maximum = None  # valoarea topic alias maximum
-        self.__reason_string_id = np.uint8(31)  # identificatorul pentru reason string
+        self.__reason_string_id = 31  # identificatorul pentru reason string
         self.__reason_string = None  # valoarea reason string
-        self.__user_property_id = np.uint8(38)  # identificatorul prorprietatiilor utilizatorului
+        self.__user_property_id = 38  # identificatorul prorprietatiilor utilizatorului
         self.__user_property = None  # proprietatiile utilizatorlui
-        self.__wildcard_subscription_available_id = np.uint8(40)
+        self.__wildcard_subscription_available_id = 40
         self.__wildcard_subscription_available = None
-        self.__subscription_identifiers_id = np.uint8(42)
+        self.__subscription_identifiers_id = 42
         self.__subscription_identifiers = None
-        self.__shared_subscription_available_id = np.uint8(42)
+        self.__shared_subscription_available_id = 42
         self.__shared_subscription_available = None
-        self.__server_keep_alive_id = np.uint8(19)
+        self.__server_keep_alive_id = 19
         self.__server_keep_alive = None
-        self.__response_information_id = np.uint8(26)
+        self.__response_information_id = 26
         self.__response_information = None
-        self.__server_reference_id = np.uint8(28)
+        self.__server_reference_id = 28
         self.__server_reference = None
-        self.__authentication_method_id = np.uint8(21)
+        self.__authentication_method_id = 21
         self.__authentication_method = None
-        self.__authentication_data_id = np.uint8(22)
+        self.__authentication_data_id = 22
         self.__authentication_data = None
 
     def encode(self) -> str:
@@ -53,7 +52,7 @@ class CONNACK(Packet, ABC):
     def decode(self, packet) -> str:
         """Prin inetrmediul acestei functii vom decodifica pachetul connect
             si vom verifica si dimensiunea pachetului"""
-        if self.type != packet[0]:
+        if self.type != int(packet[0]):
             return "Malformed packet"
         i = 1  # cu ajutorl lui I voi parcurge pachetul
         lg = 1

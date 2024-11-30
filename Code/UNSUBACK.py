@@ -1,19 +1,18 @@
 from Code.Packet import Packet
 from Code.FixedHeader import FixedHeader
 from abc import ABC
-import numpy as np
 
 
 class UNSUBACK(Packet, ABC):
     def __init__(self):
         super().__init__()
-        self.type = np.uint8(176)
+        self.type = 176
         self.length = None
         self.__packet_identifier = None
         self.__property_length = None
-        self.__reason_string_id = np.uint8(31)
+        self.__reason_string_id = 31
         self.__reason_string = None
-        self.__user_property_id = np.uint8(38)
+        self.__user_property_id = 38
         self.__user_property = None
         self.__reasons_code = None
         self.__topic_filters = None
@@ -23,7 +22,7 @@ class UNSUBACK(Packet, ABC):
         return "This packet is not send by client to broker"
 
     def decode(self, packet) -> str:
-        if self.type != packet[0]:
+        if self.type != int(packet[0]):
             return "Malformed packet"
         i = 1
         lg = 1
@@ -35,7 +34,7 @@ class UNSUBACK(Packet, ABC):
             return "Malformed packet"
         i = i + lg
         self.__packet_identifier = packet[i:i+2]
-        number = np.frombuffer(self.__packet_identifier, dtype=np.uint16).byteswap()[0]
+        number = int(packet[i]) * 256 + int(packet[i+1])
         if number != self.__last_packet_id:
             return "Malformed packet -> packet identifier doesn't match"
         i = i + 2
