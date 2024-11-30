@@ -37,26 +37,25 @@ def main():
 
     try:
         while True:
-            destination = None
-            message = None
-            while True:
-                try:
-                    destination, message = queue.get()
-                    break
-                except queue.empty:
-                    continue
-            if destination != "Main":
-                queue.put((destination, message))
-            else:
-                if isinstance(message, tuple):
-                    queue.put(("Client", (message)))
-                elif message == "Terminate":
-                    client_proc.terminate()
-                    break
-                elif "Malformed" in message:
-                    print(f"There is an error received from broker {message}.")
-                    client_proc.terminate()
-                    break
+            try:
+                destination = None
+                message = None
+                destination, message = queue.get()
+                if destination != "Main":
+                    queue.put((destination, message))
+                else:
+                    if isinstance(message, tuple):
+                        queue.put(("Client", message))
+                    elif message == "Terminate":
+                        client_proc.terminate()
+                        break
+                    elif "Malformed" in message:
+                        print(f"There is an error received from broker {message}.")
+                        client_proc.terminate()
+                        break
+            except queue.empty:
+                continue
+
     except BaseException:
         print("The application suddenly stopped.")
     finally:
