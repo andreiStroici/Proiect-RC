@@ -1,12 +1,14 @@
 import multiprocessing
 from multiprocessing import Process
-from Code.Client import  Client
+from Code.Client import Client
 from Client_Connect_Interface import *
 from Client_Interface import *
+
 
 def run_client_interface(queue):
     client = Client_Interface(queue)
     client.run()
+
 
 def main():
     """Aceasta este functia main cu thread-ul prinicipal al aplicatiei
@@ -24,7 +26,6 @@ def main():
     print("Sunt in main acum: ")
     print("Username: ", username)
     print("Password: ", password)
-
 
     client = Client("127.0.0.1", 1883, queue)
     client.set_username(username)
