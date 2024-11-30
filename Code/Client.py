@@ -92,7 +92,9 @@ class Client:
                 self.__packet.set_topic_filters(self.__last_topic_filter)
                 self.__packet.set_subscription_options(self.__QoS)
                 self.__last_topic_filter = self.__packet.get_topic_filters()
-                self.__last_packet_identifier = 10
+                last_packet_id = random.randint(0, 65636)
+                self.__last_packet_identifier = last_packet_id
+                self.__packet.set_packet_identifier(self.__last_packet_identifier)
                 self.__receive_queue.put((self.__last_topic_filter, self.__last_packet_identifier))
                 encoded_packet = self.__packet.encode()
                 var = bytearray()
@@ -102,8 +104,9 @@ class Client:
                 pass
             case "UNSUBSCRIBE":
                 self.__packet = UNSUBSCRIBE()
-                self.__packet.set_packet_identifier(11)
-                self.__last_packet_identifier = 11
+                last_packet_id = random.randint(0, 65636)
+                self.__packet.set_packet_identifier(last_packet_id)
+                self.__last_packet_identifier = last_packet_id
                 self.__packet.set_topic_filter(self.__last_topic_filter)
                 self.__receive_queue.put((self.__last_topic_filter, self.__last_packet_identifier))
                 encoded_packet = self.__packet.encode()
