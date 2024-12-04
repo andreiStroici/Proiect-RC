@@ -47,16 +47,22 @@ class SUBSCRIBE(Packet, ABC):
             returneaza un intreg care indica lungimea payload-ului"""
         lg = 2 * len(self.__topic_filters_lengths)  # cu aceasta voi calcula lungimea payload-ului pachetului
         # valoarea initiala este egala cu suma tuturor octetiilor care descriu lungimea fiecarui topic
-        for  topic in self.__topic_filters:
+        for topic in self.__topic_filters:
             lg = lg + len(topic)
         return lg
 
     def encode(self) -> str:
         result = ""
-        self.length = FixedHeader.encode_variable_byte_integer(
-            self.variable_header_length() +
-            self.payload_length() + 1
-        )
+        lg = self.variable_header_length() + self.payload_length()
+        if lg < 256:
+            lg = lg + 1
+        elif lg < 65536:
+            lg = lg + 2
+        elif lg < 16777216:
+            lg = lg + 3
+        else:
+            lg = lg + 4
+        self.length = FixedHeader.encode_variable_byte_integer(lg)
         result = result + self.type.to_bytes(1, byteorder='big').decode('latin')
         result = result + self.length.decode()
         result = result + self.__packet_identifier.to_bytes(2, byteorder='big').decode('latin')
@@ -76,7 +82,7 @@ class SUBSCRIBE(Packet, ABC):
             result = result + len(self.__user_property[1]).to_bytes(2, byteorder='big').decode('latin')
             result = result + self.__user_property[1]
         for i in range(0, len(self.__topic_filters)):
-            result = result + len(self.__topic_filters[i]).to_bytes(2,byteorder='big').decode('latin')
+            result = result + len(self.__topic_filters[i]).to_bytes(2, byteorder='big').decode('latin')
             result = result + self.__topic_filters[i]
         result = result + chr(self.__subscription_options)
         return result
