@@ -21,7 +21,16 @@ class UNSUBSCRIBE(Packet, ABC):
             return 0
 
     def variable_header_length(self):
-        lg = 2 + self.variable_header_property_length()
+        lg = self.variable_header_property_length()
+        if lg < 256:
+            lg = lg + 1
+        elif lg < 65536:
+            lg = lg + 2
+        elif lg < 16777216:
+            lg = lg + 3
+        else:
+            lg = lg + 4
+        lg = lg + 1
         return lg
 
     def payload_length(self):
