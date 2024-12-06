@@ -3,10 +3,10 @@ from Code.Packet import Packet
 from abc import ABC
 
 
-class PUBACK(Packet, ABC):
+class PUBREC(Packet, ABC):
     def __init__(self):
         super().__init__()
-        self.type = 0x40
+        self.type = 0x50
         self.length = None
         self.__packet_identifier = None
         self.__reason_code = None
@@ -17,36 +17,40 @@ class PUBACK(Packet, ABC):
         self.__user_property = None
         self.__last_packet_identifier = None
 
-    def variable_header_property_length(self) -> int:
+    def property_length(self) -> int:
         lg = 0
         if self.__reason_string is not None:
-            lg = lg + len(self.__reason_string) + 2
+            lg = lg + 2
+            lg = lg + len(self.__reason_string)
+
         if self.__user_property is not None:
-            lg = lg + len(self.__user_property[0]) + 2 + len(self.__user_property[0]) + 2
+            lg = lg + 2
+            lg = lg + len(self.__reason_string)
+
         return lg
 
     def variable_header_length(self) -> int:
-        lg = self.variable_header_property_length()
+        lg = 0
+        lg = self.property_length()
         if lg < 256:
             lg = lg + 1
         elif lg < 65536:
             lg = lg + 2
         elif lg < 16777216:
-            lg = lg + 3
+            lg = lg + 2
         else:
             lg = lg + 4
-        lg = lg + 2  # packet identifier
-        lg = lg + 1  # reason code
+        lg = lg + 1
+        lg = lg + 2
         return lg
 
     def encode(self) -> str:
         result = ""
         result = result + self.type.to_bytes(1, byteorder='big').decode('latin')
-        result = result + FixedHeader.encode_variable_byte_integer(self.variable_header_length()).decode('latin')
+        result = result + FixedHeader.encode_variable_byte_integer(self.variable_header_length()).decode("latin")
         result = result + self.__packet_identifier.to_bytes(2, byteorder='big').decode('latin')
-        result = result + self.__reason_code.to_bytes(2, byteorder='big').decode('latin')
-        result = (result +
-                  FixedHeader.encode_variable_byte_integer(self.variable_header_property_length()).decode('latin'))
+        result = result + self.__reason_code.to_bytes(1, byteorder='big').decode('latin')
+        result = result + FixedHeader.encode_variable_byte_integer(self.property_length()).decode('latin')
         if self.__reason_string is not None:
             result = result + self.__reason_string_id.to_bytes(1, byteorder='big').decode('latin')
             result = result + len(self.__reason_string).to_bytes(2, byteorder='big').decode('latin')
@@ -62,8 +66,8 @@ class PUBACK(Packet, ABC):
     def decode(self, packet) -> str:
         if self.type != int(packet[0]):
             return "Malformed packet -> wrong type"
-
         i = 1
+
         while packet[i] & 0b10000000:  # determin lungimea pachetului
             i = i + 1
         self.length, nr_bytes = FixedHeader.decode_variable_byte_integer(packet[1:i + 1])
@@ -134,6 +138,7 @@ class PUBACK(Packet, ABC):
                             self.__user_property = (user_property1, user_property2)
                     case _:
                         return "Malformed packet -> wrong property identifier"
+
         return "SUCCESS"
 
     # Setters and Getters for each None-initialized attribute
@@ -166,9 +171,3 @@ class PUBACK(Packet, ABC):
 
     def get_user_property(self):
         return self.__user_property
-
-    def set_last_packet_identifier(self, last_packet_identifier):
-        self.__last_packet_identifier = last_packet_identifier
-
-    def get_last_packet_identifier(self):
-        return self.__last_packet_identifier
