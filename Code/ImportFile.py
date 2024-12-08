@@ -10,3 +10,4 @@ from Code.UNSUBACK import UNSUBACK
 from Code.PUBACK import PUBACK
 from Code.PUBREL import PUBREL
 from Code.PUBREC import PUBREC
+from Code.PUBCOMP import PUBCOMP
