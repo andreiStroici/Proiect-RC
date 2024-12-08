@@ -7,3 +7,6 @@ from Code.SUBSCRIBE import SUBSCRIBE
 from Code.SUBACK import SUBACK
 from Code.UNSUBSCRIBE import UNSUBSCRIBE
 from Code.UNSUBACK import UNSUBACK
+from Code.PUBACK import PUBACK
+from Code.PUBREL import PUBREL
+from Code.PUBREC import PUBREC
