@@ -243,7 +243,7 @@ class CONNECT(Packet, ABC):
             result += self.__authentication_data_id.to_bytes(1, byteorder='big').decode('latin')
             # result += ''.join(chr(byte) for byte in self.__authentication_data.byteswap().tobytes())
             # Folosim latin1 pentru a păstra fiecare octet ca ASCII
-            result = result + self.__authentication_data
+            result = result + self.__authentication_data.to_bytes(2, byteorder='big').decode('latin')
 
         if self.__client_id is not None:
             # result += ''.join(chr(byte) for byte in len(self.__client_id).to_bytes(2, byteorder='big'))
@@ -255,7 +255,7 @@ class CONNECT(Packet, ABC):
             result += self.__will_property_length.decode('latin')
 
         if self.__will_delay_interval is not None:
-            result += chr(self.__will_delay_interval_id)
+            result += self.__will_delay_interval_id.to_bytes(1, byteorder='big').decode('latin')
             # result += ''.join(chr(byte) for byte in self.__will_delay_interval.to_bytes(4, byteorder='big'))
             result = result + self.__will_delay_interval.to_bytes(4, byteorder='big').decode('latin')
             # Folosim latin1 pentru a păstra fiecare octet ca ASCII
@@ -407,10 +407,7 @@ class CONNECT(Packet, ABC):
 
     # Getter și setter pentru __will_property_length
     def get_will_property_length(self):
-        return self.__will_property_length
-
-    def set_will_property_length(self, value):
-        self.__will_property_length = value
+        return self.__will_property_lengthgit
 
     # Getter și setter pentru __will_delay_interval
     def get_will_delay_interval(self):
