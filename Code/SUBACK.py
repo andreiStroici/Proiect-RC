@@ -14,7 +14,6 @@ class SUBACK(Packet, ABC):
         self.__reason_string = None
         self.__user_property_id = 38
         self.__user_property = None
-        self.__payload = None
         self.__topic_filters = []
         self.__last_packet_identifier = None
 
@@ -111,29 +110,16 @@ class SUBACK(Packet, ABC):
     def get_reason_string(self):
         return self.__reason_string
 
-    def set_reason_string(self, reason_string: str):
-        self.__reason_string = reason_string
-
     # Getter și setter pentru __user_property
     def get_user_property(self):
         return self.__user_property
-
-    def set_user_property(self, user_property: tuple[str, str]):
-        if len(user_property) == 2 and isinstance(user_property[0], str) and isinstance(user_property[1], str):
-            self.__user_property = user_property
-        else:
-            raise ValueError("User property trebuie să fie un tuple cu două string-uri.")
-
-    # Getter și setter pentru __payload
-    def get_payload(self):
-        return self.__payload
-
-    def set_payload(self, payload: str):
-        self.__payload = payload
 
     # Setter pentru __topic_filters
     def set_topic_filters(self, topic_filters: list[str]):
         self.__topic_filters = topic_filters
 
     def set_last_packet_identifier(self, pack_id):
+        self.__last_packet_identifier = pack_id
+
+    def get_packet_identifier(self, pack_id):
         self.__last_packet_identifier = pack_id
