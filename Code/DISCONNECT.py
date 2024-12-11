@@ -52,7 +52,7 @@ class DISCONNECT(Packet, ABC):
         """Vom codifica pachetul sub forma unui sir de caractrere pentru a-l
         putea trimite de la client la broker
             param: nu are niciun parametru
-            ret: reutrneaza un sir de caractere care constituie pachetul care trebuie trimis"""
+            ret: returneaza un sir de caractere care constituie pachetul care trebuie trimis"""
         ret = ""
         lg = self.variable_header_length()
 
