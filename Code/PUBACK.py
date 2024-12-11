@@ -45,6 +45,7 @@ class PUBACK(Packet, ABC):
         result = result + FixedHeader.encode_variable_byte_integer(self.variable_header_length()).decode('latin')
         result = result + self.__packet_identifier.to_bytes(2, byteorder='big').decode('latin')
         result = result + self.__reason_code.to_bytes(2, byteorder='big').decode('latin')
+        self.__property_length = self.variable_header_property_length()
         result = (result +
                   FixedHeader.encode_variable_byte_integer(self.variable_header_property_length()).decode('latin'))
         if self.__reason_string is not None:
@@ -149,9 +150,6 @@ class PUBACK(Packet, ABC):
     def get_reason_code(self):
         return self.__reason_code
 
-    def set_property_length(self, property_length):
-        self.__property_length = property_length
-
     def get_property_length(self):
         return self.__property_length
 
@@ -169,6 +167,3 @@ class PUBACK(Packet, ABC):
 
     def set_last_packet_identifier(self, last_packet_identifier):
         self.__last_packet_identifier = last_packet_identifier
-
-    def get_last_packet_identifier(self):
-        return self.__last_packet_identifier
