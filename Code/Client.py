@@ -136,7 +136,6 @@ class Client:
                 for byte in encoded_packet:
                     var.extend(ord(byte).to_bytes(1, byteorder="big"))
                 self.s_conn.send(var)
-
                 pass
             case _:
                 # Trebuie găsită o soluție pentru erorile la tipurile de pachete
@@ -276,9 +275,15 @@ class Client:
                         pass
                     case 14:
                         # DISCONNECT
+                        self.__packet = DISCONNECT()
+                        is_correct = self.__packet.decode(data)
+                        if is_correct != "SUCCES":
+                            print("Malformed DISCONNECT")
+                            self.queue.put(("Client", "Malformed DISCONNECT"))
                         pass
         except BaseException:
             print("Eroare de la primirea pachetelor")
+            self.queue.put(("Interfata", "Terminate"))
             self.queue.put(("Client", "Terminate"))
 
     def operation(self):

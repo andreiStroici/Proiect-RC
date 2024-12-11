@@ -48,6 +48,7 @@ def main():
                     if isinstance(message, tuple):
                         queue.put(("Client", message))
                     elif message == "Terminate":
+                        client_interface_proc.terminate()
                         client_proc.terminate()
                         break
                     elif "Malformed" in message:
