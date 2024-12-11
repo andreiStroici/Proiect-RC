@@ -74,23 +74,11 @@ class UNSUBSCRIBE(Packet, ABC):
         return "This packet is send by the client to the broker"
 
     # Getter și Setter pentru atributele None
-    def get_length(self):
-        return self.length
-
-    def set_length(self, value):
-        self.length = value
-
     def get_packet_identifier(self):
         return self.__packet_identifier
 
     def set_packet_identifier(self, value):
         self.__packet_identifier = value
-
-    def get_property_length(self):
-        return self.__property_length
-
-    def set_property_length(self, value):
-        self.__property_length = value
 
     def get_user_property(self):
         return self.__user_property
