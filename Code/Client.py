@@ -5,6 +5,8 @@ import random
 import socket
 import time
 from multiprocessing import Process, Lock, Manager
+
+from Code.DISCONNECT import DISCONNECT
 from Code.ImportFile import *
 from getmac import get_mac_address
 
@@ -124,6 +126,17 @@ class Client:
                 self.s_conn.send(var)
                 pass
             case "DISCONNECT":
+                self.__packet = DISCONNECT()
+                self.__packet.set_reason_code(0x00)
+                self.__packet.set_reason_string("Client requested disconnect")
+                self.__packet.set_session_expiring_interval(0)
+                encoded_packet = self.__packet.encode()
+
+                var = bytearray()
+                for byte in encoded_packet:
+                    var.extend(ord(byte).to_bytes(1, byteorder="big"))
+                self.s_conn.send(var)
+
                 pass
             case _:
                 # Trebuie găsită o soluție pentru erorile la tipurile de pachete
@@ -307,6 +320,10 @@ class Client:
                             case "Unsubscribe":
                                 self.send_message("UNSUBSCRIBE")
                                 print("SEND UNSUBSCRIBE")
+                            case "Disconnect":
+                                self.send_message("DISCONNECT")
+                                print("SEND DISCONNECT")
+                                self.queue.put(("Client", "Terminate"))
             except queue.Empty:
                 continue
             finally:

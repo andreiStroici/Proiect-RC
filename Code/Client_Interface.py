@@ -58,6 +58,10 @@ class Client_Interface():
                           command=lambda: self.get_entry_text(action_combo, send_combo))
         done_btn.place(relx=0.2, rely=0.85, anchor=CENTER)
 
+        disconnect_btn = Button(self.root, text="Disconnect", font=('Helvetica', 16, 'bold'),
+                          command=self.close)
+        disconnect_btn.place(relx=0.35, rely=0.9, anchor=CENTER)
+
     def get_selected_action(self, combobox):
         selected_value = combobox.get()
         self.root.after(500, lambda: self.get_selected_action(combobox))
@@ -96,6 +100,6 @@ class Client_Interface():
         self.update_label()
 
     def close(self):
-        self.queue.put(("Client", "Terminate"))
+        self.queue.put(("Main", ("Disconnect", None, None, None)))
         self.root.withdraw()
         self.root.quit()
