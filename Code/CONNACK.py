@@ -230,117 +230,66 @@ class CONNACK(Packet, ABC):
     def get_reason_code(self):
         return self.__reason_code
 
-    def set_reason_code(self, value):
-        self.__reason_code = value
-
-    # Getter și Setter pentru property_length
+    # Getter pentru property_length
     def get_property_length(self):
         return self.__property_length
 
-    def set_property_length(self, value):
-        self.__property_length = value
-
-    # Getter și Setter pentru session_expiry_interval
+    # Getter pentru session_expiry_interval
     def get_session_expiry_interval(self):
         return self.__session_expiry_interval
 
-    def set_session_expiry_interval(self, value):
-        self.__session_expiry_interval = value
-
-    # Getter și Setter pentru __maximum_receive
+    # Getter pentru __maximum_receive
     def get_maximum_receive(self):
         return self.__maximum_receive
 
-    def set_maximum_receive(self, value):
-        self.__maximum_receive = value
-
-    # Getter și Setter pentru max_qos
+    # Getter pentru max_qos
     def get_max_qos(self):
         return self.__max_qos
 
-    def set_max_qos(self, value):
-        self.__max_qos = value
-
-    # Getter și Setter pentru retain_available
+    # Getter pentru retain_available
     def get_retain_available(self):
         return self.__retain_available
 
-    def set_retain_available(self, value):
-        self.__retain_available = value
-
-    # Getter și Setter pentru __packet_maximum_size
+    # Getter pentru __packet_maximum_size
     def get_packet_maximum_size(self):
         return self.__packet_maximum_size
 
-    def set_packet_maximum_size(self, value):
-        self.__packet_maximum_size = value
-
-    # Getter și Setter pentru __assigned_client_id
+    # Getter pentru __assigned_client_id
     def get_assigned_client_id(self):
         return self.__assigned_client_id
 
-    def set_assigned_client_id(self, value):
-        self.__assigned_client_id = value
-
-    # Getter și Setter pentru __topic_alias_maximum
+    # Getter pentru __topic_alias_maximum
     def get_topic_alias_maximum(self):
         return self.__topic_alias_maximum
 
-    def set_topic_alias_maximum(self, value):
-        self.__topic_alias_maximum = value
-
-    # Getter și Setter pentru __user_property
+    # Getter pentru __user_property
     def get_user_property(self):
         return self.__user_property
 
-    def set_user_property(self, value):
-        self.__user_property = value
-
-    # Getter și Setter pentru __wildcard_subscription_available
+    # Getter pentru __wildcard_subscription_available
     def get_wildcard_subscription_available(self):
         return self.__wildcard_subscription_available
 
-    def set_wildcard_subscription_available(self, value):
-        self.__wildcard_subscription_available = value
-
-    # Getter și Setter pentru __subscription_identifiers
+    # Getter pentru __subscription_identifiers
     def get_subscription_identifiers(self):
         return self.__subscription_identifiers
 
-    def set_subscription_identifiers(self, value):
-        self.__subscription_identifiers = value
-
-    # Getter și Setter pentru __server_keep_alive
+    # Getter pentru __server_keep_alive
     def get_server_keep_alive(self):
         return self.__server_keep_alive
 
-    def set_server_keep_alive(self, value):
-        self.__server_keep_alive = value
-
-    # Getter și Setter pentru __response_information
+    # Getter pentru __response_information
     def get_response_information(self):
         return self.__response_information
 
-    def set_response_information(self, value):
-        self.__response_information = value
-
-    # Getter și Setter pentru __server_reference
+    # Getter pentru __server_reference
     def get_server_reference(self):
         return self.__server_reference
 
-    def set_server_reference(self, value):
-        self.__server_reference = value
-
-    # Getter și Setter pentru __authentication_method
+    # Getter pentru __authentication_method
     def get_authentication_method(self):
         return self.__authentication_method
 
-    def set_authentication_method(self, value):
-        self.__authentication_method = value
-
-    # Getter și Setter pentru __authentication_data
+    # Getter pentru __authentication_data
     def get_authentication_data(self):
         return self.__authentication_data
-
-    def set_authentication_data(self, value):
-        self.__authentication_data = value
