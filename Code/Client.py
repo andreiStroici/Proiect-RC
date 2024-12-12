@@ -89,6 +89,7 @@ class Client:
                     self.__last_packet_identifier = last_packet_id
                     self.__packet.set_packet_identifier(self.__last_packet_identifier)
                 self.__packet.set_message(self.__topic_message)
+                self.__receive_queue.put(self.__last_packet_identifier)
                 encoded_packet = self.__packet.encode()
                 var = bytearray()
                 for byte in encoded_packet:
@@ -229,6 +230,20 @@ class Client:
                         pass
                     case 4:
                         # PUBACK
+                        self.__packet = PUBACK()
+                        while True:
+                            try:
+                                message = self.__receive_queue.get(
+                                    timeout=1)  # Așteaptă până la 1 secundă pentru a primi un mesaj
+                                self.__last_packet_identifier = message
+                                break
+                            except queue.Empty:
+                                # Tratează cazurile în care coada este goală după timeout
+                                continue
+                        self.__packet.set_last_packet_identifier(self.__last_packet_identifier)
+                        is_correct = self.__packet.decode(data)
+                        if "Malformed" in is_correct:
+                            print(is_correct)
                         pass
                     case 5:
                         # PUBREC
