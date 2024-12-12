@@ -14,7 +14,5 @@ class PINGRESP(Packet, ABC):
         if self.type != int(packet[0]):
             return "Malformed packet"
         if packet[1] != 0:
-
-
             return "Malformed packet"
         return "SUCCESS"

@@ -11,7 +11,7 @@ class PUBLISH(Packet, ABC):
         super().__init__()
         self.type = 48 # 0x30
         self.length = None
-        self.__reason_code = None  # codul de identificare pentru publish
+        self.__QoS = None
         self.__topic_name = None
         self.__packet_identifier = None
         self.__property_length = None
@@ -59,15 +59,13 @@ class PUBLISH(Packet, ABC):
         if self.__content_type is not None:
             lg += 1
             lg += len(self.__content_type)
-        if self.__message is not None:
-            lg += len(self.__message)
 
         return lg
 
     def variable_header_length(self):
         lg = 1
         if self.__topic_name is not None:
-            lg += len(self.__topic_name)
+            lg += 2 + len(self.__topic_name)
         if self.__packet_identifier is not None:
             lg += 2 # ocupa 2 octeti
 
@@ -87,9 +85,27 @@ class PUBLISH(Packet, ABC):
 
         lg = self.variable_header_length()
 
-        self.length = FixedHeader.encode_variable_byte_integer()
+        # adaug lungimea mesajului (payload)
+        # if self.__message is not None:
+        #     lg += 2 + len(self.__message)
+
+        self.length = FixedHeader.encode_variable_byte_integer(lg)
+        match self.__QoS:
+            case 1:
+                self.type += 2
+            case 2:
+                self.type += 4
+
+        ret += self.type.to_bytes(1, byteorder='big').decode('latin')
         ret += self.length.decode()
-        ret += self.__reason_code.to_bytes(1, byteorder='big').decode('latin')
+
+        if self.__topic_name is not None:
+            ret += len(self.__topic_name).to_bytes(2, 'big').decode('latin')
+            ret += self.__topic_name
+
+        if self.__packet_identifier is not None:
+            ret += self.__packet_identifier.to_bytes(2, 'big').decode('latin')
+
         ret += FixedHeader.encode_variable_byte_integer((self.variable_header_property_length())).decode()
 
         if self.__payload_format is not None:
@@ -128,6 +144,7 @@ class PUBLISH(Packet, ABC):
             ret += self.__content_type
 
         if self.__message is not None:
+            # ret += len(self.__message).to_bytes(2, byteorder='big').decode('latin')
             ret += self.__message
 
         return ret
@@ -136,11 +153,24 @@ class PUBLISH(Packet, ABC):
 
         return ""
 
-    def get_reason_code(self):
-        return self.__reason_code
+    # Getters and Setters for all attributes
+    def get_QoS(self):
+        return self.__QoS
 
-    def set_reason_code(self, value):
-        self.__reason_code = value
+    def set_QoS(self, value):
+        self.__QoS = value
+
+    def get_topic_name(self):
+        return self.__topic_name
+
+    def set_topic_name(self, value):
+        self.__topic_name = value
+
+    def get_packet_identifier(self):
+        return self.__packet_identifier
+
+    def set_packet_identifier(self, value):
+        self.__packet_identifier = value
 
     def get_property_length(self):
         return self.__property_length
@@ -148,17 +178,35 @@ class PUBLISH(Packet, ABC):
     def set_property_length(self, value):
         self.__property_length = value
 
-    def get_session_expiring_interval(self):
-        return self.__session_expiring_interval
+    def get_payload_format(self):
+        return self.__payload_format
 
-    def set_session_expiring_interval(self, value):
-        self.__session_expiring_interval = value
+    def set_payload_format(self, value):
+        self.__payload_format = value
 
-    def get_reason_string(self):
-        return self.__reason_string
+    def get_message_expiry_interval(self):
+        return self.__message_expiry_interval
 
-    def set_reason_string(self, value):
-        self.__reason_string = value
+    def set_message_expiry_interval(self, value):
+        self.__message_expiry_interval = value
+
+    def get_topic_alias(self):
+        return self.__topic_alias
+
+    def set_topic_alias(self, value):
+        self.__topic_alias = value
+
+    def get_response_topic(self):
+        return self.__response_topic
+
+    def set_response_topic(self, value):
+        self.__response_topic = value
+
+    def get_correlation_data(self):
+        return self.__correlation_data
+
+    def set_correlation_data(self, value):
+        self.__correlation_data = value
 
     def get_user_property(self):
         return self.__user_property
@@ -166,8 +214,20 @@ class PUBLISH(Packet, ABC):
     def set_user_property(self, value):
         self.__user_property = value
 
-    def get_server_reference(self):
-        return self.__server_reference
+    def get_subscription_identifier(self):
+        return self.__subscription_identifier
 
-    def set_server_reference(self, value):
-        self.__server_reference = value
+    def set_subscription_identifier(self, value):
+        self.__subscription_identifier = value
+
+    def get_content_type(self):
+        return self.__content_type
+
+    def set_content_type(self, value):
+        self.__content_type = value
+
+    def get_message(self):
+        return self.__message
+
+    def set_message(self, value):
+        self.__message = value
