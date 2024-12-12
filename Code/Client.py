@@ -296,39 +296,40 @@ class Client:
         self.send_message("CONNECT")
         while True:
             try:
-                destination, message = self.queue.get()
-                if destination != "Client":
-                    self.queue.put((destination, message))
-                else:
-                    if message == "Terminate":
-                        receive.terminate()
-                        receive.join()
-                        self.queue.put(("Main", "Terminate"))
-                    if "Malformed" in message:
-                        receive.terminate()
-                        receive.join()
-                        self.queue.put("Main", message)
-                    if isinstance(message, tuple):
-                        if message[1] is not None:
-                            self.__last_topic_filter = message[1].split(', ')
-                        match message[0]:
-                            case "Subscribe": # ramane sa modificam cu tipul de QoS
-                                match message[3]:
-                                    case "At least once":
-                                        self.__QoS = 1
-                                    case "Exactly once":
-                                        self.__QoS = 2
-                                    case "At most once":
-                                        self.__QoS = 0
-                                self.send_message("SUBSCRIBE")
-                                print("SEND SUBSCRIBE")
-                            case "Unsubscribe":
-                                self.send_message("UNSUBSCRIBE")
-                                print("SEND UNSUBSCRIBE")
-                            case "Disconnect":
-                                self.send_message("DISCONNECT")
-                                print("SEND DISCONNECT")
-                                self.queue.put(("Client", "Terminate"))
+                if not self.queue.empty():
+                    destination, message = self.queue.get()
+                    if destination != "Client":
+                        self.queue.put((destination, message))
+                    else:
+                        if message == "Terminate":
+                            receive.terminate()
+                            receive.join()
+                            self.queue.put(("Main", "Terminate"))
+                        if "Malformed" in message:
+                            receive.terminate()
+                            receive.join()
+                            self.queue.put("Main", message)
+                        if isinstance(message, tuple):
+                            if message[1] is not None:
+                                self.__last_topic_filter = message[1].split(', ')
+                            match message[0]:
+                                case "Subscribe": # ramane sa modificam cu tipul de QoS
+                                    match message[3]:
+                                        case "At least once":
+                                            self.__QoS = 1
+                                        case "Exactly once":
+                                            self.__QoS = 2
+                                        case "At most once":
+                                            self.__QoS = 0
+                                    self.send_message("SUBSCRIBE")
+                                    print("SEND SUBSCRIBE")
+                                case "Unsubscribe":
+                                    self.send_message("UNSUBSCRIBE")
+                                    print("SEND UNSUBSCRIBE")
+                                case "Disconnect":
+                                    self.send_message("DISCONNECT")
+                                    print("SEND DISCONNECT")
+                                    self.queue.put(("Client", "Terminate"))
             except queue.Empty:
                 continue
             finally:

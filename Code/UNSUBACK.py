@@ -50,12 +50,13 @@ class UNSUBACK(Packet, ABC):
             i = i + 1
             maximum = i + self.length
             while i < maximum:
-                code = np.uint8(packet[i])
+                code = int(packet[i])
                 match code:
                     case 31:
                         if self.__reason_string is None:
                             i = i + 1
-                            number = np.frombuffer(packet[i:i+2], dtype=np.uint16).byteswap()[0]
+                            # number = np.frombuffer(packet[i:i+2], dtype=np.uint16).byteswap()[0]
+                            number = int.from_bytes(packet[i:i+2], byteorder='big')
                             i = i + 2
                             self.__reason_string = packet[i:i+number].decode()
                         else:
@@ -63,11 +64,13 @@ class UNSUBACK(Packet, ABC):
                     case 38:
                         if self.__user_property is None:
                             i = i + 1
-                            number = np.frombuffer(packet[i:i + 2], dtype=np.uint16).byteswap()[0]
+                            # number = np.frombuffer(packet[i:i + 2], dtype=np.uint16).byteswap()[0]
+                            number = int.from_bytes(packet[i:i+2], byteorder='big')
                             i = i + 2
                             usrpp1 = packet[i:i + number].decode()
                             i = i + number
-                            number = np.frombuffer(packet[i:i + 2], dtype=np.uint16).byteswap()[0]
+                            # number = np.frombuffer(packet[i:i + 2], dtype=np.uint16).byteswap()[0]
+                            number = int.from_bytes(packet[i:i + 2], byteorder='big')
                             i = i + 2
                             usrpp2 = packet[i:i + number].decode()
                             self.__user_property = (usrpp1, usrpp2)
