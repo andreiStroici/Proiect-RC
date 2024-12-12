@@ -137,6 +137,7 @@ class PUBLISH(Packet, ABC):
 
         if self.__subscription_identifier is not None:
             ret += self.__subscription_identifier_id.to_bytes(2, byteorder='big').decode('latin')
+            ret += self.__subscription_identifier.to_bytes(1, byteorder='big').decode('latin')
 
         if self.__content_type is not None:
             ret += self.__content_type_id.to_bytes(1, byteorder='big').decode('latin')
@@ -144,14 +145,128 @@ class PUBLISH(Packet, ABC):
             ret += self.__content_type
 
         if self.__message is not None:
-            # ret += len(self.__message).to_bytes(2, byteorder='big').decode('latin')
             ret += self.__message
 
         return ret
 
     def decode(self, packet) -> str:
+        if int(self.type) & 0xF0 != int(packet[0]) & 0xF0:
+            return "Malformed packet -> wrong type"
 
-        return ""
+        i = 1
+        while packet[i] & 0b10000000: # determin lungimea pachetului
+            i = i + 1
+
+        self.length, nr_bytes = FixedHeader.decode_variable_byte_integer(packet[1:i+1])
+        if self.length != len(packet) - 1 - i:
+            return "Malformed packet -> wrong length"
+
+        topic_name_lg = packet[i:i+2]
+        i = i + 2
+        self.__topic_name = packet[i:i+topic_name_lg]
+
+        i = i + topic_name_lg
+        self.__packet_identifier = packet[i:i+2]
+        number = int(packet[i]) * 256 + int(packet[i + 1])
+        if number != self.__packet_identifier:
+            return "Malformed packet -> packet_identifier"
+
+        i = i + 1
+        j = i
+        while packet[i] & 0b10000000: # determin lungimea antetului variabil
+            i = i + 1
+
+        self.__property_length, nr_bytes = FixedHeader.decode_variable_byte_integer(packet[j:i+1])
+        if self.__property_length != len(packet) - i - 1:
+            return "Malformed packet -> property length"
+
+        i = i + 1
+        if self.__property_length != 0:
+            maximum = len(packet)
+            while i < maximum:
+                code = packet[i]
+                match code:
+                    case 1: # payload format indicator
+                        i = i + 1
+                        if self.__payload_format is None: # ma asigur ca nu e introdus de 2 ori
+                            length = packet[i:i+1]
+                            i = i + 1
+                            self.__payload_format = str(packet[i:i+length])
+                            i = i + length
+                        else:
+                            return "Malformed packet"
+                    case 2: # message expiry interval
+                        i = i + 1
+                        if self.__message_expiry_interval is None: # ma asigur ca nu e introdus de 2 ori
+                            length = packet[i:i+1]
+                            i = i + 1
+                            self.__message_expiry_interval = str(packet[i:i+length])
+                            i = i + length
+                        else:
+                            return "Malformed packet"
+                    case 35: # topic alias
+                        i = i + 1
+                        if self.__topic_alias is None: # ma asigur ca nu e introdus de 2 ori
+                            length = packet[i:i+1]
+                            i = i + 1
+                            self.__topic_alias = str(packet[i:i+length])
+                            i = i + length
+                        else:
+                            return "Malformed packet"
+                    case 8: # response topic
+                        i = i + 1
+                        if self.__response_topic is None: # ma asigur ca e introdus de 2 ori
+                            length = packet[i:i+1]
+                            i = i + 1
+                            self.__response_topic = str(packet[i:i+length])
+                            i = i + length
+                        else:
+                            return "Malformed packet"
+                    case 9: # correlation data
+                        i = i + 1
+                        if self.__correlation_data is None: # ma asigur ca nu am introdus de 2 ori
+                            length = packet[i:i+1]
+                            i = i + 1
+                            self.__correlation_data = str(packet[i:i+length])
+                            i = i + length
+                        else:
+                            return "Malformed packet"
+                    case 38: # user property
+                        i = i + 1
+                        if self.__user_property is None:  # ma asigur ca nu e introdus de 2 ori
+                            length = packet[i:i + 2]
+                            i = i + 2
+                            user_property1 = str(packet[i:i + length])
+                            i = i + length
+                            length = packet[i:i + 2]
+                            user_property2 = str(packet[i:i + length])
+                            i = i + length
+                            self.__user_property = (user_property1, user_property2)
+                        else:
+                            return "Malformed packet"
+                    case 11: # subscription identifier
+                        i = i + 1
+                        if self.__subscription_identifier is None: # ma asigur ca nu e introdus de 2 ori
+                            length = packet[i:i+2]
+                            i = i + 2
+                            self.__subscription_identifier = str(packet[i:i+length])
+                            i = i + length
+                        else:
+                            return "Malformed packet"
+                    case 3: # content type
+                        i = i + 1
+                        if self.__content_type is None: # ma asigur ca nu e introdus de 2 ori
+                            length = packet[i:i+1]
+                            i = i + 1
+                            self.__content_type = str(packet[i:i+length])
+                            i = i + length
+                        else:
+                            return "Malformed packet"
+                    case _:
+                        i = i + 1
+                        self.__message = packet[i:maximum - 1]
+                        i = maximum - 1
+        return "SUCCESS"
 
     # Getters and Setters for all attributes
     def get_QoS(self):
