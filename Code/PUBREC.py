@@ -66,11 +66,13 @@ class PUBREC(Packet, ABC):
     def decode(self, packet) -> str:
         if self.type != int(packet[0]):
             return "Malformed packet -> wrong type"
-        i = 1
 
+        lg = len(packet)
+        i = 1
         while packet[i] & 0b10000000:  # determin lungimea pachetului
             i = i + 1
         self.length, nr_bytes = FixedHeader.decode_variable_byte_integer(packet[1:i + 1])
+        lg -= (1 + nr_bytes)
         if self.length != len(packet) - 1 - i:
             return "Malformed packer -> wrong length"
 
@@ -79,66 +81,69 @@ class PUBREC(Packet, ABC):
         if self.__packet_identifier != self.__last_packet_identifier:
             return "Malformed packet -> packet identifier"
 
-        i = i + 1
-        self.__reason_code = int(packet[i])
-        match self.__reason_code:
-            case 0:
-                print("Success")
-            case 16:
-                print("No matching subscribers")
-            case 128:
-                print("Unspecified error")
-            case 131:
-                print("Implementation specific error")
-            case 135:
-                print("Not authorized")
-            case 144:
-                print("Topic Name invalid")
-            case 145:
-                print("Packet identifier in use")
-            case 151:
-                print("Quota exceeded")
-            case 153:
-                print("Payload format invalid")
-
-        i = i + 1
-        j = i
-        while packet[i] & 0b10000000:  # determin lungimea antetului variabil
+        if i < lg:
             i = i + 1
-        self.__property_length, nr_bytes = FixedHeader.decode_variable_byte_integer(packet[j:i + 1])
-        if self.__property_length != len(packet) - i - 1:
-            return "Malformed packet -> property length"
+            self.__reason_code = int(packet[i])
+            match self.__reason_code:
+                case 0:
+                    print("Success")
+                case 16:
+                    print("No matching subscribers")
+                case 128:
+                    print("Unspecified error")
+                case 131:
+                    print("Implementation specific error")
+                case 135:
+                    print("Not authorized")
+                case 144:
+                    print("Topic Name invalid")
+                case 145:
+                    print("Packet identifier in use")
+                case 151:
+                    print("Quota exceeded")
+                case 153:
+                    print("Payload format invalid")
 
-        i = i + 1
-        if self.__property_length != 0:
-            maximum = len(packet)
-            while i < maximum:
-                code = packet[i]
-                match code:
-                    case 31:  # reason string
-                        i = i + 1
-                        if self.__reason_string is None:  # ma asigur ca nu e introdus de 2 ori
-                            length = packet[i:i + 2]
-                            i = i + 2
-                            self.__reason_string = str(packet[i:i + length])
-                            i = i + length
-                        else:
-                            return "Malformed packet"
-                    case 38:  # proprietatiile utilizatorilor
-                        i = i + 1
-                        if self.__user_property is None:  # ma asigur ca nu e introdus de 2 ori
-                            length = packet[i:i + 2]
-                            i = i + 2
-                            user_property1 = str(packet[i:i + length])
-                            i = i + length
-                            length = packet[i:i + 2]
-                            i = i + 2
-                            user_property2 = str(packet[i:i + length])
-                            i = i + length
-                            self.__user_property = (user_property1, user_property2)
-                    case _:
-                        return "Malformed packet -> wrong property identifier"
+        if i < lg:
+            i = i + 1
+            j = i
+            while packet[i] & 0b10000000:  # determin lungimea antetului variabil
+                i = i + 1
+            self.__property_length, nr_bytes = FixedHeader.decode_variable_byte_integer(packet[j:i + 1])
+            lg -= nr_bytes
+            if self.__property_length != len(packet) - i - 1:
+                return "Malformed packet -> property length"
 
+        if i < lg:
+            i = i + 1
+            if self.__property_length != 0:
+                maximum = len(packet)
+                while i < maximum:
+                    code = packet[i]
+                    match code:
+                        case 31:  # reason string
+                            i = i + 1
+                            if self.__reason_string is None:  # ma asigur ca nu e introdus de 2 ori
+                                length = packet[i:i + 2]
+                                i = i + 2
+                                self.__reason_string = str(packet[i:i + length])
+                                i = i + length
+                            else:
+                                return "Malformed packet"
+                        case 38:  # proprietatiile utilizatorilor
+                            i = i + 1
+                            if self.__user_property is None:  # ma asigur ca nu e introdus de 2 ori
+                                length = packet[i:i + 2]
+                                i = i + 2
+                                user_property1 = str(packet[i:i + length])
+                                i = i + length
+                                length = packet[i:i + 2]
+                                i = i + 2
+                                user_property2 = str(packet[i:i + length])
+                                i = i + length
+                                self.__user_property = (user_property1, user_property2)
+                        case _:
+                            return "Malformed packet -> wrong property identifier"
         return "SUCCESS"
 
     # Setters and Getters for each None-initialized attribute
