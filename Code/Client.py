@@ -269,6 +269,8 @@ class Client:
                             try:
                                 message = self.__receive_queue.get(
                                     timeout=1)  # Așteaptă până la 1 secundă pentru a primi un mesaj
+                                if message is None:
+                                    continue
                                 self.__last_topic_filter = message[0]
                                 self.__last_packet_identifier = message[1]
                                 break
@@ -318,8 +320,9 @@ class Client:
                             print("Malformed DISCONNECT")
                             self.queue.put(("Client", "Malformed DISCONNECT"))
                         pass
-        except BaseException:
+        except BaseException as e:
             print("Eroare de la primirea pachetelor")
+            print(e)
             self.queue.put(("Interfata", "Terminate"))
             self.queue.put(("Client", "Terminate"))
 
