@@ -231,9 +231,11 @@ class Client:
                         self.__packet.set_topic_name(self.__last_topic_filter[0])
                         self.__packet.set_message(self.__topic_message)
                         is_correct = self.__packet.decode(data)
-                        if is_correct != "SUCCES":
+                        if is_correct != "SUCCESS":
                             print("Malformed PUBLISH")
                             self.queue.put(("Client", "Malformed PUBLISH"))
+                        print(f"topic: {self.__packet.get_topic_name()}")
+                        print(f"message: {self.__packet.get_message()}")
                         pass
                     case 4:
                         # PUBACK

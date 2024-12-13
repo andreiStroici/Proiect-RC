@@ -162,15 +162,10 @@ class PUBLISH(Packet, ABC):
         if self.length != len(packet) - 1 - i:
             return "Malformed packet -> wrong length"
 
-        topic_name_lg = packet[i:i+2]
-        i = i + 2
-        self.__topic_name = packet[i:i+topic_name_lg]
-
-        i = i + topic_name_lg
-        self.__packet_identifier = packet[i:i+2]
-        number = int(packet[i]) * 256 + int(packet[i + 1])
-        if number != self.__packet_identifier:
-            return "Malformed packet -> packet_identifier"
+        # self.__packet_identifier = packet[i:i+2]
+        # number = int(packet[i]) * 256 + int(packet[i + 1])
+        # if number != self.__packet_identifier:
+        #     return "Malformed packet -> packet_identifier"
 
         i = i + 1
         j = i
@@ -178,12 +173,18 @@ class PUBLISH(Packet, ABC):
             i = i + 1
 
         self.__property_length, nr_bytes = FixedHeader.decode_variable_byte_integer(packet[j:i+1])
-        if self.__property_length != len(packet) - i - 1:
+        if self.__property_length > len(packet) - i - 1:
             return "Malformed packet -> property length"
 
+        topic_name_lg = int.from_bytes(packet[i:i + 2], byteorder='big')
+        i = i + 2
+        self.__topic_name = packet[i:i + topic_name_lg].decode('latin')
+
+        i = i + topic_name_lg
+
         i = i + 1
+        maximum = len(packet)
         if self.__property_length != 0:
-            maximum = len(packet)
             while i < maximum:
                 code = packet[i]
                 match code:
@@ -265,8 +266,10 @@ class PUBLISH(Packet, ABC):
                             return "Malformed packet"
                     case _:
                         i = i + 1
-                        self.__message = packet[i:maximum - 1]
-                        i = maximum - 1
+                        self.__message = packet[i:maximum].decode('latin')
+                        i = maximum
+        if self.__message is None and i < len(packet):
+            self.__message = packet[i:maximum].decode('latin')
         return "SUCCESS"
 
     # Getters and Setters for all attributes
