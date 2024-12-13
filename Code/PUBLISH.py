@@ -63,7 +63,7 @@ class PUBLISH(Packet, ABC):
         return lg
 
     def variable_header_length(self):
-        lg = 1
+        lg = 0
         if self.__topic_name is not None:
             lg += 2 + len(self.__topic_name)
         if self.__packet_identifier is not None:
@@ -87,7 +87,7 @@ class PUBLISH(Packet, ABC):
 
         # adaug lungimea mesajului (payload)
         if self.__message is not None:
-            lg += 2 + len(self.__message)
+            lg += len(self.__message)
 
         self.length = FixedHeader.encode_variable_byte_integer(lg)
         match self.__QoS:
@@ -145,7 +145,7 @@ class PUBLISH(Packet, ABC):
             ret += self.__content_type
 
         if self.__message is not None:
-            ret += len(self.__message).to_bytes(2, byteorder='big').decode('latin')
+            # ret += len(self.__message).to_bytes(2, byteorder='big').decode('latin')
             ret += self.__message
 
         return ret
