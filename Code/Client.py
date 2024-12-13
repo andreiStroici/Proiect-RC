@@ -14,7 +14,6 @@ from getmac import get_mac_address
 class Client:
     def __init__(self, broker_ip, broker_port, queue: multiprocessing.Queue):
         """Inițializează un obiect MQTTClient cu IP-ul și portul brokerului.
-
         Atributele includ ID-ul clientului generat automat, numele de utilizator și parola,
         timpul de keep alive (inițial None), IP-ul și portul brokerului, ultimul pachet trimis,
         și calitatea serviciului (QoS), care este setată implicit la 0.
@@ -36,6 +35,7 @@ class Client:
         self.__last_packet_identifier = None
         # aici voi tine ultimele topic filters trimise prin subscribe
         self.__receive_queue = multiprocessing.Queue()
+        self.__topic_message = None
 
     @staticmethod
     def generate_client_id():
@@ -80,6 +80,20 @@ class Client:
                 self.s_conn.send(var)
                 pass
             case "PUBLISH":
+                self.__packet = PUBLISH()
+                self.__packet.set_QoS(self.__QoS)
+                self.__packet.set_topic_name(self.__last_topic_filter[0])
+                if self.__QoS > 0:
+                    last_packet_id = random.randint(0, 65636)
+                    self.__last_packet_identifier = last_packet_id
+                    self.__packet.set_packet_identifier(self.__last_packet_identifier)
+                self.__packet.set_message(self.__topic_message)
+                self.__receive_queue.put(self.__last_packet_identifier)
+                encoded_packet = self.__packet.encode()
+                var = bytearray()
+                for byte in encoded_packet:
+                    var.extend(ord(byte).to_bytes(1, "big"))
+                self.s_conn.send(var)
                 pass
             case "PUBACK":
                 pass
@@ -328,6 +342,17 @@ class Client:
                             if message[1] is not None:
                                 self.__last_topic_filter = message[1].split(', ')
                             match message[0]:
+                                case "Publish":
+                                    self.__topic_message = message[2]
+                                    match message[3]:
+                                        case "At least once":
+                                            self.__QoS = 1
+                                        case "Exactly once":
+                                            self.__QoS = 2
+                                        case "At most once":
+                                            self.__QoS = 0
+                                    self.send_message("PUBLISH")
+                                    print("SEND PUBLISH")
                                 case "Subscribe": # ramane sa modificam cu tipul de QoS
                                     match message[3]:
                                         case "At least once":
