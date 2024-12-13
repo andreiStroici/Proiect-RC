@@ -291,6 +291,8 @@ class Client:
                             try:
                                 message = self.__receive_queue.get(
                                     timeout=1)  # Așteaptă până la 1 secundă pentru a primi un mesaj
+                                if message is None:
+                                    continue
                                 self.__last_topic_filter = message[0]
                                 self.__last_packet_identifier = message[1]
                                 break
