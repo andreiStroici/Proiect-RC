@@ -226,6 +226,14 @@ class Client:
                         pass
                     case 3:
                         # PUBLISH
+                        self.__packet = PUBLISH()
+                        self.__packet.set_QoS(self.__QoS)
+                        self.__packet.set_topic_name(self.__last_topic_filter[0])
+                        self.__packet.set_message(self.__topic_message)
+                        is_correct = self.__packet.decode(data)
+                        if is_correct != "SUCCES":
+                            print("Malformed PUBLISH")
+                            self.queue.put(("Client", "Malformed PUBLISH"))
                         pass
                     case 4:
                         # PUBACK

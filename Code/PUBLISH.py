@@ -86,8 +86,8 @@ class PUBLISH(Packet, ABC):
         lg = self.variable_header_length()
 
         # adaug lungimea mesajului (payload)
-        # if self.__message is not None:
-        #     lg += 2 + len(self.__message)
+        if self.__message is not None:
+            lg += 2 + len(self.__message)
 
         self.length = FixedHeader.encode_variable_byte_integer(lg)
         match self.__QoS:
@@ -145,6 +145,7 @@ class PUBLISH(Packet, ABC):
             ret += self.__content_type
 
         if self.__message is not None:
+            ret += len(self.__message).to_bytes(2, byteorder='big').decode('latin')
             ret += self.__message
 
         return ret
