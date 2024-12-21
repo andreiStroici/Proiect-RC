@@ -65,7 +65,7 @@ class PUBLISH(Packet, ABC):
     def variable_header_length(self):
         lg = 0
         if self.__topic_name is not None:
-            lg += 2 + len(self.__topic_name)
+            lg += 2 + len(self.__topic_name.encode('utf-8'))
         if self.__packet_identifier is not None:
             lg += 2 # ocupa 2 octeti
 
@@ -100,7 +100,7 @@ class PUBLISH(Packet, ABC):
         ret += self.length.decode()
 
         if self.__topic_name is not None:
-            ret += len(self.__topic_name).to_bytes(2, 'big').decode('latin')
+            ret += len(self.__topic_name.encode('utf-8')).to_bytes(2, 'big').decode('latin')
             ret += self.__topic_name
 
         if self.__packet_identifier is not None:

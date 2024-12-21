@@ -88,14 +88,22 @@ class Client:
                     self.__last_packet_identifier = last_packet_id
                     self.__packet.set_packet_identifier(self.__last_packet_identifier)
                 self.__packet.set_message(self.__topic_message)
-                self.__receive_queue.put(self.__last_packet_identifier)
                 encoded_packet = self.__packet.encode()
                 var = bytearray()
                 for byte in encoded_packet:
                     var.extend(ord(byte).to_bytes(1, "big"))
+                print(var)
                 self.s_conn.send(var)
                 pass
             case "PUBACK":
+                self.__packet = PUBACK()
+                self.__packet.set_packet_identifier(self.__last_packet_identifier)
+                encoded_packet = self.__packet.encode()
+                print(encoded_packet)
+                var = bytearray()
+                for byte in encoded_packet:
+                    var.extend(ord(byte).to_bytes(1, 'big'))
+                self.s_conn.send(var)
                 pass
             case "PUBREC":
                 pass
@@ -111,6 +119,7 @@ class Client:
                 last_packet_id = random.randint(0, 65636)
                 self.__last_packet_identifier = last_packet_id
                 self.__packet.set_packet_identifier(self.__last_packet_identifier)
+                print("Subscribe put: ", self.__last_topic_filter, " ", self.__last_packet_identifier)
                 self.__receive_queue.put((self.__last_topic_filter, self.__last_packet_identifier))
                 encoded_packet = self.__packet.encode()
                 var = bytearray()
@@ -229,11 +238,15 @@ class Client:
                         self.__packet = PUBLISH()
                         self.__packet.set_QoS(self.__QoS)
                         self.__packet.set_topic_name(self.__last_topic_filter[0])
+                        self.__packet.set_packet_identifier(self.__last_packet_identifier)
                         self.__packet.set_message(self.__topic_message)
                         is_correct = self.__packet.decode(data)
                         if is_correct != "SUCCESS":
                             print("Malformed PUBLISH")
                             self.queue.put(("Client", "Malformed PUBLISH"))
+                        else:
+                            print()
+                        print(f"QoS: {self.__packet.get_QoS()}")
                         print(f"topic: {self.__packet.get_topic_name()}")
                         print(f"message: {self.__packet.get_message()}")
                         pass
@@ -368,6 +381,11 @@ class Client:
                                             self.__QoS = 0
                                     self.send_message("PUBLISH")
                                     print("SEND PUBLISH")
+                                case "Puback":
+                                    self.__last_packet_identifier = message[1]
+                                    self.__QoS = message[2]
+                                    self.send_message("PUBACK")
+                                    print("SEND PUBACK")
                                 case "Subscribe": # ramane sa modificam cu tipul de QoS
                                     match message[3]:
                                         case "At least once":
