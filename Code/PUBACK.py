@@ -9,7 +9,7 @@ class PUBACK(Packet, ABC):
         self.type = 0x40
         self.length = None
         self.__packet_identifier = None
-        self.__reason_code = None
+        self.__reason_code = 0
         self.__property_length = None
         self.__reason_string_id = 31
         self.__reason_string = None
@@ -26,17 +26,27 @@ class PUBACK(Packet, ABC):
         return lg
 
     def variable_header_length(self) -> int:
-        lg = self.variable_header_property_length()
-        if lg < 256:
-            lg = lg + 1
-        elif lg < 65536:
-            lg = lg + 2
-        elif lg < 16777216:
-            lg = lg + 3
-        else:
-            lg = lg + 4
-        lg = lg + 2  # packet identifier
-        lg = lg + 1  # reason code
+        # lg = self.variable_header_property_length()
+        # if lg < 256:
+        #     lg = lg + 1
+        # elif lg < 65536:
+        #     lg = lg + 2
+        # elif lg < 16777216:
+        #     lg = lg + 3
+        # else:
+        #     lg = lg + 4
+        # lg = lg + 2  # packet identifier
+        # lg = lg + 1  # reason code
+        lg = 0
+
+        if self.__packet_identifier is not None:
+            lg += 2
+
+        lg += 1 # reason code
+
+        property_length = self.variable_header_property_length()
+        lg += len(FixedHeader.encode_variable_byte_integer(property_length))
+        lg += property_length
         return lg
 
     def encode(self) -> str:
@@ -44,7 +54,7 @@ class PUBACK(Packet, ABC):
         result = result + self.type.to_bytes(1, byteorder='big').decode('latin')
         result = result + FixedHeader.encode_variable_byte_integer(self.variable_header_length()).decode('latin')
         result = result + self.__packet_identifier.to_bytes(2, byteorder='big').decode('latin')
-        result = result + self.__reason_code.to_bytes(2, byteorder='big').decode('latin')
+        result = result + self.__reason_code.to_bytes(1, byteorder='big').decode('latin') # e pe un singur byte
         self.__property_length = self.variable_header_property_length()
         result = (result +
                   FixedHeader.encode_variable_byte_integer(self.variable_header_property_length()).decode('latin'))
@@ -75,8 +85,8 @@ class PUBACK(Packet, ABC):
 
         i = i + 1
         self.__packet_identifier = int(packet[i]) * 256 + int(packet[i + 1])
-        if self.__packet_identifier != self.__last_packet_identifier:
-            return "Malformed packet -> packet identifier"
+        # if self.__packet_identifier != self.__last_packet_identifier:
+        #     return "Malformed packet -> packet identifier"
 
         if i < lg:
             i = i + 1

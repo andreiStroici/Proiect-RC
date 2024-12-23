@@ -154,6 +154,8 @@ class PUBLISH(Packet, ABC):
         if int(self.type) & 0xF0 != int(packet[0]) & 0xF0:
             return "Malformed packet -> wrong type"
 
+        self.__QoS = (int(packet[0]) & 0x06) >> 1 # pentru a extrage tipul de QoS al pachetului
+
         i = 1
         while packet[i] & 0b10000000: # determin lungimea pachetului
             i = i + 1
@@ -161,11 +163,6 @@ class PUBLISH(Packet, ABC):
         self.length, nr_bytes = FixedHeader.decode_variable_byte_integer(packet[1:i+1])
         if self.length != len(packet) - 1 - i:
             return "Malformed packet -> wrong length"
-
-        # self.__packet_identifier = packet[i:i+2]
-        # number = int(packet[i]) * 256 + int(packet[i + 1])
-        # if number != self.__packet_identifier:
-        #     return "Malformed packet -> packet_identifier"
 
         i = i + 1
         j = i
@@ -181,6 +178,9 @@ class PUBLISH(Packet, ABC):
         self.__topic_name = packet[i:i + topic_name_lg].decode('latin')
 
         i = i + topic_name_lg
+
+        self.__packet_identifier = int.from_bytes(packet[i:i+2], byteorder='big')
+        i = i + 2
 
         i = i + 1
         maximum = len(packet)
