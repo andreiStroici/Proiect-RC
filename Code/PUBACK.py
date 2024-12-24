@@ -81,12 +81,12 @@ class PUBACK(Packet, ABC):
         self.length, nr_bytes = FixedHeader.decode_variable_byte_integer(packet[1:i + 1])
         lg -= (1 + nr_bytes)
         if self.length != len(packet) - 1 - i:
-            return "Malformed packer -> wrong length"
+            return "Malformed packet -> wrong length"
 
         i = i + 1
         self.__packet_identifier = int(packet[i]) * 256 + int(packet[i + 1])
-        # if self.__packet_identifier != self.__last_packet_identifier:
-        #     return "Malformed packet -> packet identifier"
+        if self.__packet_identifier != self.__last_packet_identifier:
+            return "Malformed packet -> packet identifier"
 
         if i < lg:
             i = i + 1

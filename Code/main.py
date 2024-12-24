@@ -18,14 +18,9 @@ def main():
 
     connect_interface(queue)
     status, (username, password) = queue.get()
-    print(status)
     if status == "Abort":
         print("The app is closing.")
         return 0
-
-    print("Sunt in main acum: ")
-    print("Username: ", username)
-    print("Password: ", password)
 
     client = Client("127.0.0.1", 1883, queue)
     client.set_username(username)

@@ -87,6 +87,7 @@ class Client:
                     last_packet_id = random.randint(0, 65636)
                     self.__last_packet_identifier = last_packet_id
                     self.__packet.set_packet_identifier(self.__last_packet_identifier)
+                    self.__receive_queue.put(self.__last_packet_identifier)
                 self.__packet.set_message(self.__topic_message)
                 encoded_packet = self.__packet.encode()
                 var = bytearray()
@@ -106,6 +107,15 @@ class Client:
             case "PUBREC":
                 pass
             case "PUBREL":
+                self.__packet = PUBREL()
+                self.__packet.set_packet_identifier(self.__last_packet_identifier)
+                self.__receive_queue.put(self.__last_packet_identifier)
+                self.__packet.set_reason_code(0)
+                encoded_packet = self.__packet.encode()
+                var = bytearray()
+                for byte in encoded_packet:
+                    var.extend(ord(byte).to_bytes(1, 'big'))
+                self.s_conn.send(var)
                 pass
             case "PUBCOMP":
                 pass
@@ -237,7 +247,7 @@ class Client:
                         self.__packet.set_message(self.__topic_message)
                         is_correct = self.__packet.decode(data)
                         if is_correct != "SUCCESS":
-                            print("Malformed PUBLISH")
+                            print(f"Malformed PUBLISH {is_correct}")
                             self.queue.put(("Client", "Malformed PUBLISH"))
                         else:
                             if self.__packet.get_QoS() == 1:
@@ -249,14 +259,45 @@ class Client:
                         pass
                     case 4:
                         # PUBACK
+                        while True:
+                            try:
+                                message = self.__receive_queue.get(
+                                    timeout=1)  # Așteaptă până la 1 secundă pentru a primi un mesaj
+                                if message is None:
+                                    continue
+                                self.__last_packet_identifier = message
+                                break
+                            except queue.Empty:
+                                # Tratează cazurile în care coada este goală după timeout
+                                continue
                         self.__packet = PUBACK()
                         self.__packet.set_last_packet_identifier(self.__last_packet_identifier)
                         is_correct = self.__packet.decode(data)
-                        if "Malformed" in is_correct:
-                            print(is_correct)
+                        if is_correct != "SUCCESS":
+                            print(f"PUBACK {is_correct}")
+                            self.queue.put(("Client", "Malformed PUBACK"))
                         pass
                     case 5:
                         # PUBREC
+                        while True:
+                            try:
+                                message = self.__receive_queue.get(
+                                    timeout=1)  # Așteaptă până la 1 secundă pentru a primi un mesaj
+                                if message is None:
+                                    continue
+                                self.__last_packet_identifier = message
+                                break
+                            except queue.Empty:
+                                # Tratează cazurile în care coada este goală după timeout
+                                continue
+                        self.__packet = PUBREC()
+                        self.__packet.set_last_packet_identifier(self.__last_packet_identifier)
+                        is_correct = self.__packet.decode(data)
+                        if "Malformed" in is_correct:
+                            print(f"PUBREC {is_correct}")
+                            self.queue.put(("Client", "Malformed PUBREC"))
+                        else:
+                            self.queue.put(("Client", ("Pubrel", str(self.__last_packet_identifier))))
                         pass
                     case 6:
                         # PUBREL
@@ -306,7 +347,8 @@ class Client:
                         self.__packet.set_topic_filters(self.__last_topic_filter)
                         is_correct = self.__packet.decode(data)
                         if is_correct != "SUCCESS":
-                            print(f"SUBACK: {is_correct}")
+                            print(f"UNSUBACK: {is_correct}")
+                            self.queue.put(("Client", "Malformed UNSUBACK"))
                         pass
                     case 13:
                         # PINGRESP
@@ -369,10 +411,14 @@ class Client:
                                     self.send_message("PUBLISH")
                                     print("SEND PUBLISH")
                                 case "Puback":
-                                    self.__last_packet_identifier =int(message[1])
+                                    self.__last_packet_identifier = int(message[1])
                                     self.__QoS = int(message[2])
                                     self.send_message("PUBACK")
                                     print("SEND PUBACK")
+                                case "Pubrel":
+                                    self.__last_packet_identifier = int(message[1])
+                                    self.send_message("PUBREL")
+                                    print("SEND PUBREL")
                                 case "Subscribe": # ramane sa modificam cu tipul de QoS
                                     match message[3]:
                                         case "At least once":
