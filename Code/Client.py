@@ -105,6 +105,15 @@ class Client:
                 self.s_conn.send(var)
                 pass
             case "PUBREC":
+                self.__packet = PUBREC()
+                self.__packet.set_packet_identifier(self.__last_packet_identifier)
+                self.__receive_queue.put(self.__last_packet_identifier)
+                self.__packet.set_reason_code(0)
+                encoded_packet = self.__packet.encode()
+                var = bytearray()
+                for byte in encoded_packet:
+                    var.extend(ord(byte).to_bytes(1, 'big'))
+                self.s_conn.send(var)
                 pass
             case "PUBREL":
                 self.__packet = PUBREL()
@@ -118,6 +127,14 @@ class Client:
                 self.s_conn.send(var)
                 pass
             case "PUBCOMP":
+                self.__packet = PUBCOMP()
+                self.__packet.set_packet_identifier(self.__last_packet_identifier)
+                self.__packet.set_reason_code(0)
+                encoded_packet = self.__packet.encode()
+                var = bytearray()
+                for byte in encoded_packet:
+                    var.extend(ord(byte).to_bytes(1, 'big'))
+                self.s_conn.send(var)
                 pass
             case "SUBSCRIBE":
                 self.__packet = SUBSCRIBE()
@@ -252,6 +269,8 @@ class Client:
                         else:
                             if self.__packet.get_QoS() == 1:
                                 self.queue.put(("Client", ("Puback", str(self.__packet.get_packet_identifier()), str(self.__packet.get_QoS()))))
+                            elif self.__packet.get_QoS() == 2:
+                                self.queue.put(("Client", ("Pubrec", str(self.__packet.get_packet_identifier()), str(self.__packet.get_QoS()))))
                         # print(f"QoS: {self.__packet.get_QoS()}")
                         # print(f"Packet identifier: {self.__packet.get_packet_identifier()}")
                         # print(f"topic: {self.__packet.get_topic_name()}")
@@ -301,9 +320,47 @@ class Client:
                         pass
                     case 6:
                         # PUBREL
+                        while True:
+                            try:
+                                message = self.__receive_queue.get(
+                                    timeout=1)  # Așteaptă până la 1 secundă pentru a primi un mesaj
+                                if message is None:
+                                    continue
+                                self.__last_packet_identifier = message
+                                break
+                            except queue.Empty:
+                                # Tratează cazurile în care coada este goală după timeout
+                                continue
+                        self.__packet = PUBREL()
+                        self.__packet.set_last_packet_identifier(self.__last_packet_identifier)
+                        is_correct = self.__packet.decode(data)
+                        if "Malformed" in is_correct:
+                            print(f"PUBREC {is_correct}")
+                            self.queue.put(("Client", "Malformed PUBREC"))
+                        else:
+                            self.queue.put(("Client", ("Pubcomp", str(self.__last_packet_identifier))))
                         pass
                     case 7:
                         # PUBCOMP
+                        while True:
+                            try:
+                                message = self.__receive_queue.get(
+                                    timeout=1)  # Așteaptă până la 1 secundă pentru a primi un mesaj
+                                if message is None:
+                                    continue
+                                self.__last_packet_identifier = message
+                                break
+                            except queue.Empty:
+                                # Tratează cazurile în care coada este goală după timeout
+                                continue
+                        self.__packet = PUBCOMP()
+                        self.__packet.set_last_packet_identifier(self.__last_packet_identifier)
+                        is_correct = self.__packet.decode(data)
+                        if "Malformed" in is_correct:
+                            print(f"PUBCOMP {is_correct}")
+                            self.queue.put(("Client", "Malformed PUBCOMP"))
+                        else:
+                            print("PUBLISH with QoS2 successfully sent.")
                         pass
                     case 9:
                         # SUBACK
@@ -415,10 +472,19 @@ class Client:
                                     self.__QoS = int(message[2])
                                     self.send_message("PUBACK")
                                     print("SEND PUBACK")
+                                case "Pubrec":
+                                    self.__last_packet_identifier = int(message[1])
+                                    self.__QoS = int(message[2])
+                                    self.send_message("PUBREC")
+                                    print("SEND PUBREC")
                                 case "Pubrel":
                                     self.__last_packet_identifier = int(message[1])
                                     self.send_message("PUBREL")
                                     print("SEND PUBREL")
+                                case "Pubcomp":
+                                    self.__last_packet_identifier = int(message[1])
+                                    self.send_message("PUBCOMP")
+                                    print("SEND PUBCOMP")
                                 case "Subscribe": # ramane sa modificam cu tipul de QoS
                                     match message[3]:
                                         case "At least once":

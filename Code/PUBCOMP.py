@@ -176,3 +176,6 @@ class PUBCOMP(Packet, ABC):
 
     def get_user_property(self):
         return self.__user_property
+
+    def set_last_packet_identifier(self, last_packet_identifier):
+        self.__last_packet_identifier = last_packet_identifier
