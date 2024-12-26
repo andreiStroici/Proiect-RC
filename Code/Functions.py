@@ -12,7 +12,7 @@ def define_displayTxt(r, width, height):
     text_widget.configure(bg="#f0f0f0", fg="#000000", font=('Arial', 12))
 
     # Add some sample text
-    # text_widget.insert(t_tk.END, text_var.get()) ????
+    text_widget.insert(t_tk.END, "Hello world")
     text_widget.config(state='disabled')
 
     return text_widget

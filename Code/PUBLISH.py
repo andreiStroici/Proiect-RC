@@ -179,8 +179,9 @@ class PUBLISH(Packet, ABC):
 
         i = i + topic_name_lg
 
-        self.__packet_identifier = int.from_bytes(packet[i:i+2], byteorder='big')
-        i = i + 2
+        if self.__QoS != 0:
+            self.__packet_identifier = int.from_bytes(packet[i:i+2], byteorder='big')
+            i = i + 2
 
         i = i + 1
         maximum = len(packet)

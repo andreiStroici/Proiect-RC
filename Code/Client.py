@@ -271,10 +271,11 @@ class Client:
                                 self.queue.put(("Client", ("Puback", str(self.__packet.get_packet_identifier()), str(self.__packet.get_QoS()))))
                             elif self.__packet.get_QoS() == 2:
                                 self.queue.put(("Client", ("Pubrec", str(self.__packet.get_packet_identifier()), str(self.__packet.get_QoS()))))
-                        # print(f"QoS: {self.__packet.get_QoS()}")
-                        # print(f"Packet identifier: {self.__packet.get_packet_identifier()}")
-                        # print(f"topic: {self.__packet.get_topic_name()}")
-                        # print(f"message: {self.__packet.get_message()}")
+                        print("RECEIVED PUBLISH: ")
+                        print(f"QoS: {self.__packet.get_QoS()}")
+                        print(f"Packet identifier: {self.__packet.get_packet_identifier()}")
+                        print(f"topic: {self.__packet.get_topic_name()}")
+                        print(f"message: {self.__packet.get_message()}")
                         pass
                     case 4:
                         # PUBACK
