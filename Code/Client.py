@@ -276,6 +276,7 @@ class Client:
                         print(f"Packet identifier: {self.__packet.get_packet_identifier()}")
                         print(f"topic: {self.__packet.get_topic_name()}")
                         print(f"message: {self.__packet.get_message()}")
+                        self.queue.put(("Interface", (self.__packet.get_topic_name(), self.__packet.get_message())))
                         pass
                     case 4:
                         # PUBACK

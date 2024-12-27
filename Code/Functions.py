@@ -2,7 +2,7 @@ from tkinter import *
 import tkinter as t_tk
 import time
 
-def define_displayTxt(r, width, height):
+def define_displayTxt(r, width, height, queue):
 
     # Create a Text widget
     text_widget = t_tk.Text(r, height=int(0.045*height), width=int(0.063*width))
@@ -11,9 +11,28 @@ def define_displayTxt(r, width, height):
     # Customize the Text widget appearance
     text_widget.configure(bg="#f0f0f0", fg="#000000", font=('Arial', 12))
 
-    # Add some sample text
-    text_widget.insert(t_tk.END, "Hello world")
-    text_widget.config(state='disabled')
+    def update_text():
+        while not queue.empty():
+            destination, message = queue.get()
+            if destination != "Interface":
+                queue.put((destination, message))
+            topic_name = message[0]
+            topic_text = message[1]
+            text_widget.config(state='normal')
+            text_widget.insert(t_tk.END, "Nume topic : " + topic_name + "\n" + topic_text + "\n\n")
+            text_widget.config(state='disabled')
+            text_widget.see(t_tk.END)
+        r.after(100, update_text)
+
+    def clear_text():
+        """Clear all content in the Text widget."""
+        text_widget.config(state='normal')  # Enable editing
+        text_widget.delete(1.0, t_tk.END)  # Delete all text
+        text_widget.config(state='disabled')  # Disable editing again
+
+    update_text()
+
+    r.after(5000, clear_text)
 
     return text_widget
 

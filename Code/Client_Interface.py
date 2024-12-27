@@ -52,7 +52,7 @@ class Client_Interface():
         send_combo.bind("<<ComboboxSelected>>", self.get_selected_action(send_combo))
 
         self.subscribe_label = f.define_label(self.root, "Subscriptions", 25, FALSE, 0.72, 0.05, CENTER)
-        self.subscribe_text = f.define_displayTxt(self.root, width, height)
+        self.subscribe_text = f.define_displayTxt(self.root, width, height, queue)
 
         done_btn = Button(self.root, text="Done", font=('Helvetica', 16, 'bold'),
                           command=lambda: self.get_entry_text(action_combo, send_combo))
