@@ -4,7 +4,6 @@ from Code.Client import Client
 from Client_Connect_Interface import *
 from Client_Interface import *
 
-
 def run_client_interface(queue):
     client = Client_Interface(queue)
     client.run()
@@ -14,6 +13,7 @@ def main():
     """Aceasta este functia main cu thread-ul prinicipal al aplicatiei
     Aici vom crea si thread-ul pentru client
     Ea nu are niciun raspuns"""
+
     queue = multiprocessing.Queue()
 
     connect_interface(queue)

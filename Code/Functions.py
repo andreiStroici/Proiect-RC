@@ -1,6 +1,7 @@
 from tkinter import *
 import tkinter as t_tk
 import time
+import psutil
 
 def define_displayTxt(r, width, height, queue):
 
@@ -19,7 +20,7 @@ def define_displayTxt(r, width, height, queue):
             topic_name = message[0]
             topic_text = message[1]
             text_widget.config(state='normal')
-            text_widget.insert(t_tk.END, "Nume topic : " + topic_name + "\n" + topic_text + "\n\n")
+            text_widget.insert(t_tk.END, topic_name + " : " + topic_text + "\n\n")
             text_widget.config(state='disabled')
             text_widget.see(t_tk.END)
         r.after(100, update_text)
@@ -35,6 +36,20 @@ def define_displayTxt(r, width, height, queue):
     r.after(5000, clear_text)
 
     return text_widget
+
+def get_measurements(option):
+    if option == 'CPU Temperature':
+        # Temperatura procesorului
+        cpu_temp = psutil.sensors_temperatures()['coretemp'][0].current
+        return str(cpu_temp)
+    elif option == 'CPU Load':
+        # Încărcarea procesorului
+        cpu_load = psutil.cpu_percent(interval=1)
+        return str(cpu_load)
+    elif option == 'Memory Usage':
+        # Încărcarea memoriei
+        mem_usage = psutil.virtual_memory().percent
+        return str(mem_usage)
 
 def define_label(r, text, size, boldON, x, y, anchor):
     if boldON == TRUE:

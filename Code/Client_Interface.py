@@ -2,6 +2,8 @@ import tkinter
 from tkinter import *
 from tkinter import ttk as t_tk
 import Functions as f
+from Code.Functions import get_measurements
+
 
 class Client_Interface():
     def __init__(self, queue):
@@ -32,7 +34,12 @@ class Client_Interface():
         f.define_label(self.root, "Content:", 15, FALSE, 0.02, 0.45, W)
 
         f.define_label(self.root, "Topic name:", 15, FALSE, 0.2, 0.5, CENTER)
-        self.topicN_entry = f.define_entry(self.root, FALSE, 0.2, 0.55)
+        # self.topicN_entry = f.define_entry(self.root, FALSE, 0.2, 0.55)
+        self.topicN_option = t_tk.Combobox(self.root, values=['CPU Temperature', 'CPU Load', 'Memory Usage'],
+                                           font=("Helvetica", 15),
+                                           state='readonly')
+        self.topicN_option.current(0)
+        self.topicN_option.place(relx=0.2, rely=0.55, anchor=CENTER)
 
         f.define_label(self.root, "Topic text:", 15, FALSE, 0.2, 0.60, CENTER)
         self.topicT_entry = f.define_entry(self.root, FALSE, 0.2, 0.65)
@@ -71,14 +78,14 @@ class Client_Interface():
     def get_entry_text(self, combobox, combobox2):
         # extragem numele topicului si textul la apasarea butonului "Done"
         action_option = combobox.get()
-        topicN_extract = self.topicN_entry.get()
+        topicN_extract = self.topicN_option.get()
         if action_option == "Publish":
-            topicT_extract = self.topicT_entry.get()
+            topicT_extract = get_measurements(topicN_extract)
         else:
             topicT_extract = ' '
         send_option = combobox2.get()
 
-        self.topicN_entry.delete(0, END)
+        self.topicN_option.delete(0, END)
         self.topicT_entry.delete(0, END)
 
         self.queue.put(("Main", (action_option, topicN_extract, topicT_extract, send_option)))
@@ -88,7 +95,7 @@ class Client_Interface():
         if option == "Subscribe" or option == "Unsubscribe":
             topicT_entry.config(state="disabled")
         if option == "Publish":
-            topicT_entry.config(state="normal")
+            topicT_entry.config(state="disabled") # sau renunțăm de tot la acest câmp
         self.root.after(500, self.task_client, combobox, topicT_entry)
 
     def update_label(self):
