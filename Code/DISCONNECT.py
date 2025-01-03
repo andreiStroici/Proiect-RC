@@ -8,9 +8,9 @@ class DISCONNECT(Packet, ABC):
     def __init__(self):
         """Se creaza obiectul care descrie pachetul DISCONNECT"""
         super().__init__()
-        self.type = 224 # 0xE0
+        self.type = 224  # 0xE0
         self.length = None
-        self.__reason_code = None # codul de identificare pentru disconnect
+        self.__reason_code = None  # codul de identificare pentru disconnect
         self.__property_length = None
         self.__session_expiring_interval_id = 17
         self.__session_expiring_interval = None
@@ -27,7 +27,7 @@ class DISCONNECT(Packet, ABC):
         # Elemente de proprietate
         if self.__session_expiring_interval is not None:
             lg += 1
-            lg += 4 # intervalul e pe 4 octeti
+            lg += 4  # intervalul e pe 4 octeti
         if self.__reason_string is not None:
             lg += 1
             lg += 2 + len(self.__reason_string)
@@ -46,7 +46,6 @@ class DISCONNECT(Packet, ABC):
         lg += len(FixedHeader.encode_variable_byte_integer(property_lg))
         lg += property_lg
         return lg
-
 
     def encode(self) -> str:
         """Vom codifica pachetul sub forma unui sir de caractrere pentru a-l
@@ -68,15 +67,15 @@ class DISCONNECT(Packet, ABC):
             ret += self.__session_expiring_interval.to_bytes(4, byteorder='big').decode('latin')
 
         if self.__reason_string is not None:
-            ret += self.__reason_string_id.to_bytes(1, byteorder ='big').decode('latin')
+            ret += self.__reason_string_id.to_bytes(1, byteorder='big').decode('latin')
             ret += len(self.__reason_string.encode('utf-8')).to_bytes(2, byteorder='big').decode('latin')
             ret += self.__reason_string
 
         if self.__user_property is not None:
-            ret += self.__user_property_id.to_bytes(1, byteorder= 'big').decode('latin')
+            ret += self.__user_property_id.to_bytes(1, byteorder='big').decode('latin')
             ret += len(self.__user_property[0].encode('utf-8')).to_bytes(2, byteorder='big').decode('latin')
             ret += self.__user_property[0]
-            ret += len(self.__user_property[1].encode('utf-8')).to_bytes(2, byteorder= 'big').decode('latin')
+            ret += len(self.__user_property[1].encode('utf-8')).to_bytes(2, byteorder='big').decode('latin')
             ret += self.__user_property[1]
 
         if self.__server_reference is not None:
@@ -91,10 +90,10 @@ class DISCONNECT(Packet, ABC):
             return "Malformed packet -> wrong type"
 
         i = 1
-        while packet[i] & 0b10000000: # determin lungimea pachetului
+        while packet[i] & 0b10000000:  # determin lungimea pachetului
             i = i + 1
 
-        self.length, nr_bytes = FixedHeader.decode_variable_byte_integer(packet[1:i+1])
+        self.length, nr_bytes = FixedHeader.decode_variable_byte_integer(packet[1:i + 1])
         if self.length != len(packet) - 1 - i:
             return "Malformed packet -> wrong length"
 
@@ -162,10 +161,10 @@ class DISCONNECT(Packet, ABC):
 
         i = i + 1
         j = i
-        while packet[i] & 0b10000000: # determin lungimea antetului variabil
+        while packet[i] & 0b10000000:  # determin lungimea antetului variabil
             i = i + 1
 
-        self.__property_length, nr_bytes = FixedHeader.decode_variable_byte_integer(packet[j:i+1])
+        self.__property_length, nr_bytes = FixedHeader.decode_variable_byte_integer(packet[j:i + 1])
         if self.__property_length != len(packet) - i - 1:
             return "Malformed packet -> property length"
 
@@ -175,49 +174,48 @@ class DISCONNECT(Packet, ABC):
             while i < maximum:
                 code = packet[i]
                 match code:
-                    case 17: # session expiry interval
+                    case 17:  # session expiry interval
                         i = i + 1
-                        if self.__session_expiring_interval is None: # ma asigur ca nu e introdus de doua ori
-                            length = packet[i:i+1]
+                        if self.__session_expiring_interval is None:  # ma asigur ca nu e introdus de doua ori
+                            length = packet[i:i + 1]
                             i = i + 1
-                            self.__session_expiring_interval = str(packet[i:i+length])
+                            self.__session_expiring_interval = str(packet[i:i + length])
                             i = i + length
                         else:
                             return "Malformed packet"
-                    case 31: # reason string
+                    case 31:  # reason string
                         i = i + 1
-                        if self.__reason_string is None: # ma asigur ca nu e introdus de 2 ori
-                            length = packet[i:i+2]
+                        if self.__reason_string is None:  # ma asigur ca nu e introdus de 2 ori
+                            length = packet[i:i + 2]
                             i = i + 2
-                            self.__reason_string = str(packet[i:i+length])
+                            self.__reason_string = str(packet[i:i + length])
                             i = i + length
                         else:
                             return "Malformed packet"
-                    case 38: # user property
+                    case 38:  # user property
                         i = i + 1
-                        if self.__user_property is None: # ma asigur ca nu e introdus de 2 ori
-                            length = packet[i:i+2]
+                        if self.__user_property is None:  # ma asigur ca nu e introdus de 2 ori
+                            length = packet[i:i + 2]
                             i = i + 2
-                            user_property1 = str(packet[i:i+length])
+                            user_property1 = str(packet[i:i + length])
                             i = i + length
-                            length = packet[i:i+2]
-                            user_property2 = str(packet[i:i+length])
+                            length = packet[i:i + 2]
+                            user_property2 = str(packet[i:i + length])
                             i = i + length
                             self.__user_property = (user_property1, user_property2)
                         else:
                             return "Malformed packet"
-                    case 28: # server reference
+                    case 28:  # server reference
                         i = i + 1
-                        if self.__server_reference is None: # ma asigur ca nu e introdus de 2 ori
-                            length = packet[i:i+2]
+                        if self.__server_reference is None:  # ma asigur ca nu e introdus de 2 ori
+                            length = packet[i:i + 2]
                             i = i + 2
-                            self.__server_reference = packet[i:i+length]
+                            self.__server_reference = packet[i:i + length]
                         else:
                             return "Malformed packet"
                     case _:
                         return "Malformed packet -> wrong property identifier"
         return "SUCCESS"
-
 
     def get_reason_code(self):
         return self.__reason_code
