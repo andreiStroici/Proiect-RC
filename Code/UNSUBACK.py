@@ -98,40 +98,25 @@ class UNSUBACK(Packet, ABC):
 
         return "SUCCESS"
 
-    # Getter și setter pentru `__packet_identifier`
+    # Getter pentru `__packet_identifier`
     def get_packet_identifier(self):
         return self.__packet_identifier
 
-    def set_packet_identifier(self, value):
-        self.__packet_identifier = value
-
-    # Getter și setter pentru `__property_length`
+    # Getter pentru `__property_length`
     def get_property_length(self):
         return self.__property_length
 
-    def set_property_length(self, value):
-        self.__property_length = value
-
-    # Getter și setter pentru `__reason_string`
+    # Getter pentru `__reason_string`
     def get_reason_string(self):
         return self.__reason_string
 
-    def set_reason_string(self, value):
-        self.__reason_string = value
-
-    # Getter și setter pentru `__user_property`
+    # Getter pentru `__user_property`
     def get_user_property(self):
         return self.__user_property
 
-    def set_user_property(self, value):
-        self.__user_property = value
-
-    # Getter și setter pentru `__reasons_code`
+    # Getter pentru `__reasons_code`
     def get_reasons_code(self):
         return self.__reasons_code
-
-    def set_reasons_code(self, value):
-        self.__reasons_code = value
 
     def set_topic_filters(self, topic: list):
         self.__topic_filters = topic

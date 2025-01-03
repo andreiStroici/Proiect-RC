@@ -33,7 +33,7 @@ finally:
 7. EXCEPTII: a. Tratare exceptie cand programul este inchis din compilator si nu din interfata (BaseException)
 8. Schimbare (schema) interfata pentru Subscribe (putem alege QoS) -> $$\color{green}Denisa$$ ✅
 9. Importarea codului din alte fisiere ✅
-10. Modificare diagrama clase -> $$\color{grey}Andrei$$
+10. Modificare diagrama clase -> $$\color{grey}Andrei$$ ✅
 11. Sectiunea de improvement 
 <!--- 
 $$\color{grey}Andrei$$

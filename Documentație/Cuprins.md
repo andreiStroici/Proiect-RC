@@ -56,4 +56,6 @@
 22. [Interfața cu utilizatorul](Capitolul%203%20Proiectarea%20aplicației/22.%20Interfața%20cu%20utilizatorul.md)
 ---
 ## Capitolul 4 Anexe
-01. [Bibiliografie](Capitolul%203%20Anexe/01.%20Bibliografie.md)
+01. [Probleme întâmpinate](Capitolul%204%20Anexe/01.%20Probleme%20întâmpinate.md)
+02. [Îmbunătățiri](Capitolul%204%20Anexe/02.%20Îmbunătățiri.md)
+03. [Bibiliografie](Capitolul%204%20Anexe/03.%20Bibliografie.md)
