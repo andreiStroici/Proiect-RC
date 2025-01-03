@@ -35,7 +35,7 @@ class Client_Interface():
 
         f.define_label(self.root, "Topic name:", 15, FALSE, 0.2, 0.5, CENTER)
         # self.topicN_entry = f.define_entry(self.root, FALSE, 0.2, 0.55)
-        self.topicN_option = t_tk.Combobox(self.root, values=['CPU Temperature', 'CPU Load', 'Memory Usage'],
+        self.topicN_option = t_tk.Combobox(self.root, values=['CPU Load', 'Memory Usage', 'GPU Temperature', 'GPU Load'],
                                            font=("Helvetica", 15),
                                            state='readonly')
         self.topicN_option.current(0)

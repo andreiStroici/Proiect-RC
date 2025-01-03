@@ -2,6 +2,7 @@ from tkinter import *
 import tkinter as t_tk
 import time
 import psutil
+import GPUtil
 
 def define_displayTxt(r, width, height, queue):
 
@@ -38,11 +39,7 @@ def define_displayTxt(r, width, height, queue):
     return text_widget
 
 def get_measurements(option):
-    if option == 'CPU Temperature':
-        # Temperatura procesorului
-        cpu_temp = psutil.sensors_temperatures()['coretemp'][0].current
-        return str(cpu_temp)
-    elif option == 'CPU Load':
+    if option == 'CPU Load':
         # Încărcarea procesorului
         cpu_load = psutil.cpu_percent(interval=1)
         return str(cpu_load)
@@ -50,6 +47,20 @@ def get_measurements(option):
         # Încărcarea memoriei
         mem_usage = psutil.virtual_memory().percent
         return str(mem_usage)
+    elif option == 'GPU Temperature':
+        gpus = GPUtil.getGPUs()
+        if len(gpus) > 0:
+            gpus_temperature = gpus[0].temperature
+            return str(gpus_temperature)
+        else:
+            return "No dedicated GPU found."
+    elif option == 'GPU Load':
+        gpus = GPUtil.getGPUs()
+        if len(gpus) > 0:
+            gpus_load = gpus[0].load
+            return str(gpus_load)
+        else:
+            return "No dedicated GPU found."
 
 def define_label(r, text, size, boldON, x, y, anchor):
     if boldON == TRUE:
