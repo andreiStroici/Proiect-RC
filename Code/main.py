@@ -22,7 +22,7 @@ def main():
         print("The app is closing.")
         return 0
 
-    client = Client("127.0.0.1", 1883, queue)
+    client = Client("192.168.59.121", 1883, queue)
     client.set_username(username)
     client.set_password(password)
     client_proc = Process(target=client.operation)

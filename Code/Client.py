@@ -212,49 +212,49 @@ class Client:
                             self.queue.put(("Client", "Malformed CONNACK"))
                         match self.__packet.get_reason_code():
                             case 0:
-                                print("Success")
+                                print("Connack: Success")
                             case 128:
-                                print("Unspecified error")
+                                print("Connack: Unspecified error")
                             case 129:
-                                print("Malformed Packet")
+                                print("Connack: Malformed Packet")
                             case 130:
-                                print("Protocol Error")
+                                print("Connack: Protocol Error")
                             case 131:
-                                print("Implementation specific error")
+                                print("Connack: Implementation specific error")
                             case 132:
-                                print("Unsupported Protocol Version")
+                                print("Connack: Unsupported Protocol Version")
                             case 133:
-                                print("Client Identifier not valid")
+                                print("Connack: Client Identifier not valid")
                             case 134:
-                                print("Bad User Name or Password")
+                                print("Connack: Bad User Name or Password")
                             case 135:
-                                print("Not authorized")
+                                print("Connack: Not authorized")
                             case 136:
-                                print("Server unavailable")
+                                print("Connack: Server unavailable")
                             case 137:
-                                print("Server busy")
+                                print("Connack: Server busy")
                             case 138:
-                                print("Banned")
+                                print("Connack: Banned")
                             case 140:
-                                print("Bad authentication method")
+                                print("Connack: Bad authentication method")
                             case 144:
-                                print("Topic Name invalid")
+                                print("Connack: Topic Name invalid")
                             case 149:
-                                print("Packet too large")
+                                print("Connack: Packet too large")
                             case 151:
-                                print("Quota exceeded")
+                                print("Connack: Quota exceeded")
                             case 153:
-                                print("Payload format invalid")
+                                print("Connack: Payload format invalid")
                             case 154:
-                                print("Retain not supported")
+                                print("Connack: Retain not supported")
                             case 155:
-                                print("QoS not supported")
+                                print("Connack: QoS not supported")
                             case 156:
-                                print("Use another server")
+                                print("Connack: Use another server")
                             case 157:
-                                print("Server moved")
+                                print("Connack: Server moved")
                             case 159:
-                                print("Connection rate exceeded")
+                                print("Connack: Connection rate exceeded")
                         pass
                     case 3:
                         # PUBLISH
@@ -293,10 +293,13 @@ class Client:
                                 continue
                         self.__packet = PUBACK()
                         self.__packet.set_last_packet_identifier(self.__last_packet_identifier)
-                        is_correct = self.__packet.decode(data)
+                        is_correct, message_reason_code = self.__packet.decode(data)
                         if is_correct != "SUCCESS":
                             print(f"PUBACK {is_correct}")
                             self.queue.put(("Client", "Malformed PUBACK"))
+                        else:
+                            if message_reason_code != 'Success':
+                                self.queue.put(("Interface", ('PUBACK', message_reason_code)))
                         pass
                     case 5:
                         # PUBREC
@@ -313,12 +316,15 @@ class Client:
                                 continue
                         self.__packet = PUBREC()
                         self.__packet.set_last_packet_identifier(self.__last_packet_identifier)
-                        is_correct = self.__packet.decode(data)
+                        is_correct, message_reason_code = self.__packet.decode(data)
                         if "Malformed" in is_correct:
                             print(f"PUBREC {is_correct}")
                             self.queue.put(("Client", "Malformed PUBREC"))
                         else:
-                            self.queue.put(("Client", ("Pubrel", str(self.__last_packet_identifier))))
+                            if message_reason_code != 'Success':
+                                self.queue.put(("Interface", ('PUBREC', message_reason_code)))
+                            else:
+                                self.queue.put(("Client", ("Pubrel", str(self.__last_packet_identifier))))
                         pass
                     case 6:
                         # PUBREL
@@ -335,12 +341,15 @@ class Client:
                                 continue
                         self.__packet = PUBREL()
                         self.__packet.set_last_packet_identifier(self.__last_packet_identifier)
-                        is_correct = self.__packet.decode(data)
+                        is_correct, message_reason_code = self.__packet.decode(data)
                         if "Malformed" in is_correct:
                             print(f"PUBREC {is_correct}")
                             self.queue.put(("Client", "Malformed PUBREC"))
                         else:
-                            self.queue.put(("Client", ("Pubcomp", str(self.__last_packet_identifier))))
+                            if message_reason_code != 'Success':
+                                self.queue.put(("Interface", ('PUBREL', message_reason_code)))
+                            else:
+                                self.queue.put(("Client", ("Pubcomp", str(self.__last_packet_identifier))))
                         pass
                     case 7:
                         # PUBCOMP
@@ -357,12 +366,14 @@ class Client:
                                 continue
                         self.__packet = PUBCOMP()
                         self.__packet.set_last_packet_identifier(self.__last_packet_identifier)
-                        is_correct = self.__packet.decode(data)
+                        is_correct, message_reason_code = self.__packet.decode(data)
                         if "Malformed" in is_correct:
                             print(f"PUBCOMP {is_correct}")
                             self.queue.put(("Client", "Malformed PUBCOMP"))
                         else:
-                            print("PUBLISH with QoS2 successfully sent.")
+                            if message_reason_code != 'Success':
+                                self.queue.put(("Interface", ('PUBCOMP', message_reason_code)))
+                            else: print("PUBLISH with QoS2 successfully sent.")
                         pass
                     case 9:
                         # SUBACK

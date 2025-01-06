@@ -70,7 +70,8 @@ class PUBACK(Packet, ABC):
             result = result + self.__user_property[1]
         return result
 
-    def decode(self, packet) -> str:
+    def decode(self, packet) -> (str, str):
+        message_reason_code = None
         if self.type != int(packet[0]):
             return "Malformed packet -> wrong type"
 
@@ -88,28 +89,42 @@ class PUBACK(Packet, ABC):
         if self.__packet_identifier != self.__last_packet_identifier:
             return "Malformed packet -> packet identifier"
 
+        if lg == 2:
+            print("Success")
+            message_reason_code = "Success"
+            return "SUCCESS", message_reason_code
+
         if i < lg:
-            i = i + 1
+            i = i + 2
             self.__reason_code = int(packet[i])
             match self.__reason_code:
                 case 0:
                     print("Success")
+                    message_reason_code = "Success"
                 case 16:
                     print("No matching subscribers")
+                    message_reason_code = "No matching subscribers"
                 case 128:
                     print("Unspecified error")
+                    message_reason_code = "Unspecified error"
                 case 131:
                     print("Implementation specific error")
+                    message_reason_code = "Implementation specific error"
                 case 135:
                     print("Not authorized")
+                    message_reason_code = "Not authorized"
                 case 144:
                     print("Topic Name invalid")
+                    message_reason_code = "Topic Name invalid"
                 case 145:
                     print("Packet identifier in use")
+                    message_reason_code = "Packet identifier in use"
                 case 151:
                     print("Quota exceeded")
+                    message_reason_code = "Quota exceeded"
                 case 153:
                     print("Payload format invalid")
+                    message_reason_code = "Payload format invalid"
 
         if i < lg:
             i = i + 1
@@ -151,7 +166,7 @@ class PUBACK(Packet, ABC):
                                 self.__user_property = (user_property1, user_property2)
                         case _:
                             return "Malformed packet -> wrong property identifier"
-        return "SUCCESS"
+        return "SUCCESS", message_reason_code
 
     # Setters and Getters for each None-initialized attribute
     def set_packet_identifier(self, packet_identifier):
