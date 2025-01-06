@@ -87,7 +87,7 @@ class DISCONNECT(Packet, ABC):
 
     def decode(self, packet) -> str:
         if self.type != int(packet[0]):
-            return "Malformed packet -> wrong type"
+            return "Disconnect: Malformed packet -> wrong type"
 
         i = 1
         while packet[i] & 0b10000000:  # determin lungimea pachetului
@@ -95,69 +95,69 @@ class DISCONNECT(Packet, ABC):
 
         self.length, nr_bytes = FixedHeader.decode_variable_byte_integer(packet[1:i + 1])
         if self.length != len(packet) - 1 - i:
-            return "Malformed packet -> wrong length"
+            return "Disconnect: Malformed packet -> wrong length"
 
         i = i + 1
         self.__reason_code = int(packet[i])
         match self.__reason_code:
             case 0:
-                print("Normal disconnection")
+                print("Disconnect: Normal disconnection")
             case 4:
-                print("Disconnect with Will message")
+                print("Disconnect: Disconnect with Will message")
             case 128:
-                print("Unspecified error")
+                print("Disconnect: Unspecified error")
             case 129:
-                print("Malformed Packet")
+                print("Disconnect: Malformed Packet")
             case 130:
-                print("Protocol Error")
+                print("Disconnect: Protocol Error")
             case 131:
-                print("Implementation specific error")
+                print("Disconnect: Implementation specific error")
             case 135:
-                print("Not authorized")
+                print("Disconnect: Not authorized")
             case 137:
-                print("Server busy")
+                print("Disconnect: Server busy")
             case 139:
-                print("Server shutting down")
+                print("Disconnect: Server shutting down")
             case 141:
-                print("Keep Alive timeout")
+                print("Disconnect: Keep Alive timeout")
             case 142:
-                print("Session taken over")
+                print("Disconnect: Session taken over")
             case 143:
-                print("Topic Filter invalid")
+                print("Disconnect: Topic Filter invalid")
             case 144:
-                print("Topic Name invalid")
+                print("Disconnect: Topic Name invalid")
             case 147:
-                print("Receive Maximum excedeed")
+                print("Disconnect: Receive Maximum excedeed")
             case 148:
-                print("Topic Alias invalid")
+                print("Disconnect: Topic Alias invalid")
             case 149:
-                print("Packet too large")
+                print("Disconnect: Packet too large")
             case 150:
-                print("Message rate too high")
+                print("Disconnect: Message rate too high")
             case 151:
-                print("Quota excedeed")
+                print("Disconnect: Quota excedeed")
             case 152:
-                print("Administrative action")
+                print("Disconnect: Administrative action")
             case 153:
-                print("Payload format invalid")
+                print("Disconnect: Payload format invalid")
             case 154:
-                print("Retain not supported")
+                print("Disconnect: Retain not supported")
             case 155:
-                print("QoS not supported")
+                print("Disconnect: QoS not supported")
             case 156:
-                print("Use another server")
+                print("Disconnect: Use another server")
             case 157:
-                print("Server moved")
+                print("Disconnect: Server moved")
             case 158:
-                print("Shared Subcriptions not supported")
+                print("Disconnect: Shared Subcriptions not supported")
             case 159:
-                print("Connection rate excedeed")
+                print("Disconnect: Connection rate excedeed")
             case 160:
-                print("Maximum connect time")
+                print("Disconnect: Maximum connect time")
             case 161:
-                print("Subscription Identifiers not supported")
+                print("Disconnect: Subscription Identifiers not supported")
             case 162:
-                print("Wildcard Subscriptions not supported")
+                print("Disconnect: Wildcard Subscriptions not supported")
 
         i = i + 1
         j = i
@@ -166,7 +166,7 @@ class DISCONNECT(Packet, ABC):
 
         self.__property_length, nr_bytes = FixedHeader.decode_variable_byte_integer(packet[j:i + 1])
         if self.__property_length != len(packet) - i - 1:
-            return "Malformed packet -> property length"
+            return "Disconnect: Malformed packet -> property length"
 
         i = i + 1
         if self.__property_length != 0:
@@ -182,7 +182,7 @@ class DISCONNECT(Packet, ABC):
                             self.__session_expiring_interval = str(packet[i:i + length])
                             i = i + length
                         else:
-                            return "Malformed packet"
+                            return "Disconnect: Malformed packet"
                     case 31:  # reason string
                         i = i + 1
                         if self.__reason_string is None:  # ma asigur ca nu e introdus de 2 ori
@@ -191,7 +191,7 @@ class DISCONNECT(Packet, ABC):
                             self.__reason_string = str(packet[i:i + length])
                             i = i + length
                         else:
-                            return "Malformed packet"
+                            return "Disconnect: Malformed packet"
                     case 38:  # user property
                         i = i + 1
                         if self.__user_property is None:  # ma asigur ca nu e introdus de 2 ori
@@ -204,7 +204,7 @@ class DISCONNECT(Packet, ABC):
                             i = i + length
                             self.__user_property = (user_property1, user_property2)
                         else:
-                            return "Malformed packet"
+                            return "Disconnect: Malformed packet"
                     case 28:  # server reference
                         i = i + 1
                         if self.__server_reference is None:  # ma asigur ca nu e introdus de 2 ori
@@ -212,9 +212,9 @@ class DISCONNECT(Packet, ABC):
                             i = i + 2
                             self.__server_reference = packet[i:i + length]
                         else:
-                            return "Malformed packet"
+                            return "Disconnect: Malformed packet"
                     case _:
-                        return "Malformed packet -> wrong property identifier"
+                        return "Disconnect: Malformed packet -> wrong property identifier"
         return "SUCCESS"
 
     def get_reason_code(self):

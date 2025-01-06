@@ -88,7 +88,7 @@ class SUBSCRIBE(Packet, ABC):
         return result
 
     def decode(self, packet) -> str:
-        return "Packet subscribe is not send by broker to client"
+        return "Subscribe: Packet subscribe is not sent by broker to client"
 
     # Getter and Setter methods
     def set_subscription_id(self, subscription_id: str):

@@ -152,7 +152,7 @@ class PUBLISH(Packet, ABC):
 
     def decode(self, packet) -> str:
         if int(self.type) & 0xF0 != int(packet[0]) & 0xF0:
-            return "Malformed packet -> wrong type"
+            return "Publish: Malformed packet -> wrong type"
 
         self.__QoS = (int(packet[0]) & 0x06) >> 1 # pentru a extrage tipul de QoS al pachetului
 
@@ -162,7 +162,7 @@ class PUBLISH(Packet, ABC):
 
         self.length, nr_bytes = FixedHeader.decode_variable_byte_integer(packet[1:i+1])
         if self.length != len(packet) - 1 - i:
-            return "Malformed packet -> wrong length"
+            return "Publish: Malformed packet -> wrong length"
 
         i = i + 1
         j = i
@@ -171,7 +171,7 @@ class PUBLISH(Packet, ABC):
 
         self.__property_length, nr_bytes = FixedHeader.decode_variable_byte_integer(packet[j:i+1])
         if self.__property_length > len(packet) - i - 1:
-            return "Malformed packet -> property length"
+            return "Publish: Malformed packet -> property length"
 
         topic_name_lg = int.from_bytes(packet[i:i + 2], byteorder='big')
         i = i + 2
@@ -197,7 +197,7 @@ class PUBLISH(Packet, ABC):
                             self.__payload_format = str(packet[i:i+length])
                             i = i + length
                         else:
-                            return "Malformed packet"
+                            return "Publish: Malformed packet"
                     case 2: # message expiry interval
                         i = i + 1
                         if self.__message_expiry_interval is None: # ma asigur ca nu e introdus de 2 ori
@@ -206,7 +206,7 @@ class PUBLISH(Packet, ABC):
                             self.__message_expiry_interval = str(packet[i:i+length])
                             i = i + length
                         else:
-                            return "Malformed packet"
+                            return "Publish: Malformed packet"
                     case 35: # topic alias
                         i = i + 1
                         if self.__topic_alias is None: # ma asigur ca nu e introdus de 2 ori
@@ -215,7 +215,7 @@ class PUBLISH(Packet, ABC):
                             self.__topic_alias = str(packet[i:i+length])
                             i = i + length
                         else:
-                            return "Malformed packet"
+                            return "Publish: Malformed packet"
                     case 8: # response topic
                         i = i + 1
                         if self.__response_topic is None: # ma asigur ca e introdus de 2 ori
@@ -224,7 +224,7 @@ class PUBLISH(Packet, ABC):
                             self.__response_topic = str(packet[i:i+length])
                             i = i + length
                         else:
-                            return "Malformed packet"
+                            return "Publish: Malformed packet"
                     case 9: # correlation data
                         i = i + 1
                         if self.__correlation_data is None: # ma asigur ca nu am introdus de 2 ori
@@ -233,7 +233,7 @@ class PUBLISH(Packet, ABC):
                             self.__correlation_data = str(packet[i:i+length])
                             i = i + length
                         else:
-                            return "Malformed packet"
+                            return "Publish: Malformed packet"
                     case 38: # user property
                         i = i + 1
                         if self.__user_property is None:  # ma asigur ca nu e introdus de 2 ori
@@ -246,7 +246,7 @@ class PUBLISH(Packet, ABC):
                             i = i + length
                             self.__user_property = (user_property1, user_property2)
                         else:
-                            return "Malformed packet"
+                            return "Publish: Malformed packet"
                     case 11: # subscription identifier
                         i = i + 1
                         if self.__subscription_identifier is None: # ma asigur ca nu e introdus de 2 ori
@@ -255,7 +255,7 @@ class PUBLISH(Packet, ABC):
                             self.__subscription_identifier = str(packet[i:i+length])
                             i = i + length
                         else:
-                            return "Malformed packet"
+                            return "Publish: Malformed packet"
                     case 3: # content type
                         i = i + 1
                         if self.__content_type is None: # ma asigur ca nu e introdus de 2 ori
@@ -264,7 +264,7 @@ class PUBLISH(Packet, ABC):
                             self.__content_type = str(packet[i:i+length])
                             i = i + length
                         else:
-                            return "Malformed packet"
+                            return "Publish: Malformed packet"
                     case _:
                         i = i + 1
                         self.__message = packet[i:maximum].decode('latin')

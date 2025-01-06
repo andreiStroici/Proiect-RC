@@ -18,13 +18,13 @@ class SUBACK(Packet, ABC):
         self.__last_packet_identifier = None
 
     def encode(self) -> str:
-        return "This packet is send only from the broker to the client"
+        return "Suback: This packet is sent only from the broker to the client"
 
     def decode(self, packet) -> str:
         i = 0
         type = int(packet[0])
         if self.type != type:
-            return "Malformed packet -> type"
+            return "Suback: Malformed packet -> type"
         i = i + 1
         lg = 1
         while packet[i] & 0b10000000:  # determin lungimea pachetului
@@ -32,12 +32,12 @@ class SUBACK(Packet, ABC):
             lg = lg + 1
         self.length, nr_bytes = FixedHeader.decode_variable_byte_integer(packet[1:i + 1])
         if self.length != len(packet) - 1 - lg:
-            return "Malformed packet -> packet length"
+            return "Suback: Malformed packet -> packet length"
         i = i + 1
         self.__packet_identifier = packet[i:i+2]
         number = int(packet[i]) * 256 + int(packet[i+1])
         if number != self.__last_packet_identifier:
-            return "Malformed packet -> packet_identifier"
+            return "Suback: Malformed packet -> packet_identifier"
         i = i + 2
         j = i
         while packet[i] & 0b10000000:  # determin lungimea pachetului
@@ -45,7 +45,7 @@ class SUBACK(Packet, ABC):
         self.__property_length, nr_bytes = FixedHeader.decode_variable_byte_integer(packet[j:i + 1])
         lg = self.__property_length
         if lg >= len(packet) - i - 1:
-            return "Malformed packet -> property length"
+            return "Suback: Malformed packet -> property length"
         maximum = lg + i
         while i < maximum:
             code = packet[i]
@@ -58,7 +58,7 @@ class SUBACK(Packet, ABC):
                         self.__reason_string = str(packet[i:i + length])
                         i = i + length
                     else:
-                        return "Malformed packet -> 2 times reason string"
+                        return "Suback: Malformed packet -> 2 times reason string"
                 case 38:  # user property
                     i = i + 1
                     if self.__user_property is None:  # ma asigur ca nu e introdus de 2 ori
@@ -72,38 +72,38 @@ class SUBACK(Packet, ABC):
                         i = i + length
                         self.__user_property = (user_property1, user_property2)
                     else:
-                        return "Malformed packet -> 2 times user property"
+                        return "Suback: Malformed packet -> 2 times user property"
         if len(packet) - i - 1 != len(self.__topic_filters):
-            return "Malformed packet -> topic length"
+            return "Suback: Malformed packet -> topic length"
         for j in range(0, len(self.__topic_filters)):
             code = packet[i + j + nr_bytes]
             match code:
                 case 0:
-                    print(f"Granted QoS 0 for {self.__topic_filters[j]}")
+                    print(f"Subscribe: Granted QoS 0 for {self.__topic_filters[j]}")
                 case 1:
-                    print(f"Granted QoS 1 for {self.__topic_filters[j]}")
+                    print(f"Subscribe: Granted QoS 1 for {self.__topic_filters[j]}")
                 case 2:
-                    print(f"Granted QoS 2 for {self.__topic_filters[j]}")
+                    print(f"Subscribe: Granted QoS 2 for {self.__topic_filters[j]}")
                 case 0x80:
-                    print(f"Unspecified error for {self.__topic_filters[j]}")
+                    print(f"Subscribe Unspecified error for {self.__topic_filters[j]}")
                 case 0x83:
-                    print(f"Implementation specific error for {self.__topic_filters[j]}")
+                    print(f"Subscribe: Implementation specific error for {self.__topic_filters[j]}")
                 case 0x87:
-                    print(f"Not authorized for {self.__topic_filters[j]}")
+                    print(f"Subscribe: Not authorized for {self.__topic_filters[j]}")
                 case 0x8F:
-                    print(f"Topic Filter invalid for {self.__topic_filters[j]}")
+                    print(f"Subscribe: Topic Filter invalid for {self.__topic_filters[j]}")
                 case 0x91:
-                    print(f"Packet Identifier in use for {self.__topic_filters[j]}")
+                    print(f"Subscribe: Packet Identifier in use for {self.__topic_filters[j]}")
                 case 0x97:
-                    print(f"Quota exceeded for {self.__topic_filters[j]}")
+                    print(f"Subscribe: Quota exceeded for {self.__topic_filters[j]}")
                 case 0x9E:
-                    print(f"Shared Subscriptions not supported for {self.__topic_filters[j]}")
+                    print(f"Subscribe: Shared Subscriptions not supported for {self.__topic_filters[j]}")
                 case 0xA1:
-                    print(f"Subscription Identifiers not supported for {self.__topic_filters[j]}")
+                    print(f"Subscribe: Subscription Identifiers not supported for {self.__topic_filters[j]}")
                 case 0xA2:
-                    print(f"Wildcard Subscriptions not supported for {self.__topic_filters[j]}")
+                    print(f"Subscribe: Wildcard Subscriptions not supported for {self.__topic_filters[j]}")
                 case _:
-                    return "Malformed packet"
+                    return "Subscribe: Malformed packet"
         return "SUCCESS"
 
     # Getter și setter pentru __reason_string

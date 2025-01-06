@@ -8,11 +8,11 @@ class PINGRESP(Packet, ABC):
         self.type = 208
 
     def encode(self) -> str:
-        return "This packet is sent only from the broker to client"
+        return "Pingresp: This packet is sent only from the broker to client"
 
     def decode(self, packet):
         if self.type != int(packet[0]):
-            return "Malformed packet"
+            return "Pingresp: Malformed packet"
         if packet[1] != 0:
-            return "Malformed packet"
+            return "Pingresp: Malformed packet"
         return "SUCCESS"

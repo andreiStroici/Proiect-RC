@@ -73,7 +73,7 @@ class PUBACK(Packet, ABC):
     def decode(self, packet) -> (str, str):
         message_reason_code = None
         if self.type != int(packet[0]):
-            return "Malformed packet -> wrong type"
+            return "Puback: Malformed packet -> wrong type"
 
         lg = len(packet)
         i = 1
@@ -82,15 +82,15 @@ class PUBACK(Packet, ABC):
         self.length, nr_bytes = FixedHeader.decode_variable_byte_integer(packet[1:i + 1])
         lg -= (1 + nr_bytes)
         if self.length != len(packet) - 1 - i:
-            return "Malformed packet -> wrong length"
+            return "Puback: Malformed packet -> wrong length"
 
         i = i + 1
         self.__packet_identifier = int(packet[i]) * 256 + int(packet[i + 1])
         if self.__packet_identifier != self.__last_packet_identifier:
-            return "Malformed packet -> packet identifier"
+            return "Puback: Malformed packet -> packet identifier"
 
         if lg == 2:
-            print("Success")
+            print("Puback: Success")
             message_reason_code = "Success"
             return "SUCCESS", message_reason_code
 
@@ -99,31 +99,31 @@ class PUBACK(Packet, ABC):
             self.__reason_code = int(packet[i])
             match self.__reason_code:
                 case 0:
-                    print("Success")
+                    print("Puback: Success")
                     message_reason_code = "Success"
                 case 16:
-                    print("No matching subscribers")
+                    print("Puback: No matching subscribers")
                     message_reason_code = "No matching subscribers"
                 case 128:
-                    print("Unspecified error")
+                    print("Puback: Unspecified error")
                     message_reason_code = "Unspecified error"
                 case 131:
-                    print("Implementation specific error")
+                    print("Puback: Implementation specific error")
                     message_reason_code = "Implementation specific error"
                 case 135:
-                    print("Not authorized")
+                    print("Puback: Not authorized")
                     message_reason_code = "Not authorized"
                 case 144:
-                    print("Topic Name invalid")
+                    print("Puback: Topic Name invalid")
                     message_reason_code = "Topic Name invalid"
                 case 145:
-                    print("Packet identifier in use")
+                    print("Puback: Packet identifier in use")
                     message_reason_code = "Packet identifier in use"
                 case 151:
-                    print("Quota exceeded")
+                    print("Puback: Quota exceeded")
                     message_reason_code = "Quota exceeded"
                 case 153:
-                    print("Payload format invalid")
+                    print("Puback: Payload format invalid")
                     message_reason_code = "Payload format invalid"
 
         if i < lg:
@@ -134,7 +134,7 @@ class PUBACK(Packet, ABC):
             self.__property_length, nr_bytes = FixedHeader.decode_variable_byte_integer(packet[j:i + 1])
             lg -= nr_bytes
             if self.__property_length != len(packet) - i - 1:
-                return "Malformed packet -> property length"
+                return "Puback: Malformed packet -> property length"
 
         if i < lg:
             i = i + 1
@@ -151,7 +151,7 @@ class PUBACK(Packet, ABC):
                                 self.__reason_string = str(packet[i:i + length])
                                 i = i + length
                             else:
-                                return "Malformed packet"
+                                return "Puback: Malformed packet"
                         case 38:  # proprietatiile utilizatorilor
                             i = i + 1
                             if self.__user_property is None:  # ma asigur ca nu e introdus de 2 ori
@@ -165,7 +165,7 @@ class PUBACK(Packet, ABC):
                                 i = i + length
                                 self.__user_property = (user_property1, user_property2)
                         case _:
-                            return "Malformed packet -> wrong property identifier"
+                            return "Puback: Malformed packet -> wrong property identifier"
         return "SUCCESS", message_reason_code
 
     # Setters and Getters for each None-initialized attribute

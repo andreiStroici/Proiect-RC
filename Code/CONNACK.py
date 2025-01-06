@@ -47,7 +47,7 @@ class CONNACK(Packet, ABC):
         self.__authentication_data = None
 
     def encode(self) -> str:
-        return "This packet is not send by the client"
+        return "Connack: This packet is not send by the client"
 
     def decode(self, packet) -> str:
         """Prin inetrmediul acestei functii vom decodifica pachetul connect
@@ -63,15 +63,15 @@ class CONNACK(Packet, ABC):
         self.length, nr_bytes = FixedHeader.decode_variable_byte_integer(packet[1:i+1])
         # verific daca lungimea pachetului corespunde cu cea oferita in mesaj
         if self.length != len(packet) - 1 - lg:
-            return "Malformed packet"
+            return "Connack: Malformed packet"
         i = i + 1
         self.__connack_flags = packet[i]
         if int(self.__connack_flags) not in [0, 1]:
-            return "Malformed packet"
+            return "Connack: Malformed packet"
         i = i + 1
         self.__reason_code = int(packet[i])
         if self.__reason_code not in [0] + list(range(128, 160)):
-            return "Malformed packet"
+            return "Connack: Malformed packet"
         i = i + 1
         j = i
         while packet[i] & 0b10000000:  # determin lungimea pachetului
@@ -80,7 +80,7 @@ class CONNACK(Packet, ABC):
         lg, nr_bytes = FixedHeader.decode_variable_byte_integer(self.__property_length)
         # verific lungimea proprietatiilor pachetului
         if lg != len(packet) - i - 1:
-            return "Malformed packet"
+            return "Connack: Malformed packet"
         i = i + 1
         maximum = lg + i
         # de acum voi parcurge si voi completa capurile din proprietati
@@ -93,34 +93,34 @@ class CONNACK(Packet, ABC):
                         self.__session_expiry_interval = packet[i:i + 4]
                         i = i + 4
                     else:
-                        return "Malformed packet"
+                        return "Connack: Malformed packet"
                 case 33:  # maximum receive
                     i = i + 1
                     if self.__maximum_receive is None:  # ma asigur ca nu e introdus de 2 ori
                         self.__maximum_receive = packet[i:i + 2]
                         i = i + 2
                     else:
-                        return "Malformed packet"
+                        return "Connack: Malformed packet"
                 case 36:  # maximum QoS
                     i = i + 1
                     if self.__max_qos is None:  # ma asigur ca nu e introdus de 2 ori
                         self.__max_qos = packet[i]
                         i = i + 1
                     else:
-                        return "Malformed packet"
+                        return "Connack: Malformed packet"
                 case 37:  # ratain available
                     i = i + 1
                     if self.__retain_available is None:  # ma asigur ca nu e introdus de 2 ori
                         self.__retain_available = [i]
                     else:
-                        return "Malformed packet"
+                        return "Connack: Malformed packet"
                 case 39:  # dimensiunea maxima a pachetului
                     i = i + 1
                     if self.__packet_maximum_size is None:  # ma asigur ca nu e introdus de 2 ori
                         self.__packet_maximum_size = packet[i:i + 4]
                         i = i + 4
                     else:
-                        return "Malformed packet"
+                        return "Connack: Malformed packet"
                 case 18:  # identificator de client dat de broker
                     i = i + 1
                     if self.__assigned_client_id is None:  # ma asigur ca nu e introdus de 2 ori
@@ -129,14 +129,14 @@ class CONNACK(Packet, ABC):
                         self.__assigned_client_id = str(packet[i:i + length])
                         i = i + length
                     else:
-                        return "Malformed packet"
+                        return "Connack: Malformed packet"
                 case 34:  # topic  alias maximum
                     i = i + 1
                     if self.__topic_alias_maximum is None:  # ma asigur ca nu e introdus de 2 ori
                         self.__topic_alias_maximum = packet[i:i + 2]
                         i = i + 2
                     else:
-                        return "Malformed packet"
+                        return "Connack: Malformed packet"
                 case 31:  # reason string
                     i = i + 1
                     if self.__reason_string is None:  # ma asigur ca nu e introdus de 2 ori
@@ -145,7 +145,7 @@ class CONNACK(Packet, ABC):
                         self.__reason_string = str(packet[i:i+length])
                         i = i + length
                     else:
-                        return "Malformed packet"
+                        return "Connack: Malformed packet"
                 case 38:  # proprietatiile utilizatorilor
                     i = i + 1
                     if self.__user_property is None:  # ma asigur ca nu e introdus de 2 ori
@@ -159,34 +159,34 @@ class CONNACK(Packet, ABC):
                         i = i + length
                         self.__user_property = (user_property1, user_property2)
                     else:
-                        return "Malformed packet"
+                        return "Connack: Malformed packet"
                 case 40:  # wilcard subscribe available
                     i = i + 1
                     if self.__wildcard_subscription_available is None:  # ma asigur ca nu e introdus de 2 ori
                         self.__wildcard_subscription_available = packet[i]
                         i = i + 1
                     else:
-                        return "Malformed packet"
+                        return "Connack: Malformed packet"
                 case 41:  # identificatori de abonare
                     i = i + 1
                     if self.__subscription_identifiers is None:  # ma asigur ca nu e introdus de 2 ori
                         self.__subscription_identifiers = packet[i]
                         i = i + 1
                     else:
-                        return "Malformed packet"
+                        return "Connack: Malformed packet"
                 case 42:  # shared subscription available
                     i = i + 1
                     if self.__shared_subscription_available is None:  # ma asigur ca nu e introdus de 2 ori
                         self.__shared_subscription_available = packet[i]
                         i = i + 1
                     else:
-                        return "Malformed packet"
+                        return "Connack: Malformed packet"
                 case 19:  # server keep alive
                     i = i + 1
                     if self.__server_keep_alive is packet[i:i + 2]:
                         i = i + 2
                     else:
-                        return "Malformed packet"
+                        return "Connack: Malformed packet"
                 case 26:  # response infromation
                     i = i + 1
                     if self.__response_information is None:  # ma asigur ca nu e introdus de 2 ori
@@ -195,7 +195,7 @@ class CONNACK(Packet, ABC):
                         self.__response_information = str(packet[i:i + length])
                         i = i + length
                     else:
-                        return "Malformed packet"
+                        return "Connack: Malformed packet"
                 case 28:  # referinta broker
                     i = i + 1
                     if self.__server_reference is None:  # ma asigur ca nu e introdus de 2 ori
@@ -204,7 +204,7 @@ class CONNACK(Packet, ABC):
                         self.__server_reference = str(packet[i:i + length])
                         i = i + length
                     else:
-                        return "Malformed packet"
+                        return "Connack: Malformed packet"
                 case 21:  # metoda de autentificare
                     i = i + 1
                     if self.__authentication_method is None:  # ma asigur ca nu e introdus de 2 ori
@@ -213,7 +213,7 @@ class CONNACK(Packet, ABC):
                         self.__authentication_method = str(packet[i:i + length])
                         i = i + length
                     else:
-                        return "Malformed packet"
+                        return "Connack: Malformed packet"
                 case 22:  # date de autentificare
                     i = i + 1
                     if self.__authentication_data is None:  # ma asigur ca nu e introdus de 2 ori
@@ -222,9 +222,9 @@ class CONNACK(Packet, ABC):
                         self.__authentication_data = str(packet[i:i + length])
                         i = i + length
                     else:
-                        return "Malformed packet"
+                        return "Connack: Malformed packet"
                 case _:
-                    return "Malformed packet"
+                    return "Connack: Malformed packet"
         return "SUCCESS"
 
     def get_reason_code(self):

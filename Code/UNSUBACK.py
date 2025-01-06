@@ -19,11 +19,11 @@ class UNSUBACK(Packet, ABC):
         self.__last_packet_id = None
 
     def encode(self) -> str:
-        return "This packet is not send by client to broker"
+        return "Unsuback: This packet is not sent by client to broker"
 
     def decode(self, packet) -> str:
         if self.type != int(packet[0]):
-            return "Malformed packet"
+            return "Unsuback: Malformed packet"
         i = 1
         lg = 1
         while packet[i] & 0b10000000:  # determin lungimea pachetului
@@ -31,12 +31,12 @@ class UNSUBACK(Packet, ABC):
             lg = lg + 1
         self.length, nr_bytes = FixedHeader.decode_variable_byte_integer(packet[1:i+1])
         if len(packet) - nr_bytes - 1 != self.length:
-            return "Malformed packet"
+            return "Unsuback: Malformed packet"
         i = i + lg
         self.__packet_identifier = packet[i:i+2]
         number = int(packet[i]) * 256 + int(packet[i+1])
         if number != self.__last_packet_id:
-            return "Malformed packet -> packet identifier doesn't match"
+            return "Unsuback: Malformed packet -> packet identifier doesn't match"
         i = i + 2
         j = i
         while packet[i] & 0b10000000:  # determin lungimea pachetului
@@ -44,7 +44,7 @@ class UNSUBACK(Packet, ABC):
         self.__property_length, nr_bytes = FixedHeader.decode_variable_byte_integer(packet[j:i+1])
         lg = self.__property_length
         if lg >= len(packet) - i - 1:
-            return "Malformed packet -> property length"
+            return "Unsuback: Malformed packet -> property length"
         i = i + 1
         if self.__property_length != 0:
             i = i + 1
@@ -60,7 +60,7 @@ class UNSUBACK(Packet, ABC):
                             i = i + 2
                             self.__reason_string = packet[i:i+number].decode()
                         else:
-                            return "Malformed packet -> 2 times reason string"
+                            return "Unsuback: Malformed packet -> 2 times reason string"
                     case 38:
                         if self.__user_property is None:
                             i = i + 1
@@ -75,7 +75,7 @@ class UNSUBACK(Packet, ABC):
                             usrpp2 = packet[i:i + number].decode()
                             self.__user_property = (usrpp1, usrpp2)
                         else:
-                            return "Malformed packet -> 2 times user property"
+                            return "Unsuback: Malformed packet -> 2 times user property"
         for j in range(0, len(self.__topic_filters)):
             code = packet[i + j]
             match code:

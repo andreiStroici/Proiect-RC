@@ -20,4 +20,4 @@ class PINGREQ(Packet, ABC):
         return ret
 
     def decode(self, packet) -> str:
-        return "It is not send this packet from broker to client"
+        return "Pingreq: This packet is not sent from broker to client"

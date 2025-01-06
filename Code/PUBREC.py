@@ -66,7 +66,7 @@ class PUBREC(Packet, ABC):
     def decode(self, packet) -> (str, str):
         message_reason_code = None
         if self.type != int(packet[0]):
-            return "Malformed packet -> wrong type"
+            return "Pubrec: Malformed packet -> wrong type"
 
         lg = len(packet)
         i = 1
@@ -75,12 +75,12 @@ class PUBREC(Packet, ABC):
         self.length, nr_bytes = FixedHeader.decode_variable_byte_integer(packet[1:i + 1])
         lg -= (1 + nr_bytes)
         if self.length != len(packet) - 1 - i:
-            return "Malformed packer -> wrong length"
+            return "Pubrec: Malformed packer -> wrong length"
 
         i = i + 1
         self.__packet_identifier = int(packet[i]) * 256 + int(packet[i + 1])
         if self.__packet_identifier != self.__last_packet_identifier:
-            return "Malformed packet -> packet identifier"
+            return "Pubrec: Malformed packet -> packet identifier"
 
         if lg == 2:
             print("Pubrec: Success")
@@ -127,7 +127,7 @@ class PUBREC(Packet, ABC):
             self.__property_length, nr_bytes = FixedHeader.decode_variable_byte_integer(packet[j:i + 1])
             lg -= nr_bytes
             if self.__property_length != len(packet) - i - 1:
-                return "Malformed packet -> property length"
+                return "Pubrec: Malformed packet -> property length"
 
         if i < lg:
             i = i + 1
@@ -144,7 +144,7 @@ class PUBREC(Packet, ABC):
                                 self.__reason_string = str(packet[i:i + length])
                                 i = i + length
                             else:
-                                return "Malformed packet"
+                                return "Pubrec: Malformed packet"
                         case 38:  # proprietatiile utilizatorilor
                             i = i + 1
                             if self.__user_property is None:  # ma asigur ca nu e introdus de 2 ori
@@ -158,7 +158,7 @@ class PUBREC(Packet, ABC):
                                 i = i + length
                                 self.__user_property = (user_property1, user_property2)
                         case _:
-                            return "Malformed packet -> wrong property identifier"
+                            return "Pubrec: Malformed packet -> wrong property identifier"
         return "SUCCESS", message_reason_code
 
     # Setters and Getters for each None-initialized attribute

@@ -71,7 +71,7 @@ class UNSUBSCRIBE(Packet, ABC):
         return result
 
     def decode(self, packet) -> str:
-        return "This packet is send by the client to the broker"
+        return "This packet is sent by the client to the broker"
 
     # Getter și Setter pentru atributele None
     def get_packet_identifier(self):
