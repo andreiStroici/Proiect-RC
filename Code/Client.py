@@ -30,11 +30,11 @@ class Client:
         self.s_conn.connect((self.__broker_ip, self.__broker_port))  # realizez conexiunea cu serverul
         self.__packet = None  # Ultimul pachet trimis
         self.__QoS = 0  # Calitatea serviciului, implicit 0
-        self.queue = queue  # Coada de mesaje folosita pt comunicarea intre thread-uri
+        self.queue = queue  # Coada de mesaje folosita pt comunicarea intre pocese
         self.__last_topic_filter = []  # aici voi tine ultimele topic filters trimise prin subscribe
         self.__last_packet_identifier = None
         # aici voi tine ultimele topic filters trimise prin subscribe
-        self.__receive_queue = multiprocessing.Queue()
+        self.__receive_queue = multiprocessing.Queue()  # coada de mesaje folosita pentru coerenta datelor intre procese
         self.__topic_message = None
 
     @staticmethod
